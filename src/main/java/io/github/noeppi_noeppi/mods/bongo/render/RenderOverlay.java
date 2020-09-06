@@ -135,6 +135,28 @@ public class RenderOverlay {
                     }
                 }
 
+                if (bongo.running() || bongo.won()) {
+                    long millis;
+                    if (bongo.won()) {
+                        millis = bongo.ranUntil() - bongo.runningSince();
+                    } else {
+                        millis = System.currentTimeMillis() - bongo.runningSince();
+                    }
+                    int decimal = (int) ((millis / 100) % 10);
+                    int sec = (int) ((millis / 1000) % 60);
+                    int min = (int) ((millis / 60000) % 60);
+                    int hour = (int) millis / 3600000;
+                    String timer;
+                    if (hour == 0) {
+                        timer = min + ":" + sec + "." + decimal;
+                    } else {
+                        timer = hour + ":" + min + ":" + sec + "." + decimal;
+                    }
+                    matrixStack.translate(0, 133, 100);
+                    matrixStack.scale(1.3f, 1.3f, 1);
+                    mc.fontRenderer.drawString(matrixStack, timer, 0, 0, 0xFFFFFF);
+                }
+
                 matrixStack.pop();
             }
         }

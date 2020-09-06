@@ -40,7 +40,7 @@ public class GameDef {
 
                 Task task = Task.empty();
                 task.deserializeNBT(compound);
-                tasks.add(Pair.of(totalWeight + weight, task));
+                tasks.add(Pair.of(weight, task));
                 totalWeight += weight;
             }
         }
@@ -51,18 +51,23 @@ public class GameDef {
     public String createBongo(Bongo bongo) {
         if (bongo.running())
             bongo.stop();
-        if (tasks.size() < 25 || totalWeight <= 0)
+        if (tasks.size() < 25)
             return "bongo.cmd.create.less";
 
         Random random = new Random();
+        int weightLeft = totalWeight;
         List<Task> theTasks = new ArrayList<>();
         while (theTasks.size() < 25) {
-            int rand = random.nextInt(totalWeight);
+            int rand = random.nextInt(weightLeft);
+            int weightCounted = 0;
             for (Pair<Integer, Task> pair : tasks) {
-                if (pair.getLeft() < rand) {
-                    //if (!theTasks.contains(pair.getRight()))
+                if (!theTasks.contains(pair.getRight())) {
+                    weightCounted += pair.getLeft();
+                    if (weightCounted > rand) {
                         theTasks.add(pair.getRight());
-                    break;
+                        weightLeft -= pair.getLeft();
+                        break;
+                    }
                 }
             }
         }

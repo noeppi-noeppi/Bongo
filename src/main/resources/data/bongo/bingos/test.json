@@ -9,175 +9,174 @@
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:stone",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:cobblestone",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:dirt",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:apple",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:golden_apple",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:nether_star",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:rotten_flesh",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:string",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:redstone",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:piston",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:iron_ingot",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:diamond",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:emerald",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:minecart",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:hopper",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:chest",
+      "Count": 1
+    },
+    {
+      "type": "bongo.advancement",
+      "weight": 20,
+      "advancement": "minecraft:story/iron_tools"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:gravel",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:sand",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:sandstone",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:glass",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:glass_pane",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:end_stone",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:netherrack",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:player_head",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:sugar_cane",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:wheat",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:bread",
       "Count": 1
     },
     {
       "type": "bongo.item",
       "weight": 3,
-      "id": "minecraft:grass_block",
-      "Count": 1
-    },
-    {
-      "type": "bongo.item",
-      "weight": 3,
-      "id": "minecraft:grass_block",
-      "Count": 1
-    },
-    {
-      "type": "bongo.item",
-      "weight": 3,
-      "id": "minecraft:grass_block",
+      "id": "minecraft:bowl",
       "Count": 1
     }
   ]

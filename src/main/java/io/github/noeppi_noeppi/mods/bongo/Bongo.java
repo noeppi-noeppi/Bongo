@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
@@ -50,6 +51,8 @@ public class Bongo extends WorldSavedData {
     private boolean active;
     private boolean running;
     private boolean teamWon;
+    private long runningSince = 0;
+    private long ranUntil = 0;
 
     public Bongo() {
         this(ID);
@@ -116,9 +119,20 @@ public class Bongo extends WorldSavedData {
         this.active = true;
         this.running = true;
         this.teamWon = false;
+        this.runningSince = System.currentTimeMillis();
+        this.ranUntil = 0;
+        Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
             team.clearBackPack();
             team.resetCompleted();
+            uids.addAll(team.getPlayers());
+        }
+        if (world != null) {
+            StartingEffects.callWorldEffects(this, world);
+            world.getPlayers().forEach(player -> {
+                if (uids.contains(player.getGameProfile().getId()))
+                    StartingEffects.callPlayerEffects(this, player);
+            });
         }
         markDirty();
     }
@@ -140,6 +154,8 @@ public class Bongo extends WorldSavedData {
         nbt.putBoolean("active", active);
         nbt.putBoolean("running", running);
         nbt.putBoolean("teamWon", teamWon);
+        nbt.putLong("runningSince", runningSince);
+        nbt.putLong("ranUntil", ranUntil);
         for (DyeColor dc : DyeColor.values()) {
             nbt.put(dc.getString(), getTeam(dc).serializeNBT());
         }
@@ -157,6 +173,8 @@ public class Bongo extends WorldSavedData {
         active = nbt.getBoolean("active");
         running = nbt.getBoolean("running");
         teamWon = nbt.getBoolean("teamWon");
+        runningSince = nbt.getLong("runningSince");
+        ranUntil = nbt.getLong("ranUntil");
         for (DyeColor dc : DyeColor.values()) {
             if (nbt.contains(dc.getString(), Constants.NBT.TAG_COMPOUND)) {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getString()));
@@ -180,6 +198,10 @@ public class Bongo extends WorldSavedData {
         for (Team team : teams.values())
             team.reset();
         clearItems();
+        active = false;
+        running = false;
+        runningSince = 0;
+        ranUntil = 0;
         markDirty();
     }
 
@@ -224,9 +246,19 @@ public class Bongo extends WorldSavedData {
                     IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.win"));
                     world.getPlayers().forEach(player -> player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, tc, 10, 60, 10)));
                 }
+                ranUntil = System.currentTimeMillis();
                 markDirty();
+                return;
             }
         }
+    }
+
+    public long runningSince() {
+        return runningSince;
+    }
+
+    public long ranUntil() {
+        return ranUntil;
     }
 
     @Override

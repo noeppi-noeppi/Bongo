@@ -3,11 +3,13 @@ package io.github.noeppi_noeppi.mods.bongo;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
+import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -36,6 +38,12 @@ public class BongoMod {
         TaskTypes.registerType(TaskTypeEmpty.INSTANCE);
         TaskTypes.registerType(TaskTypeItem.INSTANCE);
         TaskTypes.registerType(TaskTypeAdvancement.INSTANCE);
+
+        StartingEffects.registerPlayerEffect((bongo, player) -> player.inventory.clear());
+        StartingEffects.registerPlayerEffect((bongo, player) -> {
+            //noinspection ConstantConditions
+            AdvancementCommand.Action.REVOKE.applyToAdvancements(player, player.getServer().getAdvancementManager().getAllAdvancements());
+        });
 
         Util.registerGenericCommandArgument(MODID + "_upperenum", UppercaseEnumArgument.class, new UppercaseEnumArgument.Serializer());
         ArgumentTypes.register(MODID + "_bongogame", GameDefArgument.class, new GameDefArgument.Serialzier());
