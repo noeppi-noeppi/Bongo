@@ -1,0 +1,184 @@
+{
+  "tasks": [
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "weight": 3,
+      "id": "minecraft:grass_block",
+      "Count": 1
+    }
+  ]
+}

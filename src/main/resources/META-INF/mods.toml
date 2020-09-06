@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+issueTrackerURL="https://github.com/noeppi-noeppi/bongo/issues"
+license="Apche-2.0"
+
+[[mods]]
+modId="bongo"
+version="${file.jarVersion}"
+displayName="Bongo"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/bongo"
+authors="noeppi_noeppi"
+description='''
+It's a bingo mod.
+'''
+
+[[dependencies.bongo]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.2]"
+    ordering="NONE"
+    side="BOTH"
