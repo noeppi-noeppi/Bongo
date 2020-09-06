@@ -35,7 +35,6 @@ public class EventListener {
 
     @SubscribeEvent
     public void advancementGrant(AdvancementEvent event) {
-        System.out.println("ADV: " + event.getAdvancement().getId());
         World world = event.getPlayer().getEntityWorld();
         if (!world.isRemote) {
             Bongo.get(world).checkCompleted(TaskTypeAdvancement.INSTANCE, event.getPlayer(), event.getAdvancement().getId());

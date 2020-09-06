@@ -2,18 +2,17 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
-import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
@@ -50,9 +49,10 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public void renderSlotContent(Minecraft mc, ResourceLocation content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
         ItemStack icon = new ItemStack(Items.BARRIER);
-        MinecraftServer server = Util.getClientServer();
-        if (server != null) {
-            Advancement advancement = server.getAdvancementManager().getAdvancement(content);
+
+        ClientPlayNetHandler cpnh = mc.getConnection();
+        if (cpnh != null) {
+            Advancement advancement = cpnh.getAdvancementManager().getAdvancementList().getAdvancement(content);
             if (advancement != null) {
                 DisplayInfo di = advancement.getDisplay();
                 if (di != null) {
@@ -66,9 +66,9 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
     @Override
     public String getTranslatedContentName(ResourceLocation content) {
-        MinecraftServer server = Util.getClientServer();
-        if (server != null) {
-            Advancement advancement = server.getAdvancementManager().getAdvancement(content);
+        ClientPlayNetHandler cpnh = Minecraft.getInstance().getConnection();
+        if (cpnh != null) {
+            Advancement advancement = cpnh.getAdvancementManager().getAdvancementList().getAdvancement(content);
             if (advancement != null) {
                 DisplayInfo di = advancement.getDisplay();
                 if (di != null) {
