@@ -123,27 +123,39 @@ public class Team {
         }
     }
 
-    public void reset() {
+    public void reset(boolean suppressBingoSync) {
         completed = 0;
         players.clear();
-        clearBackPack();
-        bongo.markDirty();
+        clearBackPack(suppressBingoSync);
+        bongo.markDirty(suppressBingoSync);
     }
 
-    public void resetCompleted() {
+    public void reset() {
+        reset(false);
+    }
+
+    public void resetCompleted(boolean suppressBingoSync) {
         completed = 0;
-        bongo.markDirty();
+        bongo.markDirty(suppressBingoSync);
     }
 
-    public void clearBackPack() {
+    public void clearBackPack(boolean suppressBingoSync) {
         for (int slot = 0; slot < backpack.getSlots(); slot++) {
             backpack.setStackInSlot(slot, ItemStack.EMPTY);
         }
-        bongo.markDirty();
+        bongo.markDirty(suppressBingoSync);
+    }
+
+    public void clearBackPack() {
+        clearBackPack(false);
     }
 
     public void clearPlayers() {
         players.clear();
         bongo.markDirty();
+    }
+
+    public void resetCompleted() {
+        resetCompleted(false);
     }
 }

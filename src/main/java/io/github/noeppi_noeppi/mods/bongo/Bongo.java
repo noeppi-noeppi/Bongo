@@ -8,6 +8,7 @@ import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.server.STitlePacket;
@@ -42,6 +43,12 @@ public class Bongo extends WorldSavedData {
 
     public static void updateClient(Bongo bongo) {
         clientInstance = bongo;
+        clientInstance.items.forEach(task -> {
+            Object element = task.getElement();
+            System.out.println(element instanceof ItemStack);
+        });
+        System.out.println();
+
     }
 
     private ServerWorld world;
@@ -123,8 +130,8 @@ public class Bongo extends WorldSavedData {
         this.ranUntil = 0;
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
-            team.clearBackPack();
-            team.resetCompleted();
+            team.clearBackPack(true);
+            team.resetCompleted(true);
             uids.addAll(team.getPlayers());
         }
         if (world != null) {
@@ -196,20 +203,25 @@ public class Bongo extends WorldSavedData {
     
     public void reset() {
         for (Team team : teams.values())
-            team.reset();
-        clearItems();
+            team.reset(true);
+
         active = false;
         running = false;
         runningSince = 0;
         ranUntil = 0;
-        markDirty();
+        clearItems(true);
+        markDirty(); // only call markDirty once
     }
 
     public void clearItems() {
+        clearItems(false);
+    }
+
+    public void clearItems(boolean suppressBingoSync) {
         for (int i = 0; i < items.size(); i++) {
             items.set(i, Task.empty());
         }
-        markDirty();
+        markDirty(suppressBingoSync);
     }
 
     public Task task(int slot) {
@@ -261,12 +273,16 @@ public class Bongo extends WorldSavedData {
         return ranUntil;
     }
 
-    @Override
-    public void markDirty() {
+    public void markDirty(boolean suppressBingoSync) {
         super.markDirty();
-        if (world != null) {
+        if (world != null && !suppressBingoSync) {
             BongoNetwork.updateBongo(world);
         }
+    }
+
+    @Override
+    public void markDirty() {
+        this.markDirty(false);
     }
 
     public void setTasks(List<Task> tasks) {

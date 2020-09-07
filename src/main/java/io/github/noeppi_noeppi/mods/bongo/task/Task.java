@@ -72,4 +72,8 @@ public class Task implements INBTSerializable<CompoundNBT> {
         //noinspection unchecked
         return new Task((TaskType<Object>) type, ((TaskType<Object>) type).copy(element));
     }
+
+    public Object getElement() {
+        return element;
+    }
 }
