@@ -20,13 +20,15 @@ import java.util.List;
 import java.util.Random;
 
 public class SpreadCommand implements Command<CommandSource> {
+
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         World world = context.getSource().getWorld();
         Bongo bongo = Bongo.get(world);
         int teams = MathHelper.clamp(context.getArgument("amount", Integer.class), 1, 16);
 
-        List<PlayerEntity> players = new ArrayList<>(world.getPlayers());
+        //noinspection ConstantConditions
+        List<PlayerEntity> players = new ArrayList<>(world.getServer().getPlayerList().getPlayers());
 
         if (!bongo.active()) {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.team.noactive")).create();

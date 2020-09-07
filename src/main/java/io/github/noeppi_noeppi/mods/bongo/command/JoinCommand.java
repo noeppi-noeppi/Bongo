@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.util.Messages;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
@@ -31,10 +32,9 @@ public class JoinCommand implements Command<CommandSource> {
         team.addPlayer(player);
 
         if (oldTeam != null) {
-            player.sendMessage(new TranslationTextComponent("bongo.cmd.team.left").append(oldTeam.getName()), player.getUniqueID());
-
+            Messages.onLeave(player.getEntityWorld(), player, oldTeam);
         }
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.joined").append(team.getName()), player.getUniqueID());
+        Messages.onJoin(player.getEntityWorld(), player, team);
 
         return 0;
     }

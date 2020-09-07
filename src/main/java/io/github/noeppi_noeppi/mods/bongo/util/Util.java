@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.UUID;
 
 public class Util {
 
@@ -65,9 +67,24 @@ public class Util {
     }
 
     public static void broadcast(World world, ITextComponent message) {
-        world.getPlayers().forEach(player -> player.sendMessage(message, player.getUniqueID()));
+        MinecraftServer server = world.getServer();
+        if (server != null) {
+            server.getPlayerList().getPlayers().forEach(player -> player.sendMessage(message, player.getUniqueID()));
+        }
     }
 
+    public static void broadcastExcept(World world, PlayerEntity exlcude, ITextComponent message) {
+        UUID uid = exlcude.getGameProfile().getId();
+        MinecraftServer server = world.getServer();
+        if (server != null) {
+            server.getPlayerList().getPlayers().forEach(player -> {
+                if (!uid.equals(player.getGameProfile().getId()))
+                    player.sendMessage(message, player.getUniqueID());
+            });
+        }
+    }
+
+    @Deprecated
     public static MinecraftServer getClientServer() {
         return DistExecutor.unsafeRunForDist(() -> Minecraft.getInstance()::getIntegratedServer, () -> () -> null);
     }

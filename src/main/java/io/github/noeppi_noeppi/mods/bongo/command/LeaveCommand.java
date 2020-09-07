@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.util.Messages;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,7 +30,7 @@ public class LeaveCommand implements Command<CommandSource> {
         }
         team.removePlayer(player);
 
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.left").append(team.getName()), player.getUniqueID());
+        Messages.onLeave(player.getEntityWorld(), player, team);
 
         return 0;
     }

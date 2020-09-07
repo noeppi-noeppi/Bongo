@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 public interface TaskType<T> {
 
@@ -24,6 +25,8 @@ public interface TaskType<T> {
     void renderSlotContent(Minecraft mc, T content, MatrixStack matrixStack, IRenderTypeBuffer buffer);
 
     String getTranslatedContentName(T content);
+
+    ITextComponent getContentName(T content);
 
     boolean shouldComplete(T element, PlayerEntity player, T compare);
 

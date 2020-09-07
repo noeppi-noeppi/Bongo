@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 
 public class TaskTypeItem implements TaskType<ItemStack> {
 
@@ -50,6 +51,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
         if (text.endsWith("]"))
             text = text.substring(0, text.length() - 1);
         return text;
+    }
+
+    @Override
+    public ITextComponent getContentName(ItemStack content) {
+        return content.getTextComponent();
     }
 
     @Override
