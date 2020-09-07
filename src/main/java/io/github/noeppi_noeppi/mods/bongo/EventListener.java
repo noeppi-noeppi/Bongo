@@ -8,7 +8,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -24,8 +23,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 public class EventListener {
 
@@ -81,7 +78,7 @@ public class EventListener {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public static void addTooltip(ItemTooltipEvent event) {
+    public void addTooltip(ItemTooltipEvent event) {
         final ItemStack stack = event.getItemStack();
         if (stack.isEmpty() || event.getPlayer() == null)
             return;

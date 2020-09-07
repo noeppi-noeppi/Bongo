@@ -35,8 +35,8 @@ public class BongoUpdateHandler implements PacketHandler<BongoUpdateHandler.Bong
 
     public static class BongoUpdateMessage {
 
-        public Bongo bongo;
-        public BongoMessageType bongoMessageType;
+        public final Bongo bongo;
+        public final BongoMessageType bongoMessageType;
 
         public BongoUpdateMessage(Bongo bongo) {
             this(bongo, BongoMessageType.GENERIC);

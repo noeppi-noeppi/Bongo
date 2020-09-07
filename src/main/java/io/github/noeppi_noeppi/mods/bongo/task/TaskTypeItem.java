@@ -54,10 +54,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public boolean shouldComplete(ItemStack element, PlayerEntity player, ItemStack compare) {
-        if (ItemStack.areItemsEqualIgnoreDurability(element, compare)) {
-            return true; // TODO check for nbt
-        }
-        return false;
+        return ItemStack.areItemsEqualIgnoreDurability(element, compare); // TODO check for nbt
     }
 
     @Override
