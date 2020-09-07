@@ -7,18 +7,13 @@ import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -27,7 +22,6 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -322,15 +316,7 @@ public class Bongo extends WorldSavedData {
         return x + (5 * y);
     }
 
-    public static void addTooltip(ItemTooltipEvent event) {
-        final ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || event.getPlayer() == null)
-            return;
-        Bongo bongo = Bongo.get(event.getPlayer().world);
-        if (bongo.active() && bongo.items.stream().anyMatch(task -> {
-            ItemStack test = task.getElement(TaskTypeItem.INSTANCE);
-            return test != null && stack.isItemEqual(test);
-        }))
-            event.getToolTip().add(new StringTextComponent(TextFormatting.GOLD + I18n.format("bongo.tooltip.required")));
+    public List<Task> getItems() {
+        return Collections.unmodifiableList(items);
     }
 }

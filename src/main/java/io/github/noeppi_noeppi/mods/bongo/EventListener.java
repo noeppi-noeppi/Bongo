@@ -4,11 +4,14 @@ import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -74,5 +77,19 @@ public class EventListener {
                 }
             }
         });
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void addTooltip(ItemTooltipEvent event) {
+        final ItemStack stack = event.getItemStack();
+        if (stack.isEmpty() || event.getPlayer() == null)
+            return;
+        Bongo bongo = Bongo.get(event.getPlayer().world);
+        if (bongo.active() && bongo.getItems().stream().anyMatch(task -> {
+            ItemStack test = task.getElement(TaskTypeItem.INSTANCE);
+            return test != null && stack.isItemEqual(test);
+        }))
+            event.getToolTip().add(new StringTextComponent(TextFormatting.GOLD + I18n.format("bongo.tooltip.required")));
     }
 }

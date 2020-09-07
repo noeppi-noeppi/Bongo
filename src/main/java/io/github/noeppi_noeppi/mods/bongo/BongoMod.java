@@ -32,8 +32,6 @@ public class BongoMod {
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.addListener(BongoCommands::register);
-        if(FMLEnvironment.dist == Dist.CLIENT)
-            MinecraftForge.EVENT_BUS.addListener(Bongo::addTooltip);
     }
 
     private void setup(FMLCommonSetupEvent event) {
