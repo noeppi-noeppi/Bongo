@@ -30,6 +30,7 @@ public class BongoMod {
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.addListener(BongoCommands::register);
+        MinecraftForge.EVENT_BUS.addListener(Bongo::onItemTooltipEvent);
     }
 
     private void setup(FMLCommonSetupEvent event) {

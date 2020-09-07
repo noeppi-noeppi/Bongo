@@ -17,32 +17,34 @@ public class BongoUpdateHandler implements PacketHandler<BongoUpdateHandler.Bong
 
     @Override
     public void encode(BongoUpdateMessage msg, PacketBuffer buffer) {
-        buffer.writeCompoundTag(msg.bongo.write(new CompoundNBT()));
+        buffer.writeCompoundTag(msg.bongo.write(new CompoundNBT())).writeString(msg.bongoMessageType.name());
     }
 
     @Override
     public BongoUpdateMessage decode(PacketBuffer buffer) {
         Bongo bongo = new Bongo();
         bongo.read(Objects.requireNonNull(buffer.readCompoundTag()));
-        return new BongoUpdateMessage(bongo);
+        return new BongoUpdateMessage(bongo, BongoMessageType.valueOf(buffer.readString()));
     }
 
     @Override
     public void handle(BongoUpdateMessage msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> Bongo.updateClient(msg.bongo));
+        ctx.get().enqueueWork(() -> Bongo.updateClient(msg));
         ctx.get().setPacketHandled(true);
     }
 
     public static class BongoUpdateMessage {
 
         public Bongo bongo;
-
-        public BongoUpdateMessage() {
-
-        }
+        public BongoMessageType bongoMessageType;
 
         public BongoUpdateMessage(Bongo bongo) {
+            this(bongo, BongoMessageType.NONE);
+        }
+
+        public BongoUpdateMessage(Bongo bongo, BongoMessageType bongoMessageType) {
             this.bongo = bongo;
+            this.bongoMessageType = bongoMessageType;
         }
     }
 }

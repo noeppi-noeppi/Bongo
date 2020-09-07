@@ -47,4 +47,16 @@ public class BongoNetwork {
             INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(player.getEntityWorld())));
         }
     }
+
+    public static void updateBongo(World world, BongoMessageType messageType) {
+        if (!world.isRemote) {
+            INSTANCE.send(PacketDistributor.DIMENSION.with(world::func_234923_W_), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(world), messageType));
+        }
+    }
+
+    public static void updateBongo(PlayerEntity player, BongoMessageType messageType) {
+        if (!player.getEntityWorld().isRemote) {
+            INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(player.getEntityWorld()), messageType));
+        }
+    }
 }

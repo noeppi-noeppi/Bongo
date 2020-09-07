@@ -3,9 +3,13 @@ package io.github.noeppi_noeppi.mods.bongo;
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
+import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
+import io.github.noeppi_noeppi.mods.bongo.network.BongoUpdateHandler;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -13,12 +17,17 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +38,7 @@ public class Bongo extends WorldSavedData {
     public static final String ID = BongoMod.MODID;
 
     private static Bongo clientInstance;
+    private static final Minecraft MC = Minecraft.getInstance();
 
     public static Bongo get(World world) {
         if (!world.isRemote) {
@@ -41,14 +51,10 @@ public class Bongo extends WorldSavedData {
         }
     }
 
-    public static void updateClient(Bongo bongo) {
-        clientInstance = bongo;
-        clientInstance.items.forEach(task -> {
-            Object element = task.getElement();
-            System.out.println(element instanceof ItemStack);
-        });
-        System.out.println();
-
+    public static void updateClient(BongoUpdateHandler.BongoUpdateMessage updateMessage) {
+        clientInstance = updateMessage.bongo;
+        if ((updateMessage.bongoMessageType == BongoMessageType.START || updateMessage.bongoMessageType == BongoMessageType.STOP) && MC.world != null)
+            MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(MC.world.getRecipeManager()));
     }
 
     private ServerWorld world;
@@ -141,14 +147,20 @@ public class Bongo extends WorldSavedData {
                     StartingEffects.callPlayerEffects(this, player);
             });
         }
-        markDirty();
+        markDirty(true);
+        if (world != null) {
+            BongoNetwork.updateBongo(world, BongoMessageType.START);
+        }
     }
 
     public void stop() {
         this.active = false;
         this.running = false;
         this.teamWon = false;
-        markDirty();
+        markDirty(true);
+        if (world != null) {
+            BongoNetwork.updateBongo(world, BongoMessageType.STOP);
+        }
     }
 
     public boolean won() {
@@ -200,7 +212,7 @@ public class Bongo extends WorldSavedData {
             clearItems();
         }
     }
-    
+
     public void reset() {
         for (Team team : teams.values())
             team.reset(true);
@@ -306,5 +318,14 @@ public class Bongo extends WorldSavedData {
 
     private static int xy(int x, int y) {
         return x + (5 * y);
+    }
+
+    public static void onItemTooltipEvent(ItemTooltipEvent event) {
+        final ItemStack stack = event.getItemStack();
+        if (stack.isEmpty() || event.getPlayer() == null)
+            return;
+        Bongo bongo = Bongo.get(event.getPlayer().world);
+        if (bongo.active() && bongo.items.stream().anyMatch(task -> task.getElement() instanceof ItemStack && stack.isItemEqual((ItemStack) task.getElement())))
+            event.getToolTip().add(new StringTextComponent(TextFormatting.GOLD + I18n.format("bongo.tooltip.required")));
     }
 }
