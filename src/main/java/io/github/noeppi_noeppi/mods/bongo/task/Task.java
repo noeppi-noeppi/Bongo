@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import javax.annotation.Nullable;
+
 public class Task implements INBTSerializable<CompoundNBT> {
 
     public static Task empty() {
@@ -73,6 +75,7 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return new Task((TaskType<Object>) type, ((TaskType<Object>) type).copy(element));
     }
 
+    @Nullable
     public <T> T getElement(TaskType<T> type) {
         if (this.type == type) {
             //noinspection unchecked

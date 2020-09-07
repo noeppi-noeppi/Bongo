@@ -5,9 +5,9 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
-import io.github.noeppi_noeppi.mods.bongo.network.BongoUpdateHandler;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
+import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
@@ -327,7 +327,10 @@ public class Bongo extends WorldSavedData {
         if (stack.isEmpty() || event.getPlayer() == null)
             return;
         Bongo bongo = Bongo.get(event.getPlayer().world);
-        if (bongo.active() && bongo.items.stream().anyMatch(task -> task.getElement() instanceof ItemStack && stack.isItemEqual((ItemStack) task.getElement())))
+        if (bongo.active() && bongo.items.stream().anyMatch(task -> {
+            ItemStack test = task.getElement(TaskTypeItem.INSTANCE);
+            return test != null && stack.isItemEqual(test);
+        }))
             event.getToolTip().add(new StringTextComponent(TextFormatting.GOLD + I18n.format("bongo.tooltip.required")));
     }
 }
