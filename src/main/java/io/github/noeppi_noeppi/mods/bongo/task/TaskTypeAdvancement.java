@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
 
 public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
@@ -78,6 +80,11 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
         }
 
         return I18n.format("bongo.task.advancement.invalid");
+    }
+
+    @Override
+    public ITextComponent getContentName(ResourceLocation content) {
+        return new StringTextComponent("");
     }
 
     @Override

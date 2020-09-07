@@ -5,6 +5,7 @@ import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import net.minecraft.client.resources.ReloadListener;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
@@ -12,6 +13,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -45,10 +47,13 @@ public class EventListener {
     public void playerTick(TickEvent.PlayerTickEvent event) {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0) {
             Bongo bongo = Bongo.get(event.player.world);
-            for (final ItemStack stack : event.player.inventory.mainInventory) {
+            for (ItemStack stack : event.player.inventory.mainInventory) {
                 if (!stack.isEmpty()) {
                     bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, stack);
                 }
+            }
+            if (bongo.getTeam(event.player) != null) {
+                event.player.getFoodStats().setFoodLevel(20);
             }
         }
     }
@@ -71,5 +76,15 @@ public class EventListener {
                 }
             }
         });
+    }
+
+    @SubscribeEvent
+    public void damage(LivingHurtEvent event) {
+        if (!event.getEntityLiving().getEntityWorld().isRemote && event.getEntityLiving() instanceof PlayerEntity && !event.getSource().canHarmInCreative()) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            Bongo bongo = Bongo.get(player.getEntityWorld());
+            if (bongo.running() && bongo.getTeam(player) != null)
+                event.setCanceled(true);
+        }
     }
 }

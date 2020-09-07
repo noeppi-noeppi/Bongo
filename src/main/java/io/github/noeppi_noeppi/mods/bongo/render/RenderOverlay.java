@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.Keybinds;
+import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.client.Minecraft;
@@ -32,7 +33,7 @@ public class RenderOverlay {
         MatrixStack matrixStack = event.getMatrixStack();
         IRenderTypeBuffer buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         Minecraft mc = Minecraft.getInstance();
-        if (mc.world != null && mc.player != null && mc.currentScreen == null && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (mc.world != null && mc.player != null && mc.currentScreen == null && !mc.gameSettings.showDebugInfo && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Bongo bongo = Bongo.get(mc.world);
             Team team = bongo.getTeam(mc.player);
             if (bongo.active() && (!bongo.running() || team != null)) {
@@ -46,6 +47,9 @@ public class RenderOverlay {
                     x = (mc.getMainWindow().getScaledWidth() - px) / 2;
                     y = ((mc.getMainWindow().getScaledHeight() - px) / 2) - (2 * padding);
                     itemNames = true;
+                } else {
+                    float scale = (float) (double) ClientConfig.bongoMapScaleFactor.get();
+                    matrixStack.scale(scale, scale, 1);
                 }
 
                 matrixStack.push();
@@ -98,7 +102,6 @@ public class RenderOverlay {
                         int slot = xSlot + (5 * ySlot);
                         Task task = bongo.task(slot);
 
-                        ItemStack stack = new ItemStack(Items.STRIPPED_ACACIA_LOG); // bongo.displayItem(slot);
                         matrixStack.push();
                         matrixStack.translate(xSlot * 27, ySlot * 27, 0);
 
@@ -107,12 +110,6 @@ public class RenderOverlay {
                         matrixStack.pop();
 
                         if (itemNames) {
-                            String text = stack.getTextComponent().getStringTruncated(16);
-                            if (text.startsWith("["))
-                                text = text.substring(1);
-                            if (text.endsWith("]"))
-                                text = text.substring(0, text.length() - 1);
-
                             matrixStack.push();
                             matrixStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 400);
                             matrixStack.scale(0.3f, 0.3f, 1);
@@ -135,7 +132,7 @@ public class RenderOverlay {
                     }
                 }
 
-                if (bongo.running() || bongo.won()) {
+                if ((bongo.running() || bongo.won()) && !itemNames) {
                     long millis;
                     if (bongo.won()) {
                         millis = bongo.ranUntil() - bongo.runningSince();
@@ -192,8 +189,10 @@ public class RenderOverlay {
             float colorR = ((color >> 16) & 0xFF) / 255f;
             float colorG = ((color >> 8) & 0xFF) / 255f;
             float colorB = ((color) & 0xFF) / 255f;
+            //noinspection deprecation
             GlStateManager.color4f(colorR, colorG, colorB, 1);
             AbstractGui.blit(matrixStack, rects[rect][0], rects[rect][1], 0, 0, rects[rect][2] - rects[rect][0], rects[rect][3] - rects[rect][1], 256, 256);
+            //noinspection deprecation
             GlStateManager.color4f(1, 1, 1, 1);
         }
         matrixStack.pop();

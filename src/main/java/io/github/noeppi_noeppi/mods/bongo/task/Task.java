@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class Task implements INBTSerializable<CompoundNBT> {
@@ -41,6 +42,11 @@ public class Task implements INBTSerializable<CompoundNBT> {
     public String getTranslatedContentName() {
         //noinspection unchecked
         return ((TaskType<Object>) type).getTranslatedContentName(element);
+    }
+
+    public ITextComponent getContentName() {
+        //noinspection unchecked
+        return ((TaskType<Object>) type).getContentName(element);
     }
 
     public boolean shouldComplete(PlayerEntity player, Object compare) {

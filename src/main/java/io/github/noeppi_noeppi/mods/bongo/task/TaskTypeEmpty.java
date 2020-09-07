@@ -5,6 +5,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
 
@@ -47,6 +49,11 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     @Override
     public String getTranslatedContentName(TaskTypeEmpty content) {
         return "";
+    }
+
+    @Override
+    public ITextComponent getContentName(TaskTypeEmpty content) {
+        return new StringTextComponent("");
     }
 
     @Override

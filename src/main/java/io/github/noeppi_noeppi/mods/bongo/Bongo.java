@@ -3,14 +3,18 @@ package io.github.noeppi_noeppi.mods.bongo;
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
+import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
+import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
@@ -129,7 +133,7 @@ public class Bongo extends WorldSavedData {
         }
         if (world != null) {
             StartingEffects.callWorldEffects(this, world);
-            world.getPlayers().forEach(player -> {
+            world.getServer().getPlayerList().getPlayers().forEach(player -> {
                 if (uids.contains(player.getGameProfile().getId()))
                     StartingEffects.callPlayerEffects(this, player);
             });
@@ -225,8 +229,11 @@ public class Bongo extends WorldSavedData {
         Team team = getTeam(player);
         if (team != null) {
             for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
+                if (!team.completed(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
                     team.complete(i);
+                    if (player instanceof ServerPlayerEntity) {
+                        TaskEffects.callPlayerEffects(this, (ServerPlayerEntity) player, task(i));
+                    }
                 }
             }
         }
@@ -243,8 +250,7 @@ public class Bongo extends WorldSavedData {
                 running = false;
                 teamWon = true;
                 if (world != null) {
-                    IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.win"));
-                    world.getPlayers().forEach(player -> player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, tc, 10, 60, 10)));
+                    WinEffects.callWorldEffects(this, world, team);
                 }
                 ranUntil = System.currentTimeMillis();
                 markDirty();
@@ -285,7 +291,9 @@ public class Bongo extends WorldSavedData {
             { xy(0, 1), xy(1, 1), xy(2, 1), xy(3, 1), xy(4, 1) },
             { xy(0, 2), xy(1, 2), xy(2, 2), xy(3, 2), xy(4, 2) },
             { xy(0, 3), xy(1, 3), xy(2, 3), xy(3, 3), xy(4, 3) },
-            { xy(0, 4), xy(1, 4), xy(2, 4), xy(3, 4), xy(4, 4) }
+            { xy(0, 4), xy(1, 4), xy(2, 4), xy(3, 4), xy(4, 4) },
+            { xy(0, 0), xy(1, 1), xy(2, 2), xy(3, 3), xy(4, 4) },
+            { xy(0, 4), xy(1, 3), xy(2, 2), xy(3, 1), xy(4, 0) }
     };
 
     private static int xy(int x, int y) {

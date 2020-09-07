@@ -26,6 +26,8 @@ public class BongoCommands {
                 Commands.literal("stop").executes(new StopCommand())
         ).then(
                 Commands.literal("spread").then(Commands.argument("amount", IntegerArgumentType.integer(1, 16)).executes(new SpreadCommand()))
+        ).then(
+                Commands.literal("teams").executes(new TeamsCommand())
         ));
     }
 }
