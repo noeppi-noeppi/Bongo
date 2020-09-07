@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "mc${minecraft_version}-${mod_version}"
+version = "${minecraft_version}-${mod_version}"
 group = 'io.github.noeppi_noeppi.mods' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'Bongo'
 
