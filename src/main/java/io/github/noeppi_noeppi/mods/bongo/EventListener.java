@@ -10,9 +10,12 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -71,5 +74,11 @@ public class EventListener {
                 }
             }
         });
+    }
+
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public void onItemTooltipEvent(ItemTooltipEvent event) {
+        Bongo.addTooltip(event);
     }
 }
