@@ -239,6 +239,10 @@ public class Bongo extends WorldSavedData {
         return task;
     }
 
+    public List<Task> tasks() {
+        return Collections.unmodifiableList(items);
+    }
+
     public <T> void checkCompleted(TaskType<T> type, PlayerEntity player, T compare) {
         if (!running)
             return;
@@ -296,8 +300,12 @@ public class Bongo extends WorldSavedData {
     }
 
     public void setTasks(List<Task> tasks) {
-        for (int i = 0; i < 25; i++)
+        for (int i = 0; i < 25; i++) {
             items.set(i, tasks.get(i).copy());
+            if (world != null) {
+                tasks.get(i).syncToClient(world.getServer(), null);
+            }
+        }
         markDirty();
     }
 
@@ -318,9 +326,5 @@ public class Bongo extends WorldSavedData {
 
     private static int xy(int x, int y) {
         return x + (5 * y);
-    }
-
-    public List<Task> getItems() {
-        return Collections.unmodifiableList(items);
     }
 }

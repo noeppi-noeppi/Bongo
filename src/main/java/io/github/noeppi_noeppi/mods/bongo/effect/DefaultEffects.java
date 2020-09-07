@@ -22,7 +22,7 @@ public class DefaultEffects {
         TaskEffects.registerPlayerEffect((bongo, thePlayer, task) -> {
             Team team = bongo.getTeam(thePlayer);
             if (team != null) {
-                IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.task.complete")).append(task.getContentName());
+                IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.task.complete")).append(task.getContentName(thePlayer.getServerWorld().getServer()));
                 thePlayer.getServerWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
                     player.sendMessage(tc, player.getUniqueID());
                     if (team.hasPlayer(player)) {

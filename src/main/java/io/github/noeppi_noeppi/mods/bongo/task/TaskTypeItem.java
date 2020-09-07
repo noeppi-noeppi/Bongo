@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 
 public class TaskTypeItem implements TaskType<ItemStack> {
@@ -54,7 +55,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
-    public ITextComponent getContentName(ItemStack content) {
+    public ITextComponent getContentName(ItemStack content, MinecraftServer server) {
         return content.getTextComponent();
     }
 

@@ -1,22 +1,24 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
+import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+
+import javax.annotation.Nullable;
 
 public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
@@ -50,46 +52,40 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
     @Override
     public void renderSlotContent(Minecraft mc, ResourceLocation content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        ItemStack icon = new ItemStack(Items.BARRIER);
-
-        ClientPlayNetHandler cpnh = mc.getConnection();
-        if (cpnh != null) {
-            Advancement advancement = cpnh.getAdvancementManager().getAdvancementList().getAdvancement(content);
-            if (advancement != null) {
-                DisplayInfo di = advancement.getDisplay();
-                if (di != null) {
-                    icon = di.getIcon();
-                }
-            }
-        }
-
+        ItemStack icon = ClientAdvancementInfo.getDisplay(content);
         RenderHelper.renderItemGui(matrixStack, buffer, icon, 0, 0, 16);
     }
 
     @Override
     public String getTranslatedContentName(ResourceLocation content) {
-        ClientPlayNetHandler cpnh = Minecraft.getInstance().getConnection();
-        if (cpnh != null) {
-            Advancement advancement = cpnh.getAdvancementManager().getAdvancementList().getAdvancement(content);
-            if (advancement != null) {
-                DisplayInfo di = advancement.getDisplay();
-                if (di != null) {
-                    return di.getTitle().getStringTruncated(18);
-                }
-            }
-        }
-
-        return I18n.format("bongo.task.advancement.invalid");
+        return ClientAdvancementInfo.getTranslation(content).getStringTruncated(18);
     }
 
     @Override
-    public ITextComponent getContentName(ResourceLocation content) {
-        return new StringTextComponent("");
+    public ITextComponent getContentName(ResourceLocation content, MinecraftServer server) {
+        Advancement advancement = server.getAdvancementManager().getAdvancement(content);
+        if (advancement == null) {
+            return new TranslationTextComponent("bongo.task.advancement.invalid");
+        } else {
+            return advancement.getDisplayText();
+        }
     }
 
     @Override
     public boolean shouldComplete(ResourceLocation element, PlayerEntity player, ResourceLocation compare) {
         return element.equals(compare);
+    }
+
+    @Override
+    public void syncToClient(ResourceLocation element, MinecraftServer server, @Nullable ServerPlayerEntity syncTarget) {
+        Advancement advancement = server.getAdvancementManager().getAdvancement(element);
+        if (advancement != null) {
+            if (syncTarget == null) {
+                BongoNetwork.syncAdvancement(advancement);
+            } else {
+                BongoNetwork.syncAdvancementTo(advancement, syncTarget);
+            }
+        }
     }
 
     @Override

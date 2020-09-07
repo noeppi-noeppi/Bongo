@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
@@ -52,7 +53,7 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     }
 
     @Override
-    public ITextComponent getContentName(TaskTypeEmpty content) {
+    public ITextComponent getContentName(TaskTypeEmpty content, MinecraftServer server) {
         return new StringTextComponent("");
     }
 

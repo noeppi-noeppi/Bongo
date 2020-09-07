@@ -2,17 +2,20 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
+import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -31,6 +34,14 @@ public class EventListener {
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         BongoNetwork.updateBongo(event.getPlayer());
+        World world = event.getPlayer().getEntityWorld();
+        if (!world.isRemote && world instanceof ServerWorld && event.getPlayer() instanceof ServerPlayerEntity) {
+            Bongo bongo = Bongo.get(world);
+            for (Task task : bongo.tasks()) {
+                if (task != null)
+                    task.syncToClient(world.getServer(), (ServerPlayerEntity) event.getPlayer());
+            }
+        }
     }
 
     @SubscribeEvent
@@ -98,7 +109,7 @@ public class EventListener {
         if (stack.isEmpty() || event.getPlayer() == null)
             return;
         Bongo bongo = Bongo.get(event.getPlayer().world);
-        if (bongo.active() && bongo.getItems().stream().anyMatch(task -> {
+        if (bongo.active() && bongo.tasks().stream().anyMatch(task -> {
             ItemStack test = task.getElement(TaskTypeItem.INSTANCE);
             return test != null && stack.isItemEqual(test);
         }))

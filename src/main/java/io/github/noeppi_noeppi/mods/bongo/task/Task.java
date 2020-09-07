@@ -4,7 +4,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -46,9 +48,14 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return ((TaskType<Object>) type).getTranslatedContentName(element);
     }
 
-    public ITextComponent getContentName() {
+    public ITextComponent getContentName(MinecraftServer server) {
         //noinspection unchecked
-        return ((TaskType<Object>) type).getContentName(element);
+        return ((TaskType<Object>) type).getContentName(element, server);
+    }
+
+    public void syncToClient(MinecraftServer server, @Nullable ServerPlayerEntity syncTarget) {
+        //noinspection unchecked
+        ((TaskType<Object>) type).syncToClient(element, server, syncTarget);
     }
 
     public boolean shouldComplete(PlayerEntity player, Object compare) {
@@ -58,6 +65,8 @@ public class Task implements INBTSerializable<CompoundNBT> {
         //noinspection unchecked
         return ((TaskType<Object>) type).shouldComplete(element, player, compare);
     }
+
+
 
     @Override
     public CompoundNBT serializeNBT() {

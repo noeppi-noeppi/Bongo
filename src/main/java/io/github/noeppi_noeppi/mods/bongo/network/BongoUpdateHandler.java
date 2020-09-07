@@ -17,7 +17,8 @@ public class BongoUpdateHandler implements PacketHandler<BongoUpdateHandler.Bong
 
     @Override
     public void encode(BongoUpdateMessage msg, PacketBuffer buffer) {
-        buffer.writeCompoundTag(msg.bongo.write(new CompoundNBT())).writeString(msg.bongoMessageType.name());
+        buffer.writeCompoundTag(msg.bongo.write(new CompoundNBT()));
+        buffer.writeString(msg.bongoMessageType.name());
     }
 
     @Override

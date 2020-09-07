@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.network;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -30,6 +31,7 @@ public class BongoNetwork {
 
     public static void registerPackets() {
         register(new BongoUpdateHandler(), NetworkDirection.PLAY_TO_CLIENT);
+        register(new AdvancementInfoUpdateHandler(), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     private static <T> void register(PacketHandler<T> handler, NetworkDirection direction) {
@@ -57,6 +59,18 @@ public class BongoNetwork {
     public static void updateBongo(PlayerEntity player, BongoMessageType messageType) {
         if (!player.getEntityWorld().isRemote) {
             INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(player.getEntityWorld()), messageType));
+        }
+    }
+
+    public static void syncAdvancement(Advancement advancement) {
+        if (advancement.getDisplay() != null) {
+            INSTANCE.send(PacketDistributor.ALL.noArg(), new AdvancementInfoUpdateHandler.AdvancementInfoUpdateMessage(advancement.getId(), advancement.getDisplay().icon, advancement.getDisplay().getTitle()));
+        }
+    }
+
+    public static void syncAdvancementTo(Advancement advancement, ServerPlayerEntity playerEntity) {
+        if (advancement.getDisplay() != null) {
+            INSTANCE.send(PacketDistributor.PLAYER.with(() -> playerEntity), new AdvancementInfoUpdateHandler.AdvancementInfoUpdateMessage(advancement.getId(), advancement.getDisplay().icon, advancement.getDisplay().getTitle()));
         }
     }
 }
