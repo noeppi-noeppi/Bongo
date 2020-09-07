@@ -6,9 +6,8 @@ import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 
 public class DefaultEffects {
 
@@ -40,7 +39,9 @@ public class DefaultEffects {
             world.getServer().getPlayerList().getPlayers().forEach(player -> {
                 if (team.hasPlayer(player)) {
                     tcc.append(new StringTextComponent(" "));
-                    tcc.append(player.getDisplayName());
+                    IFormattableTextComponent pname = player.getDisplayName().deepCopy();
+                    pname.setStyle(Style.EMPTY.applyFormatting(TextFormatting.RESET).applyFormatting(TextFormatting.UNDERLINE).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @p " + player.getPosX() + " " + player.getPosY() + " " + player.getPosZ())));
+                    tcc.append(pname);
                 }
             });
 
