@@ -5,7 +5,6 @@ import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
-import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
@@ -14,7 +13,6 @@ import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypes;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -51,7 +49,7 @@ public class BongoMod {
         DefaultEffects.register();
 
         Util.registerGenericCommandArgument(MODID + "_upperenum", UppercaseEnumArgument.class, new UppercaseEnumArgument.Serializer());
-        ArgumentTypes.register(MODID + "_bongogame", GameDefArgument.class, new GameDefArgument.Serialzier());
+        ArgumentTypes.register(MODID + "_bongogame", GameDefArgument.class, new GameDefArgument.Serializer());
     }
 
     private void clientSetup(FMLClientSetupEvent event) {

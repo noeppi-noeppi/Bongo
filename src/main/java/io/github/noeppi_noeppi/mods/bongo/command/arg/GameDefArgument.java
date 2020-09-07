@@ -74,7 +74,7 @@ public class GameDefArgument implements ArgumentType<GameDef> {
         }
     }
 
-    public static class Serialzier implements IArgumentSerializer<GameDefArgument> {
+    public static class Serializer implements IArgumentSerializer<GameDefArgument> {
 
         @Override
         public void write(GameDefArgument argument, PacketBuffer buffer) {

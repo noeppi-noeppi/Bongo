@@ -28,10 +28,12 @@ public class RenderHelper {
             //noinspection ConstantConditions
             Minecraft.getInstance().getTextureManager().getTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE).setBlurMipmapDirect(false, false);
 
+            //noinspection deprecation
             RenderSystem.enableAlphaTest();
             RenderSystem.defaultAlphaFunc();
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            //noinspection deprecation
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
             matrixStack.translate(x, y, 150);
@@ -53,7 +55,9 @@ public class RenderHelper {
                 net.minecraft.client.renderer.RenderHelper.setupGui3DDiffuseLighting();
             }
 
+            //noinspection deprecation
             RenderSystem.disableAlphaTest();
+            //noinspection deprecation
             RenderSystem.disableRescaleNormal();
 
             matrixStack.pop();
@@ -68,11 +72,13 @@ public class RenderHelper {
         matrixStack.translate(-(widthHalf + 2), -(heightHalf + 2), 0);
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        //noinspection deprecation
         GlStateManager.color4f(0.2f, 0.2f, 0.2f, 0.8f);
         Minecraft.getInstance().getTextureManager().bindTexture(WHITE_TEXTURE);
 
         AbstractGui.blit(matrixStack, 0, 0, 0, 0, (int) (2 * widthHalf) + 4, (int) (2 * heightHalf) + 4, 256, 256);
 
+        //noinspection deprecation
         GlStateManager.color4f(1, 1, 1, 1);
         RenderSystem.disableBlend();
         matrixStack.translate(widthHalf + 2, heightHalf + 2, 10);

@@ -73,8 +73,8 @@ public class Util {
         }
     }
 
-    public static void broadcastExcept(World world, PlayerEntity exlcude, ITextComponent message) {
-        UUID uid = exlcude.getGameProfile().getId();
+    public static void broadcastExcept(World world, PlayerEntity exclude, ITextComponent message) {
+        UUID uid = exclude.getGameProfile().getId();
         MinecraftServer server = world.getServer();
         if (server != null) {
             server.getPlayerList().getPlayers().forEach(player -> {

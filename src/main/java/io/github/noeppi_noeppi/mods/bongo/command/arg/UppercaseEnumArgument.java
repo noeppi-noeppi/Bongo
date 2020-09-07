@@ -30,7 +30,7 @@ public class UppercaseEnumArgument<T extends Enum<T>> implements ArgumentType<T>
     }
 
     @Override
-    public T parse(final StringReader reader) throws CommandSyntaxException {
+    public T parse(final StringReader reader) {
         return Enum.valueOf(enumClass, reader.readUnquotedString().toUpperCase());
     }
 
@@ -55,10 +55,12 @@ public class UppercaseEnumArgument<T extends Enum<T>> implements ArgumentType<T>
         @Nonnull
         @Override
         public UppercaseEnumArgument read(PacketBuffer buffer) {
+            String name = buffer.readString();
             try {
-                String name = buffer.readString();
                 return new UppercaseEnumArgument(Class.forName(name));
             } catch (ClassNotFoundException e) {
+                System.err.println("Can' get enum value of type " + name + ". " + e.getMessage());
+                //noinspection ConstantConditions
                 return null;
             }
         }
