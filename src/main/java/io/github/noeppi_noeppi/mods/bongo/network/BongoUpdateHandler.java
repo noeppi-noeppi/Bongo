@@ -29,7 +29,7 @@ public class BongoUpdateHandler implements PacketHandler<BongoUpdateHandler.Bong
 
     @Override
     public void handle(BongoUpdateMessage msg, Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> Bongo.updateClient(msg));
+        ctx.get().enqueueWork(() -> Bongo.updateClient(msg.bongo, msg.bongoMessageType));
         ctx.get().setPacketHandled(true);
     }
 
@@ -39,7 +39,7 @@ public class BongoUpdateHandler implements PacketHandler<BongoUpdateHandler.Bong
         public BongoMessageType bongoMessageType;
 
         public BongoUpdateMessage(Bongo bongo) {
-            this(bongo, BongoMessageType.NONE);
+            this(bongo, BongoMessageType.GENERIC);
         }
 
         public BongoUpdateMessage(Bongo bongo, BongoMessageType bongoMessageType) {

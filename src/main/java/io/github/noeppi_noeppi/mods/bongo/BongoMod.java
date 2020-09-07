@@ -10,11 +10,13 @@ import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.impl.AdvancementCommand;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +32,8 @@ public class BongoMod {
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.addListener(BongoCommands::register);
+        if(FMLEnvironment.dist == Dist.CLIENT)
+            MinecraftForge.EVENT_BUS.addListener(Bongo::addTooltip);
     }
 
     private void setup(FMLCommonSetupEvent event) {

@@ -75,10 +75,4 @@ public class EventListener {
             }
         });
     }
-
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public void onItemTooltipEvent(ItemTooltipEvent event) {
-        Bongo.addTooltip(event);
-    }
 }

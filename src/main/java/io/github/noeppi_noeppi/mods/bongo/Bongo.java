@@ -24,8 +24,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
@@ -40,7 +38,7 @@ public class Bongo extends WorldSavedData {
     public static final String ID = BongoMod.MODID;
 
     private static Bongo clientInstance;
-    private static Minecraft MC = null;
+    private static Minecraft mc = null;
 
     public static Bongo get(World world) {
         if (!world.isRemote) {
@@ -53,12 +51,12 @@ public class Bongo extends WorldSavedData {
         }
     }
 
-    public static void updateClient(BongoUpdateHandler.BongoUpdateMessage updateMessage) {
-        clientInstance = updateMessage.bongo;
-        if (MC == null)
-            MC = Minecraft.getInstance();
-        if ((updateMessage.bongoMessageType == BongoMessageType.START || updateMessage.bongoMessageType == BongoMessageType.STOP) && MC.world != null)
-            MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(MC.world.getRecipeManager()));
+    public static void updateClient(Bongo bongo, BongoMessageType bongoMessageType) {
+        clientInstance = bongo;
+        if (mc == null)
+            mc = Minecraft.getInstance();
+        if ((bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) && mc.world != null)
+            MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(mc.world.getRecipeManager()));
     }
 
     private ServerWorld world;
