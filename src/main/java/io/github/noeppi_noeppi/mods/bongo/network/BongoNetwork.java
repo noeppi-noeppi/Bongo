@@ -52,7 +52,7 @@ public class BongoNetwork {
 
     public static void updateBongo(World world, BongoMessageType messageType) {
         if (!world.isRemote) {
-            INSTANCE.send(PacketDistributor.DIMENSION.with(world::func_234923_W_), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(world), messageType));
+            INSTANCE.send(PacketDistributor.ALL.noArg(), new BongoUpdateHandler.BongoUpdateMessage(Bongo.get(world), messageType));
         }
     }
 
