@@ -65,6 +65,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
+    public ItemStack bongoTooltipStack(ItemStack element) {
+        return element;
+    }
+
+    @Override
     public CompoundNBT serializeNBT(ItemStack element) {
         return element.write(new CompoundNBT());
     }

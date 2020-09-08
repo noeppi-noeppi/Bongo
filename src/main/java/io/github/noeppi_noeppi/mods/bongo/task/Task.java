@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -66,7 +67,10 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return ((TaskType<Object>) type).shouldComplete(element, player, compare);
     }
 
-
+    public ItemStack bongoTooltipStack() {
+        //noinspection unchecked
+        return ((TaskType<Object>) type).bongoTooltipStack(element);
+    }
 
     @Override
     public CompoundNBT serializeNBT() {
@@ -88,15 +92,5 @@ public class Task implements INBTSerializable<CompoundNBT> {
     public Task copy() {
         //noinspection unchecked
         return new Task((TaskType<Object>) type, ((TaskType<Object>) type).copy(element));
-    }
-
-    @Nullable
-    public <T> T getElement(TaskType<T> type) {
-        if (this.type == type) {
-            //noinspection unchecked
-            return (T) element;
-        } else {
-            return null;
-        }
     }
 }

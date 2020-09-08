@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -38,6 +39,10 @@ public class Team {
 
     public IFormattableTextComponent getName() {
         return new TranslationTextComponent("bongo.team." + color.getString()).mergeStyle(Util.getTextFormatting(color));
+    }
+
+    public TextFormatting getFormatting() {
+        return Util.getTextFormatting(color);
     }
 
     public boolean completed (int slot) {
@@ -71,6 +76,7 @@ public class Team {
 
     public void addPlayer(PlayerEntity player) {
         addPlayer(player.getGameProfile().getId());
+        player.refreshDisplayName();
     }
 
     public void removePlayer(UUID uid) {
@@ -80,6 +86,7 @@ public class Team {
 
     public void removePlayer(PlayerEntity player) {
         removePlayer(player.getGameProfile().getId());
+        player.refreshDisplayName();
     }
 
     public IItemHandlerModifiable getBackPack() {

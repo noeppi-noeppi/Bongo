@@ -103,11 +103,6 @@
       "Count": 1
     },
     {
-      "type": "bongo.advancement",
-      "weight": 20,
-      "advancement": "minecraft:story/iron_tools"
-    },
-    {
       "type": "bongo.item",
       "weight": 3,
       "id": "minecraft:gravel",
@@ -178,6 +173,36 @@
       "weight": 3,
       "id": "minecraft:bowl",
       "Count": 1
+    },
+    {
+      "type": "bongo.advancement",
+      "weight": 20,
+      "advancement": "minecraft:story/iron_tools"
+    },
+    {
+      "type": "bongo.entity",
+      "weight": 20,
+      "entity": "minecraft:bee"
+    },
+    {
+      "type": "bongo.entity",
+      "weight": 20,
+      "entity": "minecraft:creeper"
+    },
+    {
+      "type": "bongo.entity",
+      "weight": 20,
+      "entity": "minecraft:wither"
+    },
+    {
+      "type": "bongo.entity",
+      "weight": 20,
+      "entity": "minecraft:cow"
+    },
+    {
+      "type": "bongo.entity",
+      "weight": 20,
+      "entity": "minecraft:enderman"
     }
   ]
 }

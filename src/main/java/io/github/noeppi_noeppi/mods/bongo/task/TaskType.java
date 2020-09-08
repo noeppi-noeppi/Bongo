@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -45,5 +46,9 @@ public interface TaskType<T> {
 
     default void syncToClient(T element, MinecraftServer server, @Nullable ServerPlayerEntity syncTarget) {
 
+    }
+
+    default ItemStack bongoTooltipStack(T element) {
+        return ItemStack.EMPTY;
     }
 }

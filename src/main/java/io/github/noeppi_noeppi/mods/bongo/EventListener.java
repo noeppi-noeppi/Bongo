@@ -1,9 +1,11 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
+import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
+import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeEntity;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
@@ -12,14 +14,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -105,14 +107,39 @@ public class EventListener {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void addTooltip(ItemTooltipEvent event) {
-        final ItemStack stack = event.getItemStack();
+        ItemStack stack = event.getItemStack();
         if (stack.isEmpty() || event.getPlayer() == null)
             return;
         Bongo bongo = Bongo.get(event.getPlayer().world);
         if (bongo.active() && bongo.tasks().stream().anyMatch(task -> {
-            ItemStack test = task.getElement(TaskTypeItem.INSTANCE);
-            return test != null && stack.isItemEqual(test);
-        }))
-            event.getToolTip().add(new StringTextComponent(TextFormatting.GOLD + I18n.format("bongo.tooltip.required")));
+            ItemStack test = task.bongoTooltipStack();
+            return !test.isEmpty() && stack.isItemEqual(test);
+        })) {
+            event.getToolTip().add(new TranslationTextComponent("bongo.tooltip.required").mergeStyle(TextFormatting.GOLD));
+        }
+    }
+
+    @SubscribeEvent
+    public void playerName(PlayerEvent.NameFormat event) {
+        PlayerEntity player = event.getPlayer();
+        Bongo bongo = Bongo.get(player.getEntityWorld());
+        if (bongo.active()) {
+            Team team = bongo.getTeam(player);
+            if (team != null) {
+                ITextComponent tc = event.getDisplayname();
+                if (tc instanceof IFormattableTextComponent)
+                    ((IFormattableTextComponent) tc).mergeStyle(team.getFormatting());
+                event.setDisplayname(tc);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void entityDie(LivingDeathEvent event) {
+        if (event.getSource().getTrueSource() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
+            Bongo bongo = Bongo.get(player.getEntityWorld());
+            bongo.checkCompleted(TaskTypeEntity.INSTANCE, player, event.getEntity().getType());
+        }
     }
 }

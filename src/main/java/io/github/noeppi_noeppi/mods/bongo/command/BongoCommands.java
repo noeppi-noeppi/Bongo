@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
@@ -21,7 +22,7 @@ public class BongoCommands {
         ).then(
                 Commands.literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("pattern", GameDefArgument.gameDef()).executes(new CreateCommand()))
         ).then(
-                Commands.literal("start").executes(new StartCommand())
+                Commands.literal("start").then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
         ).then(
                 Commands.literal("stop").executes(new StopCommand())
         ).then(

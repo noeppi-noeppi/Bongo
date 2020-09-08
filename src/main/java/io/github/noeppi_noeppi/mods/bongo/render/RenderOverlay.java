@@ -109,7 +109,7 @@ public class RenderOverlay {
 
                         if (itemNames) {
                             matrixStack.push();
-                            matrixStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 400);
+                            matrixStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 700);
                             matrixStack.scale(0.3f, 0.3f, 1);
 
                             RenderHelper.renderText(task.getTranslatedName(), matrixStack, buffer);
@@ -122,10 +122,10 @@ public class RenderOverlay {
                         }
 
                         if (team != null && team.completed(slot)) {
-                            matrixStack.translate(0, 0, 500);
+                            matrixStack.translate(0, 0, 800);
                             mc.getTextureManager().bindTexture(BEACON_TEXTURE);
                             AbstractGui.blit(matrixStack, xSlot * 27, ySlot * 27, 90, 222, 16, 16, 256, 256);
-                            matrixStack.translate(0, 0, -500);
+                            matrixStack.translate(0, 0, -800);
                         }
                     }
                 }
@@ -147,7 +147,7 @@ public class RenderOverlay {
                     } else {
                         timer = hour + ":" + min + ":" + sec + "." + decimal;
                     }
-                    matrixStack.translate(0, 133, 100);
+                    matrixStack.translate(0, 133, 800);
                     matrixStack.scale(1.3f, 1.3f, 1);
                     mc.fontRenderer.drawString(matrixStack, timer, 0, 0, 0xFFFFFF);
                 }

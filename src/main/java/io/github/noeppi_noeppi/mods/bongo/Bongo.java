@@ -49,8 +49,11 @@ public class Bongo extends WorldSavedData {
         clientInstance = bongo;
         if (mc == null)
             mc = Minecraft.getInstance();
-        if ((bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) && mc.world != null)
+        if ((bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) && mc.world != null) {
+            if (mc.player != null)
+                mc.player.refreshDisplayName();
             MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(mc.world.getRecipeManager()));
+        }
     }
 
     private ServerWorld world;
@@ -117,6 +120,10 @@ public class Bongo extends WorldSavedData {
         this.active = true;
         this.running = false;
         this.teamWon = false;
+        if (world != null) {
+            for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
+                player.refreshDisplayName();
+        }
         markDirty();
     }
 
@@ -155,6 +162,8 @@ public class Bongo extends WorldSavedData {
         this.teamWon = false;
         markDirty(true);
         if (world != null) {
+            for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
+                player.refreshDisplayName();
             BongoNetwork.updateBongo(world, BongoMessageType.STOP);
         }
     }

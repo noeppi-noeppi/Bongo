@@ -7,10 +7,7 @@ import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeEmpty;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypes;
+import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,6 +42,7 @@ public class BongoMod {
         TaskTypes.registerType(TaskTypeEmpty.INSTANCE);
         TaskTypes.registerType(TaskTypeItem.INSTANCE);
         TaskTypes.registerType(TaskTypeAdvancement.INSTANCE);
+        TaskTypes.registerType(TaskTypeEntity.INSTANCE);
 
         DefaultEffects.register();
 

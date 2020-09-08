@@ -19,6 +19,7 @@
   "bongo.backpack": "Backpack of ",
   "bongo.big_overlay": "Big Bingo Overlay",
   "bongo.task.item.name": "Item",
+  "bongo.task.entity.name": "Kill Entity",
   "bongo.task.advancement.name": "Advancement",
   "bongo.task.advancement.invalid": "Invalid Advancement",
   "bongo.cmd.bp.noteam": "Join a team to access your teams backpack.",
