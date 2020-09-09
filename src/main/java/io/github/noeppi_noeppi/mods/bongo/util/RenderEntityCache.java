@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class RenderEntityCache {
 
-    private static Map<EntityType<?>, Entity> CACHE = new HashMap<>();
+    private static final Map<EntityType<?>, Entity> CACHE = new HashMap<>();
 
     public static <T extends Entity> T getRenderEntity(Minecraft mc, EntityType<T> type) {
         if (CACHE.containsKey(type)) {

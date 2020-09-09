@@ -7,7 +7,6 @@ import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeEntity;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;

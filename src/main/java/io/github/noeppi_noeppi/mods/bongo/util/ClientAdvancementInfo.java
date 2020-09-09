@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ClientAdvancementInfo {
 
-    private static Map<ResourceLocation, Pair<ItemStack, ITextComponent>> CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, Pair<ItemStack, ITextComponent>> CACHE = new HashMap<>();
 
     public static ItemStack getDisplay(ResourceLocation id) {
         if (CACHE.containsKey(id)) {

@@ -1,16 +1,13 @@
 package io.github.noeppi_noeppi.mods.bongo.network;
 
-import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public class AdvancementInfoUpdateHandler implements PacketHandler<AdvancementInfoUpdateHandler.AdvancementInfoUpdateMessage> {
