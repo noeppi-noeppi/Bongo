@@ -51,9 +51,9 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, ResourceLocation content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    public void renderSlotContent(Minecraft mc, ResourceLocation content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
         ItemStack icon = ClientAdvancementInfo.getDisplay(content);
-        RenderHelper.renderItemGui(matrixStack, buffer, icon, 0, 0, 16);
+        RenderHelper.renderItemGui(matrixStack, buffer, icon, 0, 0, 16, false);
     }
 
     @Override

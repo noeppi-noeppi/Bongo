@@ -54,14 +54,14 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, EntityType<?> content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    public void renderSlotContent(Minecraft mc, EntityType<?> content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
         @SuppressWarnings("unchecked")
         EntityRenderer<Entity> render = (EntityRenderer<Entity>) mc.getRenderManager().renderers.get(content);
         if (render != null) {
             Entity entity = RenderEntityCache.getRenderEntity(mc, content);
             AxisAlignedBB bb = entity.getRenderBoundingBox();
             float scale = (float) Math.min(Math.min(8d / bb.getXSize(), 16d / bb.getYSize()), 8d / bb.getZSize());
-            matrixStack.translate(8, 16, 100);
+            matrixStack.translate(8, 16, 50);
             matrixStack.scale(scale, scale, scale);
             matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));
             matrixStack.rotate(Vector3f.YP.rotationDegrees(45));

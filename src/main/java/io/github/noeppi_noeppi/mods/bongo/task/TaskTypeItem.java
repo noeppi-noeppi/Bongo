@@ -40,8 +40,8 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, ItemStack content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        RenderHelper.renderItemGui(matrixStack, buffer, content, 0, 0, 16);
+    public void renderSlotContent(Minecraft mc, ItemStack content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+        RenderHelper.renderItemGui(matrixStack, buffer, content, 0, 0, 16, !bigBongo);
     }
 
     @Override
@@ -51,6 +51,10 @@ public class TaskTypeItem implements TaskType<ItemStack> {
             text = text.substring(1);
         if (text.endsWith("]"))
             text = text.substring(0, text.length() - 1);
+
+        if (content.getCount() > 1)
+            text += (" x " + content.getCount());
+
         return text;
     }
 
@@ -61,7 +65,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public boolean shouldComplete(ItemStack element, PlayerEntity player, ItemStack compare) {
-        return ItemStack.areItemsEqualIgnoreDurability(element, compare); // TODO check for nbt
+        return ItemStack.areItemsEqualIgnoreDurability(element, compare) && element.getCount() <= compare.getCount(); // TODO check for nbt
     }
 
     @Override
@@ -76,6 +80,8 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public ItemStack deserializeNBT(CompoundNBT nbt) {
+        if (!nbt.contains("Count"))
+            nbt.putByte("Count", (byte) 1);
         return ItemStack.read(nbt);
     }
 

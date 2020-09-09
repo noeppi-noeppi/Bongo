@@ -66,7 +66,14 @@ public class EventListener {
             Bongo bongo = Bongo.get(event.player.world);
             for (ItemStack stack : event.player.inventory.mainInventory) {
                 if (!stack.isEmpty()) {
-                    bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, stack);
+                    int count = 0;
+                    for (ItemStack checkStack : event.player.inventory.mainInventory) {
+                        if (ItemStack.areItemsEqual(stack, checkStack) && ItemStack.areItemStackTagsEqual(stack, checkStack))
+                            count += checkStack.getCount();
+                    }
+                    ItemStack test = stack.copy();
+                    test.setCount(count);
+                    bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
                 }
             }
             if (bongo.getTeam(event.player) != null) {

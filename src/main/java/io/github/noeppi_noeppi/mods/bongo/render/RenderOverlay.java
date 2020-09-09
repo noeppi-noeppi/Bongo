@@ -103,7 +103,7 @@ public class RenderOverlay {
                         matrixStack.push();
                         matrixStack.translate(xSlot * 27, ySlot * 27, 0);
 
-                        task.renderSlotContent(mc, matrixStack, buffer);
+                        task.renderSlotContent(mc, matrixStack, buffer, itemNames);
 
                         matrixStack.pop();
 
@@ -114,7 +114,7 @@ public class RenderOverlay {
 
                             RenderHelper.renderText(task.getTranslatedName(), matrixStack, buffer);
 
-                            matrixStack.translate(0, 8 / 0.3, 0);
+                            matrixStack.translate(0, 8 / 0.3, 10);
 
                             RenderHelper.renderText(task.getTranslatedContentName(), matrixStack, buffer);
 

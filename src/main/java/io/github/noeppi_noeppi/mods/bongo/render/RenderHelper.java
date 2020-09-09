@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -19,7 +20,7 @@ public class RenderHelper {
 
     public static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/white.png");
 
-    public static void renderItemGui(MatrixStack matrixStack, IRenderTypeBuffer buffer, ItemStack stack, int x, int y, int size) {
+    public static void renderItemGui(MatrixStack matrixStack, IRenderTypeBuffer buffer, ItemStack stack, int x, int y, int size, boolean includeAmount) {
         if (!stack.isEmpty()) {
             IBakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(stack, null, Minecraft.getInstance().player);
 
@@ -36,7 +37,7 @@ public class RenderHelper {
             //noinspection deprecation
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-            matrixStack.translate(x, y, 150);
+            matrixStack.translate(x, y, 50);
             matrixStack.scale(size / 16f, size / 16f, 1);
             matrixStack.translate(8.0F, 8.0F, 0.0F);
             matrixStack.scale(1.0F, -1.0F, 1.0F);
@@ -61,6 +62,17 @@ public class RenderHelper {
             RenderSystem.disableRescaleNormal();
 
             matrixStack.pop();
+
+            if (includeAmount && stack.getCount() > 1) {
+                matrixStack.push();
+                matrixStack.translate(x, y, 90);
+
+                FontRenderer fr = Minecraft.getInstance().fontRenderer;
+                String text = Integer.toString(stack.getCount());
+                fr.renderString(text, (float)(17 - fr.getStringWidth(text)), 9, 16777215, true, matrixStack.getLast().getMatrix(), buffer, false, 0, 15728880);
+
+                matrixStack.pop();
+            }
         }
     }
 

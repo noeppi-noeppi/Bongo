@@ -43,7 +43,7 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, TaskTypeEmpty content, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    public void renderSlotContent(Minecraft mc, TaskTypeEmpty content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
 
     }
 

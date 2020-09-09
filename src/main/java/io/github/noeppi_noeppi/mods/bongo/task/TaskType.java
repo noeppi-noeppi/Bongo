@@ -27,7 +27,7 @@ public interface TaskType<T> {
 
     void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer);
 
-    void renderSlotContent(Minecraft mc, T content, MatrixStack matrixStack, IRenderTypeBuffer buffer);
+    void renderSlotContent(Minecraft mc, T content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo);
 
     String getTranslatedContentName(T content);
 

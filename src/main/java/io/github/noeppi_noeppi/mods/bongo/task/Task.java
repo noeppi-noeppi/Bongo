@@ -39,9 +39,9 @@ public class Task implements INBTSerializable<CompoundNBT> {
         type.renderSlot(mc, matrixStack, buffer);
     }
 
-    public void renderSlotContent(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    public void renderSlotContent(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
         //noinspection unchecked
-        ((TaskType<Object>) type).renderSlotContent(mc, element, matrixStack, buffer);
+        ((TaskType<Object>) type).renderSlotContent(mc, element, matrixStack, buffer, bigBongo);
     }
 
     public String getTranslatedContentName() {
