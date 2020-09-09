@@ -45,5 +45,9 @@
   "bongo.info": "[Bongo] ",
   "bongo.win": " won",
   "bongo.winplayers": " hat gewonnen. Spieler:",
-  "bongo.task.complete": " hat eine Aufgabe beendet: "
+  "bongo.task.complete": " hat eine Aufgabe beendet: ",
+  "bongo.cmd.tc.noteam": "Du kannst nicht in den TeamChat Modus wechseln. Du keinem Team angehörst.",
+  "bongo.cmd.tc.norun": "Du kannst nicht in den TeamChat Modus wechseln. Das Spiel ist nicht aktiv.",
+  "bongo.cmd.tc.true": "Du bist num im TeamChat Modus.",
+  "bongo.cmd.tc.false": "Du bist nicht mehr im TeamChat Modus"
 }

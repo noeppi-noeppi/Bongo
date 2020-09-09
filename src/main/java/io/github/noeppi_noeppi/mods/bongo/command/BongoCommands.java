@@ -12,6 +12,7 @@ public class BongoCommands {
 
     public static void register(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("bp").executes(new BackPackCommand()));
+        event.getDispatcher().register(Commands.literal("tc").executes(new TeamChatCommand()));
 
         event.getDispatcher().register(Commands.literal("bingo").then(
                 Commands.literal("backpack").executes(new BackPackCommand())
@@ -22,13 +23,15 @@ public class BongoCommands {
         ).then(
                 Commands.literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("pattern", GameDefArgument.gameDef()).executes(new CreateCommand()))
         ).then(
-                Commands.literal("start").then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
+                Commands.literal("start").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
         ).then(
-                Commands.literal("stop").executes(new StopCommand())
+                Commands.literal("stop").requires(cs -> cs.hasPermissionLevel(2)).executes(new StopCommand())
         ).then(
-                Commands.literal("spread").then(Commands.argument("amount", IntegerArgumentType.integer(1, 16)).executes(new SpreadCommand()))
+                Commands.literal("spread").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("amount", IntegerArgumentType.integer(1, 16)).executes(new SpreadCommand()))
         ).then(
                 Commands.literal("teams").executes(new TeamsCommand())
+        ).then(
+                Commands.literal("teamchat").executes(new TeamChatCommand())
         ));
     }
 }

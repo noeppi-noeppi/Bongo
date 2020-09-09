@@ -7,6 +7,7 @@ import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeEntity;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -19,6 +20,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -139,6 +141,22 @@ public class EventListener {
             PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
             Bongo bongo = Bongo.get(player.getEntityWorld());
             bongo.checkCompleted(TaskTypeEntity.INSTANCE, player, event.getEntity().getType());
+        }
+    }
+
+    @SubscribeEvent
+    public void serverChat(ServerChatEvent event) {
+        Bongo bongo = Bongo.get(event.getPlayer().getEntityWorld());
+        if (bongo.teamChat(event.getPlayer())) {
+            Team team = bongo.getTeam(event.getPlayer());
+            if (team != null) {
+                event.setCanceled(true);
+                IFormattableTextComponent tc = new StringTextComponent("[");
+                tc.append(team.getName());
+                tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
+                tc.append(event.getComponent());
+                Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
+            }
         }
     }
 }

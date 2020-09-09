@@ -45,5 +45,9 @@
   "bongo.info": "[Bongo] ",
   "bongo.win": " won",
   "bongo.winplayers": " won. Players:",
-  "bongo.task.complete": " has completed a task: "
+  "bongo.task.complete": " has completed a task: ",
+  "bongo.cmd.tc.noteam": "You can not enter TeamChat mode. Please join a team first.",
+  "bongo.cmd.tc.norun": "You can not enter TeamChat mode. The game is not active.",
+  "bongo.cmd.tc.true": "You entered TeamChat mode.",
+  "bongo.cmd.tc.false": "You left TeamChat mode."
 }

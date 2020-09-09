@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
+import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
@@ -79,6 +80,16 @@ public class Util {
         if (server != null) {
             server.getPlayerList().getPlayers().forEach(player -> {
                 if (!uid.equals(player.getGameProfile().getId()))
+                    player.sendMessage(message, player.getUniqueID());
+            });
+        }
+    }
+
+    public static void broadcastTeam(World world, Team team, ITextComponent message) {
+        MinecraftServer server = world.getServer();
+        if (server != null) {
+            server.getPlayerList().getPlayers().forEach(player -> {
+                if (team.hasPlayer(player))
                     player.sendMessage(message, player.getUniqueID());
             });
         }

@@ -61,6 +61,7 @@ public class Bongo extends WorldSavedData {
 
     private final Map<DyeColor, Team> teams;
     private final List<Task> items;
+    private final List<UUID> playersInTcMode = new ArrayList<>();
     private boolean active;
     private boolean running;
     private boolean teamWon;
@@ -161,6 +162,7 @@ public class Bongo extends WorldSavedData {
         this.active = false;
         this.running = false;
         this.teamWon = false;
+        playersInTcMode.clear();
         markDirty(true);
         if (world != null) {
             for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
@@ -190,6 +192,15 @@ public class Bongo extends WorldSavedData {
             itemList.add(item.serializeNBT());
         }
         nbt.put("items", itemList);
+
+        ListNBT tcPlayers = new ListNBT();
+        for (UUID uid : playersInTcMode) {
+            CompoundNBT playerNbt = new CompoundNBT();
+            playerNbt.putUniqueId("player", uid);
+            tcPlayers.add(playerNbt);
+        }
+        nbt.put("teamchat", tcPlayers);
+
         return nbt;
     }
 
@@ -205,6 +216,7 @@ public class Bongo extends WorldSavedData {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getString()));
             }
         }
+
         if (nbt.contains("items", Constants.NBT.TAG_LIST)) {
             ListNBT itemList = nbt.getList("items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < items.size(); i++) {
@@ -217,6 +229,16 @@ public class Bongo extends WorldSavedData {
         } else {
             clearItems();
         }
+
+        playersInTcMode.clear();
+        if (nbt.contains("teamchat", Constants.NBT.TAG_LIST)) {
+            ListNBT tcPlayers = nbt.getList("teamchat", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < tcPlayers.size(); i++) {
+                CompoundNBT playerNbt = tcPlayers.getCompound(i);
+                UUID uid = playerNbt.getUniqueId("player");
+                playersInTcMode.add(uid);
+            }
+        }
     }
     
     public void reset() {
@@ -228,6 +250,7 @@ public class Bongo extends WorldSavedData {
         runningSince = 0;
         ranUntil = 0;
         clearItems(true);
+        playersInTcMode.clear();
         markDirty(); // only call markDirty once
     }
 
@@ -283,6 +306,7 @@ public class Bongo extends WorldSavedData {
                     WinEffects.callWorldEffects(this, world, team);
                 }
                 ranUntil = System.currentTimeMillis();
+                playersInTcMode.clear();
                 markDirty();
                 return;
             }
@@ -302,6 +326,30 @@ public class Bongo extends WorldSavedData {
         if (world != null && !suppressBingoSync) {
             BongoNetwork.updateBongo(world);
         }
+    }
+
+    public boolean toggleTeamChat(PlayerEntity player) {
+        return toggleTeamChat(player.getGameProfile().getId());
+    }
+
+    public boolean toggleTeamChat(UUID uid) {
+        if (playersInTcMode.contains(uid)) {
+            playersInTcMode.remove(uid);
+            markDirty();
+            return false;
+        } else {
+            playersInTcMode.add(uid);
+            markDirty();
+            return true;
+        }
+    }
+
+    public boolean teamChat(PlayerEntity player) {
+        return teamChat(player.getGameProfile().getId());
+    }
+
+    public boolean teamChat(UUID uid) {
+        return playersInTcMode.contains(uid);
     }
 
     @Override
