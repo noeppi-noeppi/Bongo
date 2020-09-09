@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -65,7 +66,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public boolean shouldComplete(ItemStack element, PlayerEntity player, ItemStack compare) {
-        return ItemStack.areItemsEqualIgnoreDurability(element, compare) && element.getCount() <= compare.getCount(); // TODO check for nbt
+        if (ItemStack.areItemsEqualIgnoreDurability(element, compare) && element.getCount() <= compare.getCount()) {
+            return Util.matchesNBT(element.getTag(), compare.getTag());
+        } else {
+            return false;
+        }
     }
 
     @Override

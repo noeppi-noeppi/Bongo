@@ -172,7 +172,8 @@
       "type": "bongo.item",
       "weight": 3,
       "id": "minecraft:bowl",
-      "Count": 1
+      "Count": 1,
+      "tag": {}
     },
     {
       "type": "bongo.advancement",

@@ -7,6 +7,7 @@ import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -108,5 +109,17 @@ public class Util {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean matchesNBT(@Nullable CompoundNBT required, @Nullable CompoundNBT actual) {
+        if (required == null || required.isEmpty())
+            return true;
+
+        if (actual == null || actual.isEmpty())
+            return false;
+
+        CompoundNBT copy = actual.copy();
+        copy.merge(required);
+        return copy.equals(actual);
     }
 }
