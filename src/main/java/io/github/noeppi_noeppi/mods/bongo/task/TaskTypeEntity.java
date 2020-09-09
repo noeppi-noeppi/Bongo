@@ -1,20 +1,17 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
@@ -64,7 +61,6 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
             Entity entity = RenderEntityCache.getRenderEntity(mc, content);
             AxisAlignedBB bb = entity.getRenderBoundingBox();
             float scale = (float) Math.min(Math.min(8d / bb.getXSize(), 16d / bb.getYSize()), 8d / bb.getZSize());
-            System.out.println(content + ": " + scale + "  [" + bb + "]");
             matrixStack.translate(8, 16, 100);
             matrixStack.scale(scale, scale, scale);
             matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));

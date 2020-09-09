@@ -3,9 +3,9 @@ package io.github.noeppi_noeppi.mods.bongo;
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
-import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
+import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
@@ -15,13 +15,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,10 +50,23 @@ public class Bongo extends WorldSavedData {
         clientInstance = bongo;
         if (mc == null)
             mc = Minecraft.getInstance();
-        if ((bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) && mc.world != null) {
+        if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) {
             if (mc.player != null)
                 mc.player.refreshDisplayName();
-            MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(mc.world.getRecipeManager()));
+            if (mc.getResourceManager() instanceof SimpleReloadableResourceManager) {
+                SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) mc.getResourceManager();
+                try {
+                    Class c = Class.forName("mezz.jei.startup.ClientLifecycleHandler$JeiReloadListener");
+                    for (IFutureReloadListener listener : resourceManager.reloadListeners) {
+                        if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
+                            ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
+                        }
+                    }
+                } catch (ClassNotFoundException ignore) {
+                } catch (Throwable e) {
+                    BongoMod.LOGGER.warn("Could not reload JEI item list: ", e);
+                }
+            }
         }
     }
 
