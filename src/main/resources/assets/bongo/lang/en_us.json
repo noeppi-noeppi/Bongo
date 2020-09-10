@@ -22,6 +22,7 @@
   "bongo.task.entity.name": "Kill Entity",
   "bongo.task.advancement.name": "Advancement",
   "bongo.task.advancement.invalid": "Invalid Advancement",
+  "bongo.task.biome.name": "Biome",
   "bongo.cmd.bp.noteam": "Join a team to access your teams backpack.",
   "bongo.cmd.bp.norun": "You can't access your team's backpack while the game is not running.",
   "bongo.cmd.team.noactive": "There's no game currently active. You can't join a team now.",

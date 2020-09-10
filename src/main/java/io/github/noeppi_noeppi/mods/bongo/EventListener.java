@@ -3,10 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
-import io.github.noeppi_noeppi.mods.bongo.task.Task;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAdvancement;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeEntity;
-import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeItem;
+import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
@@ -76,6 +73,7 @@ public class EventListener {
                     bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
                 }
             }
+            bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, event.player.getEntityWorld().getBiome(event.player.getPosition()));
             if (bongo.getTeam(event.player) != null) {
                 event.player.getFoodStats().setFoodLevel(20);
             }

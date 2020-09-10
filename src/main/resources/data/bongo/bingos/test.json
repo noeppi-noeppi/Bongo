@@ -204,6 +204,16 @@
       "type": "bongo.entity",
       "weight": 20,
       "entity": "minecraft:enderman"
+    },
+    {
+      "type": "bongo.biome",
+      "weight": 40,
+      "biome": "minecraft:dark_forest"
+    },
+    {
+      "type": "bongo.biome",
+      "weight": 40,
+      "biome": "minecraft:desert"
     }
   ]
 }

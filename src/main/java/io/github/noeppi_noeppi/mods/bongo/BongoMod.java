@@ -43,6 +43,7 @@ public class BongoMod {
         TaskTypes.registerType(TaskTypeItem.INSTANCE);
         TaskTypes.registerType(TaskTypeAdvancement.INSTANCE);
         TaskTypes.registerType(TaskTypeEntity.INSTANCE);
+        TaskTypes.registerType(TaskTypeBiome.INSTANCE);
 
         DefaultEffects.register();
 

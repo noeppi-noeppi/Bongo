@@ -22,6 +22,7 @@
   "bongo.task.entity.name": "Mb töten",
   "bongo.task.advancement.name": "Fortschritt",
   "bongo.task.advancement.invalid": "Ungültiger Fortschritt",
+  "bongo.task.biome.name": "Biom",
   "bongo.cmd.bp.noteam": "Du musst einem team beitreten um deinen Rucksack sehen zu können",
   "bongo.cmd.bp.norun": "Du kannst jetzt nicht auf deinen Rucksack zugreifen. Das Spiel wurde noch nicht gestartet.",
   "bongo.cmd.team.noactive": "Du kannst jetzt keinem Team beitreten. Es wurde noch kein Spiel erstellt.",
