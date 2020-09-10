@@ -50,5 +50,12 @@
   "bongo.cmd.tc.noteam": "You can not enter TeamChat mode. Please join a team first.",
   "bongo.cmd.tc.norun": "You can not enter TeamChat mode. The game is not active.",
   "bongo.cmd.tc.true": "You entered TeamChat mode.",
-  "bongo.cmd.tc.false": "You left TeamChat mode."
+  "bongo.cmd.tc.false": "You left TeamChat mode.",
+  "bongo.wc.bongo.one": "Just one task.",
+  "bongo.wc.bongo.all": "All 25 tasks.",
+  "bongo.wc.bongo.rows": "One row",
+  "bongo.wc.bongo.columns": "One colums",
+  "bongo.wc.bongo.diagonals": "One diagonal",
+  "bongo.wc.bongo.rows_and_columns": "A row or a column",
+  "bongo.wc.bongo.row_and_column": "A row and a column"
 }

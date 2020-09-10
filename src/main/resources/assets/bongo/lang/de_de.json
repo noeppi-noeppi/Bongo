@@ -50,5 +50,12 @@
   "bongo.cmd.tc.noteam": "Du kannst nicht in den TeamChat Modus wechseln. Du keinem Team angehörst.",
   "bongo.cmd.tc.norun": "Du kannst nicht in den TeamChat Modus wechseln. Das Spiel ist nicht aktiv.",
   "bongo.cmd.tc.true": "Du bist num im TeamChat Modus.",
-  "bongo.cmd.tc.false": "Du bist nicht mehr im TeamChat Modus"
+  "bongo.cmd.tc.false": "Du bist nicht mehr im TeamChat Modus",
+  "bongo.wc.bongo.one": "Nur eine Aufgabe",
+  "bongo.wc.bongo.all": "Alle 25 Aufgaben",
+  "bongo.wc.bongo.rows": "Eine Zeile",
+  "bongo.wc.bongo.columns": "Eine Spalte",
+  "bongo.wc.bongo.diagonals": "Eine Diagonale",
+  "bongo.wc.bongo.rows_and_columns": "Eine Zeile oder eine Spalte",
+  "bongo.wc.bongo.row_and_column": "Eine Zeile und eine Spalte"
 }

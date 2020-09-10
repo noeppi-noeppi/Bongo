@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.data.WinCondition;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
@@ -62,6 +63,7 @@ public class Bongo extends WorldSavedData {
     private final Map<DyeColor, Team> teams;
     private final List<Task> items;
     private final List<UUID> playersInTcMode = new ArrayList<>();
+    private WinCondition winCondition = WinCondition.DEFAULT;
     private boolean active;
     private boolean running;
     private boolean teamWon;
@@ -162,6 +164,7 @@ public class Bongo extends WorldSavedData {
         this.active = false;
         this.running = false;
         this.teamWon = false;
+        this.winCondition = WinCondition.DEFAULT;
         playersInTcMode.clear();
         markDirty(true);
         if (world != null) {
@@ -183,6 +186,8 @@ public class Bongo extends WorldSavedData {
         nbt.putBoolean("teamWon", teamWon);
         nbt.putLong("runningSince", runningSince);
         nbt.putLong("ranUntil", ranUntil);
+        nbt.putString("winCondition", winCondition.id);
+
         for (DyeColor dc : DyeColor.values()) {
             nbt.put(dc.getString(), getTeam(dc).serializeNBT());
         }
@@ -211,6 +216,7 @@ public class Bongo extends WorldSavedData {
         teamWon = nbt.getBoolean("teamWon");
         runningSince = nbt.getLong("runningSince");
         ranUntil = nbt.getLong("ranUntil");
+        winCondition = WinCondition.getWinOrDefault(nbt.getString("winCondition"));
         for (DyeColor dc : DyeColor.values()) {
             if (nbt.contains(dc.getString(), Constants.NBT.TAG_COMPOUND)) {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getString()));
@@ -251,7 +257,21 @@ public class Bongo extends WorldSavedData {
         ranUntil = 0;
         clearItems(true);
         playersInTcMode.clear();
+        this.winCondition = WinCondition.DEFAULT;
         markDirty(); // only call markDirty once
+    }
+
+    public WinCondition getWin() {
+        return winCondition == null ? WinCondition.DEFAULT : winCondition;
+    }
+
+    public void setWin(WinCondition wc, boolean suppressBingoSync) {
+        if (wc == null) {
+            winCondition = WinCondition.DEFAULT;
+        } else {
+            winCondition = wc;
+        }
+        markDirty(suppressBingoSync);
     }
 
     public void clearItems() {
@@ -295,11 +315,7 @@ public class Bongo extends WorldSavedData {
 
     public void checkWin() {
         for (Team team : teams.values()) {
-            wincheck: for (int[] win : WIN_VALUES) {
-                for (int slot : win) {
-                    if (!team.completed(slot))
-                        continue wincheck;
-                }
+            if (winCondition.won(this, team)) {
                 running = false;
                 teamWon = true;
                 if (world != null) {
@@ -383,24 +399,5 @@ public class Bongo extends WorldSavedData {
                 BongoMod.LOGGER.warn("Could not reload JEI item list: ", e);
             }
         }
-    }
-
-    private static final int[][] WIN_VALUES = new int[][]{
-            { xy(0, 0), xy(0, 1), xy(0, 2), xy(0, 3), xy(0, 4) },
-            { xy(1, 0), xy(1, 1), xy(1, 2), xy(1, 3), xy(1, 4) },
-            { xy(2, 0), xy(2, 1), xy(2, 2), xy(2, 3), xy(2, 4) },
-            { xy(3, 0), xy(3, 1), xy(3, 2), xy(3, 3), xy(3, 4) },
-            { xy(4, 0), xy(4, 1), xy(4, 2), xy(4, 3), xy(4, 4) },
-            { xy(0, 0), xy(1, 0), xy(2, 0), xy(3, 0), xy(4, 0) },
-            { xy(0, 1), xy(1, 1), xy(2, 1), xy(3, 1), xy(4, 1) },
-            { xy(0, 2), xy(1, 2), xy(2, 2), xy(3, 2), xy(4, 2) },
-            { xy(0, 3), xy(1, 3), xy(2, 3), xy(3, 3), xy(4, 3) },
-            { xy(0, 4), xy(1, 4), xy(2, 4), xy(3, 4), xy(4, 4) },
-            { xy(0, 0), xy(1, 1), xy(2, 2), xy(3, 3), xy(4, 4) },
-            { xy(0, 4), xy(1, 3), xy(2, 2), xy(3, 1), xy(4, 0) }
-    };
-
-    private static int xy(int x, int y) {
-        return x + (5 * y);
     }
 }

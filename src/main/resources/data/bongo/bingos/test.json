@@ -1,4 +1,5 @@
 {
+  "winCondition": "bongo.default",
   "tasks": [
     {
       "type": "bongo.item",

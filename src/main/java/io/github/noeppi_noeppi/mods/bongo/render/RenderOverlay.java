@@ -7,10 +7,12 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.Keybinds;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.data.WinCondition;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -130,6 +132,7 @@ public class RenderOverlay {
                     }
                 }
 
+                String timer = null;
                 if ((bongo.running() || bongo.won()) && !itemNames) {
                     long millis;
                     if (bongo.won()) {
@@ -141,15 +144,31 @@ public class RenderOverlay {
                     int sec = (int) ((millis / 1000) % 60);
                     int min = (int) ((millis / 60000) % 60);
                     int hour = (int) millis / 3600000;
-                    String timer;
                     if (hour == 0) {
                         timer = min + ":" + sec + "." + decimal;
                     } else {
                         timer = hour + ":" + min + ":" + sec + "." + decimal;
                     }
+                }
+
+                String winCondition = null;
+                if (bongo.getWin() != WinCondition.DEFAULT) {
+                    winCondition = I18n.format("bongo.wc." + bongo.getWin().id);
+                }
+
+                if (timer != null || winCondition != null) {
                     matrixStack.translate(0, 133, 800);
                     matrixStack.scale(1.3f, 1.3f, 1);
-                    mc.fontRenderer.drawString(matrixStack, timer, 0, 0, 0xFFFFFF);
+
+                    if (winCondition != null) {
+                        mc.fontRenderer.drawString(matrixStack, winCondition, 0, 0, 0xFFFFFF);
+                    }
+
+                    if (timer != null) {
+                        if (winCondition != null)
+                            matrixStack.translate(0, mc.fontRenderer.FONT_HEIGHT + 1, 0);
+                        mc.fontRenderer.drawString(matrixStack, timer, 0, 0, 0xFFFFFF);
+                    }
                 }
 
                 matrixStack.pop();
