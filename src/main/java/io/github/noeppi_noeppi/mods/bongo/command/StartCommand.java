@@ -6,6 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.util.CommandUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -30,7 +31,7 @@ public class StartCommand implements Command<CommandSource> {
         }
         bongo.start();
 
-        if (context.getArgument("randomize_positions", Boolean.class)) {
+        if (CommandUtil.getArgumentOrDefault(context, "randomize_positions", Boolean.class, true)) {
             Random random = new Random();
             for (Team team : bongo.getTeams())
                 randomizeTeamAround(random, player.getServerWorld(), team, (int) Math.round(player.getPosX()), (int) Math.round(player.getPosZ()), 10000);

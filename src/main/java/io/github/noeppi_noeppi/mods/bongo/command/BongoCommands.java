@@ -23,7 +23,7 @@ public class BongoCommands {
         ).then(
                 Commands.literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("pattern", GameDefArgument.gameDef()).executes(new CreateCommand()))
         ).then(
-                Commands.literal("start").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
+                Commands.literal("start").requires(cs -> cs.hasPermissionLevel(2)).executes(new StartCommand()).then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
         ).then(
                 Commands.literal("stop").requires(cs -> cs.hasPermissionLevel(2)).executes(new StopCommand())
         ).then(
