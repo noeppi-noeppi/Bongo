@@ -4,7 +4,13 @@ Custom bingos can be added via [DataPacks](https://minecraft.gamepedia.com/Data_
 
 ```json
 {
-  "winCondition": "bongo.default",
+  "settings": {
+    "winCondition": "bongo.default",
+    "invulnerable": true,
+    "pvp": false,
+    "friendlyFire": false,
+    "lockTaskOnDeath": false
+  },
   "tasks": [
     {
       "type": "bongo.item",
@@ -15,18 +21,48 @@ Custom bingos can be added via [DataPacks](https://minecraft.gamepedia.com/Data_
 }
 ```
 
-`winCondition` describes what a team has to achive to win the game. There are 8 win conditions you can use:
+## Settings
+
+### Win Condition
+
+`winCondition` describes what a team has to achieve to win the game. There are 8 win-conditions you can use:
 
 ```
 bongo.one                 Only one task
 bongo.all                 All 25 tasks
 bongo.rows                Only rows
-bongo.columns             Only colums
+bongo.columns             Only columns
 bongo.diagonals           Only diagonals
 bongo.rows_and_columns    Only rows and columns
 bongo.default             (Default) rows, columns and diagonals
 bongo.row_and_column      One row AND one column
 ```
+
+### Invulnerable
+
+`invulnerable` is a boolean value that, when set to true, prevents all damage to players while the game is active except damage dealt by other players. It also refills hunger.
+
+*Default: true*
+
+### PvP
+
+`pvp` is a boolean value that, when set to false, prevents all damage to players from other players while the game is active.
+
+*Default: false*
+
+### Friendly Fire
+
+When `friendlyFire` is false and pvp is enabled players won't be able to deal damage to their teammates.
+
+*Default: false*
+
+### Lock task on death
+
+Whenever a player dies while bongo is active and `lockTaskOnDeath` is set to true, a random task will get blocked for the team of that player. A blocked task can't be completed.
+
+*Default: false*
+
+## Tasks
 
 `tasks` is a list of tasks. A task is an object. All tasks share the following properties:
 
@@ -42,7 +78,7 @@ For a valid game definition there must be at minimum 25 tasks.
 
 ### Empty
 
-This task will display nothing and it can not be completed. It's type is `bongo.empty`. This task is mainly for internal use but it can be useful if you want to restrict a random row and a random column.
+This task will display nothing, and it can't be completed. Its type is `bongo.empty`. This task is mainly for internal use, but it can be useful if you want to restrict a random row and a random column.
 
 ### Item
 

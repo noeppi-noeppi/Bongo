@@ -57,5 +57,6 @@
   "bongo.wc.bongo.columns": "Eine Spalte",
   "bongo.wc.bongo.diagonals": "Eine Diagonale",
   "bongo.wc.bongo.rows_and_columns": "Eine Zeile oder eine Spalte",
-  "bongo.wc.bongo.row_and_column": "Eine Zeile und eine Spalte"
+  "bongo.wc.bongo.row_and_column": "Eine Zeile und eine Spalte",
+  "bongo.task_locked.death": "%s ist gestorben. Eine Aufgabe wurde gesperrt."
 }

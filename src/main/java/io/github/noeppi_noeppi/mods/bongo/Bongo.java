@@ -1,8 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
+import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import io.github.noeppi_noeppi.mods.bongo.data.WinCondition;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
@@ -54,7 +55,8 @@ public class Bongo extends WorldSavedData {
         if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) {
             if (mc.player != null)
                 mc.player.refreshDisplayName();
-            reloadJeiItems();
+            if (ClientConfig.addItemTooltips.get())
+                reloadJeiItems();
         }
     }
 
@@ -63,7 +65,7 @@ public class Bongo extends WorldSavedData {
     private final Map<DyeColor, Team> teams;
     private final List<Task> items;
     private final List<UUID> playersInTcMode = new ArrayList<>();
-    private WinCondition winCondition = WinCondition.DEFAULT;
+    private GameSettings settings = GameSettings.DEFAULT;
     private boolean active;
     private boolean running;
     private boolean teamWon;
@@ -145,6 +147,7 @@ public class Bongo extends WorldSavedData {
         for (Team team : teams.values()) {
             team.clearBackPack(true);
             team.resetCompleted(true);
+            team.resetLocked(true);
             uids.addAll(team.getPlayers());
         }
         if (world != null) {
@@ -164,7 +167,7 @@ public class Bongo extends WorldSavedData {
         this.active = false;
         this.running = false;
         this.teamWon = false;
-        this.winCondition = WinCondition.DEFAULT;
+        this.settings = GameSettings.DEFAULT;
         playersInTcMode.clear();
         markDirty(true);
         if (world != null) {
@@ -186,7 +189,7 @@ public class Bongo extends WorldSavedData {
         nbt.putBoolean("teamWon", teamWon);
         nbt.putLong("runningSince", runningSince);
         nbt.putLong("ranUntil", ranUntil);
-        nbt.putString("winCondition", winCondition.id);
+        nbt.put("settings", settings.getTag());
 
         for (DyeColor dc : DyeColor.values()) {
             nbt.put(dc.getString(), getTeam(dc).serializeNBT());
@@ -216,7 +219,11 @@ public class Bongo extends WorldSavedData {
         teamWon = nbt.getBoolean("teamWon");
         runningSince = nbt.getLong("runningSince");
         ranUntil = nbt.getLong("ranUntil");
-        winCondition = WinCondition.getWinOrDefault(nbt.getString("winCondition"));
+        if (nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
+            settings = new GameSettings(nbt.getCompound("settings"));
+        } else {
+            settings = GameSettings.DEFAULT;
+        }
         for (DyeColor dc : DyeColor.values()) {
             if (nbt.contains(dc.getString(), Constants.NBT.TAG_COMPOUND)) {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getString()));
@@ -257,19 +264,19 @@ public class Bongo extends WorldSavedData {
         ranUntil = 0;
         clearItems(true);
         playersInTcMode.clear();
-        this.winCondition = WinCondition.DEFAULT;
+        settings = GameSettings.DEFAULT;
         markDirty(); // only call markDirty once
     }
 
-    public WinCondition getWin() {
-        return winCondition == null ? WinCondition.DEFAULT : winCondition;
+    public GameSettings getSettings() {
+        return settings == null ? GameSettings.DEFAULT : settings;
     }
 
-    public void setWin(WinCondition wc, boolean suppressBingoSync) {
-        if (wc == null) {
-            winCondition = WinCondition.DEFAULT;
+    public void setSettings(GameSettings settings, boolean suppressBingoSync) {
+        if (settings == null) {
+            this.settings = GameSettings.DEFAULT;
         } else {
-            winCondition = wc;
+            this.settings = settings;
         }
         markDirty(suppressBingoSync);
     }
@@ -302,7 +309,7 @@ public class Bongo extends WorldSavedData {
         Team team = getTeam(player);
         if (team != null) {
             for (int i = 0; i < items.size(); i++) {
-                if (!team.completed(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
+                if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
                     team.complete(i);
                     if (player instanceof ServerPlayerEntity) {
                         TaskEffects.callPlayerEffects(this, (ServerPlayerEntity) player, task(i));
@@ -315,7 +322,7 @@ public class Bongo extends WorldSavedData {
 
     public void checkWin() {
         for (Team team : teams.values()) {
-            if (winCondition.won(this, team)) {
+            if (getSettings().winCondition.won(this, team)) {
                 running = false;
                 teamWon = true;
                 if (world != null) {

@@ -23,7 +23,7 @@ public class GameDef {
     public static final Map<ResourceLocation, GameDef> GAMES = new HashMap<>();
 
     public final ResourceLocation id;
-    private final WinCondition winCondition;
+    private final GameSettings settings;
     private final List<Pair<Integer, Task>> tasks;
     private final int totalWeight;
     private final CompoundNBT nbt;
@@ -45,10 +45,11 @@ public class GameDef {
                 totalWeight += weight;
             }
         }
-        if (nbt.contains("winCondition", Constants.NBT.TAG_STRING)) {
-            winCondition = WinCondition.getWin(nbt.getString("winCondition"));
+
+        if (nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
+            settings = new GameSettings(nbt.getCompound("settings"));
         } else {
-            winCondition = WinCondition.DEFAULT;
+            settings = GameSettings.DEFAULT;
         }
         this.totalWeight = totalWeight;
         this.nbt = nbt;
@@ -77,7 +78,7 @@ public class GameDef {
                 }
             }
         }
-        bongo.setWin(winCondition, true);
+        bongo.setSettings(settings, true);
         bongo.setTasks(theTasks);
         return null;
     }

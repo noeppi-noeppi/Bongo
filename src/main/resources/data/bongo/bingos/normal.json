@@ -1,5 +1,11 @@
 {
-  "winCondition": "bongo.default",
+  "settings": {
+    "winCondition": "bongo.default",
+    "invulnerable": true,
+    "pvp": false,
+    "friendlyFire": false,
+    "lockTaskOnDeath": false
+  },
   "tasks": [
     {
       "type": "bongo.item",

@@ -29,11 +29,33 @@ public class RenderOverlay {
     public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/overlay/completed_rects.png");
 
     @SubscribeEvent
+    public void renderChat(RenderGameOverlayEvent.Pre event) {
+        // When some elements the bingo card occasionally there are render problems. So we
+        // just hide man GUI parts when the bingo card is enlarged.
+        if (Keybinds.BIG_OVERLAY.isKeyDown()) {
+            RenderGameOverlayEvent.ElementType type = event.getType();
+            if (type == RenderGameOverlayEvent.ElementType.CHAT
+                    || type == RenderGameOverlayEvent.ElementType.DEBUG
+                    || type == RenderGameOverlayEvent.ElementType.EXPERIENCE
+                    || type == RenderGameOverlayEvent.ElementType.HEALTH
+                    || type == RenderGameOverlayEvent.ElementType.HEALTHMOUNT
+                    || type == RenderGameOverlayEvent.ElementType.BOSSHEALTH
+                    || type == RenderGameOverlayEvent.ElementType.BOSSINFO
+                    || type == RenderGameOverlayEvent.ElementType.ARMOR
+                    || type == RenderGameOverlayEvent.ElementType.JUMPBAR
+                    || type == RenderGameOverlayEvent.ElementType.FOOD
+                    || type == RenderGameOverlayEvent.ElementType.FPS_GRAPH) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post event) {
         MatrixStack matrixStack = event.getMatrixStack();
         IRenderTypeBuffer buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
         Minecraft mc = Minecraft.getInstance();
-        if (mc.world != null && mc.player != null && mc.currentScreen == null && !mc.gameSettings.showDebugInfo && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (mc.world != null && mc.player != null && mc.currentScreen == null && (!mc.gameSettings.showDebugInfo || Keybinds.BIG_OVERLAY.isKeyDown()) && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Bongo bongo = Bongo.get(mc.world);
             Team team = bongo.getTeam(mc.player);
             if (bongo.active() && (!bongo.running() || team != null)) {
@@ -123,11 +145,21 @@ public class RenderOverlay {
                             matrixStack.pop();
                         }
 
-                        if (team != null && team.completed(slot)) {
-                            matrixStack.translate(0, 0, 800);
-                            mc.getTextureManager().bindTexture(BEACON_TEXTURE);
-                            AbstractGui.blit(matrixStack, xSlot * 27, ySlot * 27, 90, 222, 16, 16, 256, 256);
-                            matrixStack.translate(0, 0, -800);
+                        if (team != null) {
+                            if (team.completed(slot)) {
+                                matrixStack.push();
+                                matrixStack.translate(0, 0, 800);
+                                mc.getTextureManager().bindTexture(BEACON_TEXTURE);
+                                AbstractGui.blit(matrixStack, xSlot * 27, ySlot * 27, 90, 222, 16, 16, 256, 256);
+                                matrixStack.pop();
+                            } else if (team.locked(slot)) {
+                                matrixStack.push();
+                                matrixStack.translate(xSlot * 27, ySlot * 27, 800);
+                                mc.getTextureManager().bindTexture(BEACON_TEXTURE);
+                                matrixStack.scale(16f/15f, 16f/15f, 16f/15f);
+                                AbstractGui.blit(matrixStack, 0, 0, 113, 222, 15, 15, 256, 256);
+                                matrixStack.pop();
+                            }
                         }
                     }
                 }
@@ -152,8 +184,8 @@ public class RenderOverlay {
                 }
 
                 String winCondition = null;
-                if (bongo.getWin() != WinCondition.DEFAULT) {
-                    winCondition = I18n.format("bongo.wc." + bongo.getWin().id);
+                if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
+                    winCondition = I18n.format("bongo.wc." + bongo.getSettings().winCondition.id);
                 }
 
                 if (timer != null || winCondition != null) {

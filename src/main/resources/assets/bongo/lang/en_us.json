@@ -57,5 +57,6 @@
   "bongo.wc.bongo.columns": "One colums",
   "bongo.wc.bongo.diagonals": "One diagonal",
   "bongo.wc.bongo.rows_and_columns": "A row or a column",
-  "bongo.wc.bongo.row_and_column": "A row and a column"
+  "bongo.wc.bongo.row_and_column": "A row and a column",
+  "bongo.task_locked.death": "%s died. A task has been locked."
 }

@@ -14,10 +14,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Team {
 
@@ -25,6 +22,7 @@ public class Team {
     public final DyeColor color;
 
     private int completed;
+    private int locked;
     private final List<UUID> players;
     private final ItemStackHandler backpack;
 
@@ -33,6 +31,7 @@ public class Team {
         this.bongo = bongo;
         this.color = color;
         this.completed = 0;
+        this.locked = 0;
         this.players = new ArrayList<>();
         this.backpack = new ItemStackHandler(27);
     }
@@ -45,12 +44,21 @@ public class Team {
         return Util.getTextFormatting(color);
     }
 
-    public boolean completed (int slot) {
+    public boolean completed(int slot) {
         return (completed & (1 << (slot % 25))) > 0;
     }
 
     public void complete(int slot) {
         completed |= (1 << (slot % 25));
+        bongo.markDirty();
+    }
+
+    public boolean locked(int slot) {
+        return (locked & (1 << (slot % 25))) > 0;
+    }
+
+    public void lock(int slot) {
+        locked |= (1 << (slot % 25));
         bongo.markDirty();
     }
 
@@ -102,6 +110,7 @@ public class Team {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putInt("completed", completed);
+        nbt.putInt("locked", locked);
         ListNBT playerList = new ListNBT();
         for (UUID uuid : players) {
             CompoundNBT uuidTag = new CompoundNBT();
@@ -115,6 +124,7 @@ public class Team {
 
     public void deserializeNBT(CompoundNBT nbt) {
         completed = nbt.getInt("completed");
+        locked = nbt.getInt("locked");
 
         if (nbt.contains("players", Constants.NBT.TAG_LIST)) {
             ListNBT playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
@@ -131,8 +141,9 @@ public class Team {
 
     public void reset(boolean suppressBingoSync) {
         completed = 0;
+        locked = 0;
         players.clear();
-        clearBackPack(suppressBingoSync);
+        clearBackPack(true);
         bongo.markDirty(suppressBingoSync);
     }
 
@@ -143,6 +154,31 @@ public class Team {
     public void resetCompleted(boolean suppressBingoSync) {
         completed = 0;
         bongo.markDirty(suppressBingoSync);
+    }
+
+    public void resetLocked(boolean suppressBingoSync) {
+        locked = 0;
+        bongo.markDirty(suppressBingoSync);
+    }
+
+    public boolean lockRandomTask() {
+        int notCompletedTasks = 0;
+        for (int i = 0; i < 25; i++) {
+            if (!completed(i) && !locked((i)))
+                notCompletedTasks += 1;
+        }
+        int task = new Random().nextInt(notCompletedTasks);
+        for (int i = 0; i < 25; i++) {
+            if (!completed(i) && !locked((i))) {
+                if (task == 0) {
+                    lock(i);
+                    return true;
+                } else {
+                    task -= 1;
+                }
+            }
+        }
+        return false;
     }
 
     public void clearBackPack(boolean suppressBingoSync) {
@@ -163,5 +199,9 @@ public class Team {
 
     public void resetCompleted() {
         resetCompleted(false);
+    }
+
+    public void resetLocked() {
+        resetLocked(false);
     }
 }

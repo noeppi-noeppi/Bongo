@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
@@ -9,8 +10,11 @@ import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -74,7 +78,7 @@ public class EventListener {
                 }
             }
             bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, event.player.getEntityWorld().getBiome(event.player.getPosition()));
-            if (bongo.getTeam(event.player) != null) {
+            if (bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
                 event.player.getFoodStats().setFoodLevel(20);
             }
         }
@@ -105,23 +109,38 @@ public class EventListener {
         if (!event.getEntityLiving().getEntityWorld().isRemote && event.getEntityLiving() instanceof PlayerEntity && !event.getSource().canHarmInCreative()) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             Bongo bongo = Bongo.get(player.getEntityWorld());
-            if (bongo.running() && bongo.getTeam(player) != null)
-                event.setCanceled(true);
+            Team team = bongo.getTeam(player);
+            if (bongo.running() && team != null) {
+                if (event.getSource().getTrueSource() instanceof PlayerEntity) {
+                    PlayerEntity source = (PlayerEntity) event.getSource().getTrueSource();
+                    if (!bongo.getSettings().pvp) {
+                        event.setCanceled(true);
+                    } else if (team.hasPlayer(source)) {
+                        if (!bongo.getSettings().friendlyFire) {
+                            event.setCanceled(true);
+                        }
+                    }
+                } else if (bongo.getSettings().invulnerable) {
+                    event.setCanceled(true);
+                }
+            }
         }
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void addTooltip(ItemTooltipEvent event) {
-        ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || event.getPlayer() == null)
-            return;
-        Bongo bongo = Bongo.get(event.getPlayer().world);
-        if (bongo.active() && bongo.tasks().stream().anyMatch(task -> {
-            ItemStack test = task.bongoTooltipStack();
-            return !test.isEmpty() && stack.isItemEqual(test);
-        })) {
-            event.getToolTip().add(new TranslationTextComponent("bongo.tooltip.required").mergeStyle(TextFormatting.GOLD));
+        if (ClientConfig.addItemTooltips.get()) {
+            ItemStack stack = event.getItemStack();
+            if (stack.isEmpty() || event.getPlayer() == null)
+                return;
+            Bongo bongo = Bongo.get(event.getPlayer().world);
+            if (bongo.active() && bongo.tasks().stream().anyMatch(task -> {
+                ItemStack test = task.bongoTooltipStack();
+                return !test.isEmpty() && stack.isItemEqual(test);
+            })) {
+                event.getToolTip().add(new TranslationTextComponent("bongo.tooltip.required").mergeStyle(TextFormatting.GOLD));
+            }
         }
     }
 
@@ -146,6 +165,24 @@ public class EventListener {
             PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
             Bongo bongo = Bongo.get(player.getEntityWorld());
             bongo.checkCompleted(TaskTypeEntity.INSTANCE, player, event.getEntity().getType());
+        }
+        if (event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            Bongo bongo = Bongo.get(player.getEntityWorld());
+            if (bongo.getSettings().lockTaskOnDeath) {
+                Team team = bongo.getTeam(player);
+                if (team != null && team.lockRandomTask()) {
+                    IFormattableTextComponent tc = new TranslationTextComponent("bongo.task_locked.death", player.getDisplayName());
+                    if (player instanceof ServerPlayerEntity) {
+                        ((ServerPlayerEntity) player).getServerWorld().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
+                            if (team.hasPlayer(thePlayer)) {
+                                thePlayer.sendMessage(tc, thePlayer.getUniqueID());
+                                thePlayer.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.MASTER, thePlayer.getPosX(), thePlayer.getPosY(), thePlayer.getPosZ(), 1f, 1));
+                            }
+                        });
+                    }
+                }
+            }
         }
     }
 
