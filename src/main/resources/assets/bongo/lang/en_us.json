@@ -25,6 +25,7 @@
   "bongo.cmd.team.leftother": " left ",
   "bongo.cmd.team.noactive": "There's no game currently active. You can't join a team now.",
   "bongo.cmd.team.running": "You can't change your team while the game is running.",
+  "bongo.disconnect": "A bingo game is already active. You're not able to join right now.",
   "bongo.info": "[Bongo] ",
   "bongo.task.advancement.invalid": "Invalid Advancement",
   "bongo.task.advancement.name": "Advancement",
