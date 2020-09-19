@@ -13,8 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.server.management.OpEntry;
-import net.minecraft.server.management.OpList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
