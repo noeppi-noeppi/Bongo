@@ -32,6 +32,8 @@ public class BongoCommands {
                 Commands.literal("teams").executes(new TeamsCommand())
         ).then(
                 Commands.literal("teamchat").executes(new TeamChatCommand())
+        ).then(
+                Commands.literal("dump").requires(cs -> cs.hasPermissionLevel(2)).executes(new DumpCommand()).then(Commands.argument("everything", BoolArgumentType.bool()).executes(new DumpCommand()))
         ));
     }
 }

@@ -36,6 +36,13 @@ public class BongoMod {
         gsonbuilder.setLenient();
         return gsonbuilder.create();
     });
+    public static final Gson PRETTY_GSON = net.minecraft.util.Util.make(() -> {
+        GsonBuilder gsonbuilder = new GsonBuilder();
+        gsonbuilder.disableHtmlEscaping();
+        gsonbuilder.setLenient();
+        gsonbuilder.setPrettyPrinting();
+        return gsonbuilder.create();
+    });
 
     public BongoMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);

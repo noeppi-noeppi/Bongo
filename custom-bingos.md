@@ -168,3 +168,14 @@ Example:
   "potion": "minecraft:regeneration"
 }
 ```
+
+## The Dump Command
+
+Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or you server'S folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all posible nbt values though).
+
+Because those lists can get quite big when playing in a large modpack you can also do `/bingo dump false` This will tell bongo to only dump elements that you as a player have in some way. 
+  * For items, it dumps every item from your main inventory (with this you can also get NBT-Data out of the items).
+  * For biomes, it dumps the biome you're currently in.
+  * For entities, it dumps all entities that are within a 10x10x20 box around you,
+  * For advancements, it dumps all advancements you currently have.
+  * For potions, it dumps all potion effects that are currently active for you.

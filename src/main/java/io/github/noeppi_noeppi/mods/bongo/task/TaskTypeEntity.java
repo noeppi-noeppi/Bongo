@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
@@ -22,7 +24,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TaskTypeEntity implements TaskType<EntityType<?>> {
 
@@ -108,5 +114,14 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
     @Override
     public EntityType<?> deserializeNBT(CompoundNBT nbt) {
         return ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("entity")));
+    }
+
+    @Override
+    public Stream<EntityType<?>> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        if (player == null) {
+            return ForgeRegistries.ENTITIES.getValues().stream().filter(type -> type.isSummonable() && type.getClassification() != EntityClassification.MISC);
+        } else {
+            return player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosX() - 10, player.getPosY() - 5, player.getPosZ() - 10, player.getPosX() + 10, player.getPosY() + 5, player.getPosZ() + 10)).stream().<EntityType<?>>map(Entity::getType).collect(Collectors.toSet()).stream();
+        }
     }
 }

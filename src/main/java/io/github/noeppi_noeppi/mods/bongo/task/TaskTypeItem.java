@@ -8,12 +8,18 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TaskTypeItem implements TaskType<ItemStack> {
 
@@ -111,5 +117,22 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     @Override
     public ItemStack copy(ItemStack element) {
         return element.copy();
+    }
+
+    @Override
+    public Stream<ItemStack> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        if (player == null) {
+            return ForgeRegistries.ITEMS.getValues().stream().flatMap(item -> {
+                if (item.getGroup() != null) {
+                    NonNullList<ItemStack> nl = NonNullList.create();
+                    item.fillItemGroup(item.getGroup(), nl);
+                    return nl.stream();
+                } else {
+                    return Stream.of(new ItemStack(item));
+                }
+            }).filter(stack -> !stack.isEmpty());
+        } else {
+            return player.inventory.mainInventory.stream().filter(stack -> !stack.isEmpty());
+        }
     }
 }

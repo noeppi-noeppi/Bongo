@@ -7,12 +7,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nullable;
+import java.util.stream.Stream;
 
 public class TaskTypePotion implements TaskType<Effect> {
 
@@ -74,5 +79,14 @@ public class TaskTypePotion implements TaskType<Effect> {
     @Override
     public Effect deserializeNBT(CompoundNBT nbt) {
         return ForgeRegistries.POTIONS.getValue(new ResourceLocation(nbt.getString("potion")));
+    }
+
+    @Override
+    public Stream<Effect> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        if (player == null) {
+            return ForgeRegistries.POTIONS.getValues().stream().filter(effect -> !effect.isInstant());
+        } else {
+            return player.getActivePotionEffects().stream().map(EffectInstance::getPotion);
+        }
     }
 }

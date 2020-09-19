@@ -91,7 +91,7 @@ public class EventListener {
                 }
             }
             bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, event.player.getEntityWorld().getBiome(event.player.getPosition()));
-            if (bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
+            if (bongo.running() && bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
                 event.player.getFoodStats().setFoodLevel(20);
                 event.player.setAir(event.player.getMaxAir());
             }

@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
@@ -108,5 +109,14 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public Predicate<ItemStack> bongoTooltipStack(ResourceLocation element) {
         return ClientAdvancementInfo.getTooltipItem(element);
+    }
+
+    @Override
+    public Stream<ResourceLocation> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        if (player == null) {
+            return server.getAdvancementManager().getAllAdvancements().stream().map(Advancement::getId);
+        } else {
+            return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> player.getAdvancements().getProgress(adv).isDone()).map(Advancement::getId);
+        }
     }
 }

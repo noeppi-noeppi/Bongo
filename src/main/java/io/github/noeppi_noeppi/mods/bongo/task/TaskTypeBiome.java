@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -15,6 +16,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import javax.annotation.Nullable;
+import java.util.stream.Stream;
 
 public class TaskTypeBiome implements TaskType<Biome> {
 
@@ -87,5 +91,14 @@ public class TaskTypeBiome implements TaskType<Biome> {
     @Override
     public Biome deserializeNBT(CompoundNBT nbt) {
         return ForgeRegistries.BIOMES.getValue(new ResourceLocation(nbt.getString("biome")));
+    }
+
+    @Override
+    public Stream<Biome> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        if (player == null) {
+            return ForgeRegistries.BIOMES.getValues().stream();
+        } else {
+            return Stream.of(player.getEntityWorld().getBiome(player.getPosition()));
+        }
     }
 }

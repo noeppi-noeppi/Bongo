@@ -17,8 +17,6 @@ public class GameSettings {
     public final boolean consumeItems;
 
     public GameSettings(CompoundNBT nbt) {
-        this.nbt = nbt;
-
         if (nbt.contains("winCondition", Constants.NBT.TAG_STRING)) {
             winCondition = WinCondition.getWinOrDefault(nbt.getString("winCondition"));
         } else {
@@ -54,6 +52,14 @@ public class GameSettings {
         } else {
             consumeItems = false;
         }
+
+        this.nbt = new CompoundNBT();
+        this.nbt.putString("winCondition", winCondition.id);
+        this.nbt.putBoolean("invulnerable", invulnerable);
+        this.nbt.putBoolean("pvp", pvp);
+        this.nbt.putBoolean("friendlyFire", friendlyFire);
+        this.nbt.putBoolean("lockTaskOnDeath", lockTaskOnDeath);
+        this.nbt.putBoolean("consumeItems", consumeItems);
     }
 
     public CompoundNBT getTag() {

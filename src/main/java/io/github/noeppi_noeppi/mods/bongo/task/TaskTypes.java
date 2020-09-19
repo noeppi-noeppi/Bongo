@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,5 +21,9 @@ public class TaskTypes {
         } else {
             taskTypes.put(id, type);
         }
+    }
+
+    public static Collection<TaskType<?>> getTypes() {
+        return taskTypes.values();
     }
 }

@@ -4,10 +4,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.stream.Stream;
 
 public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
 
@@ -70,5 +75,10 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     @Override
     public TaskTypeEmpty deserializeNBT(CompoundNBT nbt) {
         return this;
+    }
+
+    @Override
+    public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+        return Stream.empty();
     }
 }

@@ -23,9 +23,10 @@ import java.util.UUID;
 public class Util {
 
     public static final List<DyeColor> PREFERRED_COLOR__ORDER = ImmutableList.of(
-            DyeColor.RED, DyeColor.GREEN, DyeColor.ORANGE, DyeColor.BLUE, DyeColor.PURPLE, DyeColor.YELLOW,
-            DyeColor.LIGHT_BLUE, DyeColor.CYAN, DyeColor.PINK, DyeColor.LIME, DyeColor.GRAY, DyeColor.MAGENTA,
-            DyeColor.BLACK, DyeColor.WHITE, DyeColor.BROWN, DyeColor.LIGHT_GRAY
+            DyeColor.ORANGE, DyeColor.LIME, DyeColor.LIGHT_BLUE, DyeColor.PINK, DyeColor.CYAN,
+            DyeColor.YELLOW, DyeColor.RED, DyeColor.GREEN, DyeColor.BLUE, DyeColor.PURPLE,
+            DyeColor.GRAY, DyeColor.MAGENTA, DyeColor.BLACK, DyeColor.WHITE, DyeColor.BROWN,
+            DyeColor.LIGHT_GRAY
     );
 
     public static TextFormatting getTextFormatting(@Nullable DyeColor color) {

@@ -13,6 +13,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface TaskType<T> {
 
@@ -55,4 +56,6 @@ public interface TaskType<T> {
     default void consumeItem(T element, PlayerEntity player) {
 
     }
+
+    Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player);
 }
