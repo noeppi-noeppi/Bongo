@@ -13,6 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.management.OpEntry;
+import net.minecraft.server.management.OpList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
@@ -33,6 +35,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.UUID;
 
 public class EventListener {
 
@@ -208,6 +211,30 @@ public class EventListener {
                 tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
                 tc.append(event.getComponent());
                 Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        Bongo bongo = Bongo.get(event.getEntity().world);
+        if (bongo.active()) {
+            boolean flag = false;
+            for (Team team : bongo.getTeams()) {
+                for (UUID uuid : team.getPlayers()) {
+                    if (uuid.equals(event.getPlayer().getUniqueID()))
+                        flag = true;
+                }
+            }
+            if (!flag) {
+                ServerPlayerEntity player = ((ServerPlayerEntity) event.getPlayer());
+                if (player.getServer() != null) {
+                    OpList ops = player.getServer().getPlayerList().getOppedPlayers();
+                    for (OpEntry entry : ops.getEntries()) {
+                        if (entry.getValue() != null && entry.getValue().getId().equals(player.getUniqueID())) flag = true;
+                    }
+                }
+                if (!flag) player.connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
             }
         }
     }
