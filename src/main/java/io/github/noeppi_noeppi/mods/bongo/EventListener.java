@@ -33,7 +33,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.UUID;
 
 public class EventListener {
 
@@ -43,6 +42,18 @@ public class EventListener {
         World world = event.getPlayer().getEntityWorld();
         if (!world.isRemote && world instanceof ServerWorld && event.getPlayer() instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(world);
+            if (bongo.running()) {
+                boolean playerFound = false;
+                for (Team team : bongo.getTeams()) {
+                    if (team.hasPlayer(event.getPlayer())) {
+                        playerFound = true;
+                    }
+                }
+                if (!playerFound && !event.getPlayer().hasPermissionLevel(2)) {
+                    ((ServerPlayerEntity) event.getPlayer()).connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
+                    return;
+                }
+            }
             for (Task task : bongo.tasks()) {
                 if (task != null)
                     task.syncToClient(world.getServer(), (ServerPlayerEntity) event.getPlayer());
@@ -209,23 +220,6 @@ public class EventListener {
                 tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
                 tc.append(event.getComponent());
                 Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        Bongo bongo = Bongo.get(event.getEntity().world);
-        if (bongo.active()) {
-            boolean playerFound = false;
-            for (Team team : bongo.getTeams()) {
-                for (UUID uuid : team.getPlayers()) {
-                    if (uuid.equals(event.getPlayer().getUniqueID()))
-                        playerFound = true;
-                }
-            }
-            if (!playerFound && !event.getPlayer().hasPermissionLevel(2)) {
-                ((ServerPlayerEntity) event.getPlayer()).connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
             }
         }
     }
