@@ -19,6 +19,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
@@ -102,5 +103,10 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
         } else {
             return new ResourceLocation("minecraft", "invalid");
         }
+    }
+
+    @Override
+    public Predicate<ItemStack> bongoTooltipStack(ResourceLocation element) {
+        return ClientAdvancementInfo.getTooltipItem(element);
     }
 }

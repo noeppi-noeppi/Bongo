@@ -9,7 +9,8 @@ Custom bingos can be added via [DataPacks](https://minecraft.gamepedia.com/Data_
     "invulnerable": true,
     "pvp": false,
     "friendlyFire": false,
-    "lockTaskOnDeath": false
+    "lockTaskOnDeath": false,
+    "consumeItems": false
   },
   "tasks": [
     {
@@ -59,6 +60,12 @@ When `friendlyFire` is false and pvp is enabled players won't be able to deal da
 ### Lock task on death
 
 Whenever a player dies while bongo is active and `lockTaskOnDeath` is set to true, a random task will get blocked for the team of that player. A blocked task can't be completed.
+
+*Default: false*
+
+### Consume Items
+
+If `consumeItems` is set to true and someone completes a task, the item (or whatever the task is about) will get consumed. Not all task types can be consumed.
 
 *Default: false*
 

@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 public class Task implements INBTSerializable<CompoundNBT> {
 
@@ -67,7 +68,12 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return ((TaskType<Object>) type).shouldComplete(element, player, compare);
     }
 
-    public ItemStack bongoTooltipStack() {
+    public void consumeItem(PlayerEntity player) {
+        //noinspection unchecked
+        ((TaskType<Object>) type).consumeItem(element, player);
+    }
+
+    public Predicate<ItemStack> bongoTooltipStack() {
         //noinspection unchecked
         return ((TaskType<Object>) type).bongoTooltipStack(element);
     }

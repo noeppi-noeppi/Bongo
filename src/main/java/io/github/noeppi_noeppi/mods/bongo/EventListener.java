@@ -135,10 +135,7 @@ public class EventListener {
             if (stack.isEmpty() || event.getPlayer() == null)
                 return;
             Bongo bongo = Bongo.get(event.getPlayer().world);
-            if (bongo.active() && bongo.tasks().stream().anyMatch(task -> {
-                ItemStack test = task.bongoTooltipStack();
-                return !test.isEmpty() && stack.isItemEqual(test);
-            })) {
+            if (bongo.active() && bongo.isTooltipStack(stack)) {
                 event.getToolTip().add(new TranslationTextComponent("bongo.tooltip.required").mergeStyle(TextFormatting.GOLD));
             }
         }

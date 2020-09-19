@@ -4,7 +4,8 @@
     "invulnerable": true,
     "pvp": false,
     "friendlyFire": false,
-    "lockTaskOnDeath": false
+    "lockTaskOnDeath": false,
+    "consumeItems": false
   },
   "tasks": [
     {

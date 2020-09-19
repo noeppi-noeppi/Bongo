@@ -7,10 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
+
+import java.util.function.Predicate;
 
 public class TaskTypeItem implements TaskType<ItemStack> {
 
@@ -74,8 +77,23 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
-    public ItemStack bongoTooltipStack(ItemStack element) {
-        return element;
+    public void consumeItem(ItemStack element, PlayerEntity player) {
+        int slot = -1;
+        for (ItemStack theStack : player.inventory.mainInventory) {
+            if (ItemStack.areItemsEqualIgnoreDurability(element, theStack) && element.getCount() <= theStack.getCount()) {
+                if (Util.matchesNBT(element.getTag(), theStack.getTag())) {
+                    slot = player.inventory.getSlotFor(theStack);
+                }
+            }
+        }
+        if (slot >= 0) {
+            player.inventory.decrStackSize(slot, element.getCount());
+        }
+    }
+
+    @Override
+    public Predicate<ItemStack> bongoTooltipStack(ItemStack element) {
+        return stack -> ItemStack.areItemsEqual(element, stack);
     }
 
     @Override

@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.resources.IFutureReloadListener;
@@ -29,6 +30,7 @@ import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Bongo extends WorldSavedData {
 
@@ -55,8 +57,10 @@ public class Bongo extends WorldSavedData {
         if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) {
             if (mc.player != null)
                 mc.player.refreshDisplayName();
-            if (ClientConfig.addItemTooltips.get())
+            if (ClientConfig.addItemTooltips.get()) {
+                bongo.updateTooltipPredicate();
                 reloadJeiItems();
+            }
         }
     }
 
@@ -64,6 +68,7 @@ public class Bongo extends WorldSavedData {
 
     private final Map<DyeColor, Team> teams;
     private final List<Task> items;
+    private Predicate<ItemStack> tooltipPredicate;
     private final List<UUID> playersInTcMode = new ArrayList<>();
     private GameSettings settings = GameSettings.DEFAULT;
     private boolean active;
@@ -91,6 +96,7 @@ public class Bongo extends WorldSavedData {
         items = new ArrayList<>();
         for (int i = 0; i < 25; i++)
             items.add(Task.empty());
+        tooltipPredicate = stack -> false;
         active = false;
         running = false;
         teamWon = false;
@@ -311,6 +317,9 @@ public class Bongo extends WorldSavedData {
             for (int i = 0; i < items.size(); i++) {
                 if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
                     team.complete(i);
+                    if (getSettings().consumeItems) {
+                        task(i).consumeItem(player);
+                    }
                     if (player instanceof ServerPlayerEntity) {
                         TaskEffects.callPlayerEffects(this, (ServerPlayerEntity) player, task(i));
                     }
@@ -387,7 +396,29 @@ public class Bongo extends WorldSavedData {
                 tasks.get(i).syncToClient(world.getServer(), null);
             }
         }
+        updateTooltipPredicate();
         markDirty();
+    }
+
+    private void updateTooltipPredicate() {
+        if (world == null) {
+            // We cache the predicates to reduce lagg
+            List<Predicate<ItemStack>> predicates = new ArrayList<>();
+            for (int i = 0; i < 25; i++) {
+                predicates.add(task(i).bongoTooltipStack());
+            }
+            tooltipPredicate = stack -> {
+                for (Predicate<ItemStack> predicate : predicates) {
+                    if (predicate.test(stack))
+                        return true;
+                }
+                return false;
+            };
+        }
+    }
+
+    public boolean isTooltipStack(ItemStack stack) {
+        return !stack.isEmpty() && tooltipPredicate.test(stack);
     }
 
     private static void reloadJeiItems() {

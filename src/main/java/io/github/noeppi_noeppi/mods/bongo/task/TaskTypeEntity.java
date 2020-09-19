@@ -22,6 +22,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.function.Predicate;
+
 public class TaskTypeEntity implements TaskType<EntityType<?>> {
 
     public static final TaskTypeEntity INSTANCE = new TaskTypeEntity();
@@ -86,12 +88,12 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
     }
 
     @Override
-    public ItemStack bongoTooltipStack(EntityType<?> element) {
+    public Predicate<ItemStack> bongoTooltipStack(EntityType<?> element) {
         Item item = SpawnEggItem.getEgg(element);
         if (item == null) {
-            return ItemStack.EMPTY;
+            return stack -> false;
         } else {
-            return new ItemStack(item);
+            return stack -> !stack.isEmpty() && stack.getItem() == item;
         }
     }
 

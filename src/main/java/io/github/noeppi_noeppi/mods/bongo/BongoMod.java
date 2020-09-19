@@ -1,5 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
@@ -10,6 +12,9 @@ import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.util.EnumTypeAdapterFactory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +30,12 @@ public class BongoMod {
 
     public static final String MODID = "bongo";
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final Gson GSON = net.minecraft.util.Util.make(() -> {
+        GsonBuilder gsonbuilder = new GsonBuilder();
+        gsonbuilder.disableHtmlEscaping();
+        gsonbuilder.setLenient();
+        return gsonbuilder.create();
+    });
 
     public BongoMod() {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);

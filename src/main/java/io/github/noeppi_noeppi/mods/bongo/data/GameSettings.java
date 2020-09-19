@@ -14,6 +14,7 @@ public class GameSettings {
     public final boolean pvp;
     public final boolean friendlyFire;
     public final boolean lockTaskOnDeath;
+    public final boolean consumeItems;
 
     public GameSettings(CompoundNBT nbt) {
         this.nbt = nbt;
@@ -46,6 +47,12 @@ public class GameSettings {
             lockTaskOnDeath = nbt.getBoolean("lockTaskOnDeath");
         } else {
             lockTaskOnDeath = false;
+        }
+
+        if (nbt.contains("consumeItems")) {
+            consumeItems = nbt.getBoolean("consumeItems");
+        } else {
+            consumeItems = false;
         }
     }
 

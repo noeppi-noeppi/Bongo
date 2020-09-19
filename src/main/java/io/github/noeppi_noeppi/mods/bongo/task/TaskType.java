@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 public interface TaskType<T> {
 
@@ -47,7 +48,11 @@ public interface TaskType<T> {
 
     }
 
-    default ItemStack bongoTooltipStack(T element) {
-        return ItemStack.EMPTY;
+    default Predicate<ItemStack> bongoTooltipStack(T element) {
+        return stack -> false;
+    }
+
+    default void consumeItem(T element, PlayerEntity player) {
+
     }
 }
