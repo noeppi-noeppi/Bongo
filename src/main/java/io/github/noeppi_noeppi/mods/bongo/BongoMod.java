@@ -8,6 +8,7 @@ import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
+import io.github.noeppi_noeppi.mods.bongo.render.CrownRenderer;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -70,5 +71,6 @@ public class BongoMod {
     private void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
         MinecraftForge.EVENT_BUS.register(new RenderOverlay());
+        CrownRenderer.register();
     }
 }

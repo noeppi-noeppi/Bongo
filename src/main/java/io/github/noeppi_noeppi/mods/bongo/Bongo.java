@@ -76,6 +76,7 @@ public class Bongo extends WorldSavedData {
     private boolean teamWon;
     private long runningSince = 0;
     private long ranUntil = 0;
+    private DyeColor winningTeam;
 
     public Bongo() {
         this(ID);
@@ -100,6 +101,7 @@ public class Bongo extends WorldSavedData {
         active = false;
         running = false;
         teamWon = false;
+        winningTeam = null;
     }
 
     public Team getTeam(DyeColor color) {
@@ -173,6 +175,7 @@ public class Bongo extends WorldSavedData {
         this.active = false;
         this.running = false;
         this.teamWon = false;
+        this.winningTeam = null;
         this.settings = GameSettings.DEFAULT;
         playersInTcMode.clear();
         markDirty(true);
@@ -187,6 +190,10 @@ public class Bongo extends WorldSavedData {
         return teamWon;
     }
 
+    public Team winningTeam() {
+        return teams.get(winningTeam);
+    }
+
     @Nonnull
     @Override
     public CompoundNBT write(@Nonnull CompoundNBT nbt) {
@@ -195,6 +202,10 @@ public class Bongo extends WorldSavedData {
         nbt.putBoolean("teamWon", teamWon);
         nbt.putLong("runningSince", runningSince);
         nbt.putLong("ranUntil", ranUntil);
+
+        if (winningTeam != null)
+            nbt.putInt("winningTeam", winningTeam.ordinal());
+
         nbt.put("settings", settings.getTag());
 
         for (DyeColor dc : DyeColor.values()) {
@@ -225,6 +236,13 @@ public class Bongo extends WorldSavedData {
         teamWon = nbt.getBoolean("teamWon");
         runningSince = nbt.getLong("runningSince");
         ranUntil = nbt.getLong("ranUntil");
+
+        if (nbt.contains("winningTeam")) {
+            winningTeam = DyeColor.values()[nbt.getInt("winningTeam")];
+        } else {
+            winningTeam = null;
+        }
+
         if (nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
             settings = new GameSettings(nbt.getCompound("settings"));
         } else {
@@ -268,6 +286,8 @@ public class Bongo extends WorldSavedData {
         running = false;
         runningSince = 0;
         ranUntil = 0;
+        teamWon = false;
+        winningTeam = null;
         clearItems(true);
         playersInTcMode.clear();
         settings = GameSettings.DEFAULT;
@@ -334,6 +354,7 @@ public class Bongo extends WorldSavedData {
             if (getSettings().winCondition.won(this, team)) {
                 running = false;
                 teamWon = true;
+                winningTeam = team.color;
                 if (world != null) {
                     WinEffects.callWorldEffects(this, world, team);
                 }
