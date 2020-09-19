@@ -35,10 +35,6 @@ public class GameDefArgument implements ArgumentType<GameDef> {
         return new GameDefArgument(null);
     }
 
-    public static GameDefArgument gameDef(Map<ResourceLocation, GameDef> games) {
-        return new GameDefArgument(games);
-    }
-
     public GameDef parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation rl = rla.parse(reader);
         GameDef gd = games().get(rl);

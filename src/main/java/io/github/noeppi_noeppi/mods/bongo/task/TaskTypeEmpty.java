@@ -11,7 +11,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {

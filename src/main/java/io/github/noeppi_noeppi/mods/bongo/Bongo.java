@@ -397,7 +397,10 @@ public class Bongo extends WorldSavedData {
             }
         }
         updateTooltipPredicate();
-        markDirty();
+        markDirty(true);
+        if (world != null) {
+            BongoNetwork.updateBongo(world, BongoMessageType.CREATE);
+        }
     }
 
     private void updateTooltipPredicate() {
