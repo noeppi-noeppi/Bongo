@@ -219,22 +219,15 @@ public class EventListener {
     public void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         Bongo bongo = Bongo.get(event.getEntity().world);
         if (bongo.active()) {
-            boolean flag = false;
+            boolean playerFound = false;
             for (Team team : bongo.getTeams()) {
                 for (UUID uuid : team.getPlayers()) {
                     if (uuid.equals(event.getPlayer().getUniqueID()))
-                        flag = true;
+                        playerFound = true;
                 }
             }
-            if (!flag) {
-                ServerPlayerEntity player = ((ServerPlayerEntity) event.getPlayer());
-                if (player.getServer() != null) {
-                    OpList ops = player.getServer().getPlayerList().getOppedPlayers();
-                    for (OpEntry entry : ops.getEntries()) {
-                        if (entry.getValue() != null && entry.getValue().getId().equals(player.getUniqueID())) flag = true;
-                    }
-                }
-                if (!flag) player.connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
+            if (!playerFound && !event.getPlayer().hasPermissionLevel(2)) {
+                ((ServerPlayerEntity) event.getPlayer()).connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
             }
         }
     }
