@@ -164,7 +164,19 @@ public class RenderOverlay {
                     }
                 }
 
-                String timer = null;
+                List<String> lines = new ArrayList<>();
+
+                if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
+                    lines.add(I18n.format("bongo.wc." + bongo.getSettings().winCondition.id));
+                }
+
+                if (bongo.getSettings().teleportsPerTeam != 0 && !bongo.won()) {
+                    boolean hasRunningTeam = team != null && bongo.running();
+                    int tpLeft = hasRunningTeam ? team.teleportsLeft() : bongo.getSettings().teleportsPerTeam;
+                    String tpLeftStr = tpLeft < 0 ? I18n.format("bongo.infinite") : Integer.toString(tpLeft);
+                    lines.add(I18n.format(hasRunningTeam ? "bongo.tp_left": "bongo.tp_team", tpLeftStr));
+                }
+
                 if ((bongo.running() || bongo.won()) && !itemNames) {
                     long millis;
                     if (bongo.won()) {
@@ -177,29 +189,18 @@ public class RenderOverlay {
                     int min = (int) ((millis / 60000) % 60);
                     int hour = (int) millis / 3600000;
                     if (hour == 0) {
-                        timer = I18n.format("bongo.timer") + min + ":" + sec + "." + decimal;
+                        lines.add(I18n.format("bongo.timer") + min + ":" + sec + "." + decimal);
                     } else {
-                        timer = I18n.format("bongo.timer") +hour + ":" + min + ":" + sec + "." + decimal;
+                        lines.add(I18n.format("bongo.timer") +hour + ":" + min + ":" + sec + "." + decimal);
                     }
                 }
 
-                String winCondition = null;
-                if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
-                    winCondition = I18n.format("bongo.wc." + bongo.getSettings().winCondition.id);
-                }
-
-                if (timer != null || winCondition != null) {
+                if (!lines.isEmpty()) {
                     matrixStack.translate(0, 133, 800);
                     matrixStack.scale(1.3f, 1.3f, 1);
 
-                    if (winCondition != null) {
-                        mc.fontRenderer.drawString(matrixStack, winCondition, 0, 0, 0xFFFFFF);
-                    }
-
-                    if (timer != null) {
-                        if (winCondition != null)
-                            matrixStack.translate(0, mc.fontRenderer.FONT_HEIGHT + 1, 0);
-                        mc.fontRenderer.drawString(matrixStack, timer, 0, 0, 0xFFFFFF);
+                    for (int i = 0;i < lines.size(); i++) {
+                        mc.fontRenderer.drawString(matrixStack, lines.get(i), 0, (mc.fontRenderer.FONT_HEIGHT + 1) * i, 0xFFFFFF);
                     }
                 }
 
