@@ -177,9 +177,9 @@ public class RenderOverlay {
                     int min = (int) ((millis / 60000) % 60);
                     int hour = (int) millis / 3600000;
                     if (hour == 0) {
-                        timer = min + ":" + sec + "." + decimal;
+                        timer = I18n.format("bongo.timer") + min + ":" + sec + "." + decimal;
                     } else {
-                        timer = hour + ":" + min + ":" + sec + "." + decimal;
+                        timer = I18n.format("bongo.timer") +hour + ":" + min + ":" + sec + "." + decimal;
                     }
                 }
 

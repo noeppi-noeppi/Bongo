@@ -10,6 +10,7 @@ import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.PotionItem;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -25,6 +26,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -62,6 +64,17 @@ public class EventListener {
     }
 
     @SubscribeEvent
+    public void potionAdd(PotionEvent.PotionAddedEvent event) {
+        if (event.getEntityLiving() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            World world = player.getEntityWorld();
+            if (!world.isRemote) {
+                Bongo.get(world).checkCompleted(TaskTypePotion.INSTANCE, player, event.getPotionEffect().getPotion());
+            }
+        }
+    }
+
+    @SubscribeEvent
     public void playerTick(TickEvent.PlayerTickEvent event) {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0) {
             Bongo bongo = Bongo.get(event.player.world);
@@ -80,6 +93,7 @@ public class EventListener {
             bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, event.player.getEntityWorld().getBiome(event.player.getPosition()));
             if (bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
                 event.player.getFoodStats().setFoodLevel(20);
+                event.player.setAir(event.player.getMaxAir());
             }
         }
     }

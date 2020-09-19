@@ -3647,6 +3647,16 @@
       "type": "bongo.biome",
       "weight": 15,
       "biome": "minecraft:basalt_deltas"
+    },
+    {
+      "type": "bongo.potion",
+      "weight": 10000,
+      "potion": "minecraft:instant_health"
+    },
+    {
+      "type": "bongo.potion",
+      "weight": 10000,
+      "potion": "minecraft:poison"
     }
   ]
 }

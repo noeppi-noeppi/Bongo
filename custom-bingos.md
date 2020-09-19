@@ -155,3 +155,16 @@ Example:
   "biome": "minecraft:plains"
 }
 ```
+
+### Potion
+
+This task has the type `bongo.potion`. To complete a player must have a potion effect active. Sadly this does not work with instant effects.
+
+Example:
+
+```json
+{
+  "type": "bongo.potion",
+  "potion": "minecraft:regeneration"
+}
+```

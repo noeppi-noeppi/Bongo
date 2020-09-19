@@ -78,6 +78,8 @@ public class GameDef {
                 }
             }
         }
+        // If this was not here rare items sould be more likely to appear in the first row.
+        Collections.shuffle(theTasks);
         bongo.setSettings(settings, true);
         bongo.setTasks(theTasks);
         return null;
