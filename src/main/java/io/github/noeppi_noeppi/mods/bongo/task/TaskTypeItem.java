@@ -107,8 +107,9 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public ItemStack deserializeNBT(CompoundNBT nbt) {
-        if (!nbt.contains("Count"))
+        if (!nbt.contains("Count")) {
             nbt.putByte("Count", (byte) 1);
+        }
         return ItemStack.read(nbt);
     }
 

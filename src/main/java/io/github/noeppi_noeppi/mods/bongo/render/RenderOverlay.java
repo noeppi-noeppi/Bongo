@@ -33,19 +33,24 @@ public class RenderOverlay {
         // When some elements the bingo card occasionally there are render problems. So we
         // just hide man GUI parts when the bingo card is enlarged.
         if (Keybinds.BIG_OVERLAY.isKeyDown()) {
-            RenderGameOverlayEvent.ElementType type = event.getType();
-            if (type == RenderGameOverlayEvent.ElementType.CHAT
-                    || type == RenderGameOverlayEvent.ElementType.DEBUG
-                    || type == RenderGameOverlayEvent.ElementType.EXPERIENCE
-                    || type == RenderGameOverlayEvent.ElementType.HEALTH
-                    || type == RenderGameOverlayEvent.ElementType.HEALTHMOUNT
-                    || type == RenderGameOverlayEvent.ElementType.BOSSHEALTH
-                    || type == RenderGameOverlayEvent.ElementType.BOSSINFO
-                    || type == RenderGameOverlayEvent.ElementType.ARMOR
-                    || type == RenderGameOverlayEvent.ElementType.JUMPBAR
-                    || type == RenderGameOverlayEvent.ElementType.FOOD
-                    || type == RenderGameOverlayEvent.ElementType.FPS_GRAPH) {
-                event.setCanceled(true);
+            if (Minecraft.getInstance().world != null) {
+                Bongo bongo = Bongo.get(Minecraft.getInstance().world);
+                if (bongo.active()) {
+                    RenderGameOverlayEvent.ElementType type = event.getType();
+                    if (type == RenderGameOverlayEvent.ElementType.CHAT
+                            || type == RenderGameOverlayEvent.ElementType.DEBUG
+                            || type == RenderGameOverlayEvent.ElementType.EXPERIENCE
+                            || type == RenderGameOverlayEvent.ElementType.HEALTH
+                            || type == RenderGameOverlayEvent.ElementType.HEALTHMOUNT
+                            || type == RenderGameOverlayEvent.ElementType.BOSSHEALTH
+                            || type == RenderGameOverlayEvent.ElementType.BOSSINFO
+                            || type == RenderGameOverlayEvent.ElementType.ARMOR
+                            || type == RenderGameOverlayEvent.ElementType.JUMPBAR
+                            || type == RenderGameOverlayEvent.ElementType.FOOD
+                            || type == RenderGameOverlayEvent.ElementType.FPS_GRAPH) {
+                        event.setCanceled(true);
+                    }
+                }
             }
         }
     }
@@ -164,36 +169,38 @@ public class RenderOverlay {
                     }
                 }
 
-                List<String> lines = new ArrayList<>();
+                if (!itemNames) {
+                    List<String> lines = new ArrayList<>();
 
-                if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
-                    lines.add(I18n.format("bongo.wc." + bongo.getSettings().winCondition.id));
-                }
-
-                if ((bongo.running() || bongo.won()) && !itemNames) {
-                    long millis;
-                    if (bongo.won()) {
-                        millis = bongo.ranUntil() - bongo.runningSince();
-                    } else {
-                        millis = System.currentTimeMillis() - bongo.runningSince();
+                    if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
+                        lines.add(I18n.format("bongo.wc." + bongo.getSettings().winCondition.id));
                     }
-                    int decimal = (int) ((millis / 100) % 10);
-                    int sec = (int) ((millis / 1000) % 60);
-                    int min = (int) ((millis / 60000) % 60);
-                    int hour = (int) millis / 3600000;
-                    if (hour == 0) {
-                        lines.add(I18n.format("bongo.timer") + min + ":" + sec + "." + decimal);
-                    } else {
-                        lines.add(I18n.format("bongo.timer") +hour + ":" + min + ":" + sec + "." + decimal);
+
+                    if (bongo.running() || bongo.won()) {
+                        long millis;
+                        if (bongo.won()) {
+                            millis = bongo.ranUntil() - bongo.runningSince();
+                        } else {
+                            millis = System.currentTimeMillis() - bongo.runningSince();
+                        }
+                        int decimal = (int) ((millis / 100) % 10);
+                        int sec = (int) ((millis / 1000) % 60);
+                        int min = (int) ((millis / 60000) % 60);
+                        int hour = (int) millis / 3600000;
+                        if (hour == 0) {
+                            lines.add(I18n.format("bongo.timer") + min + ":" + sec + "." + decimal);
+                        } else {
+                            lines.add(I18n.format("bongo.timer") + hour + ":" + min + ":" + sec + "." + decimal);
+                        }
                     }
-                }
 
-                if (!lines.isEmpty()) {
-                    matrixStack.translate(0, 133, 800);
-                    matrixStack.scale(1.3f, 1.3f, 1);
+                    if (!lines.isEmpty()) {
+                        matrixStack.translate(0, 133, 800);
+                        matrixStack.scale(1.3f, 1.3f, 1);
 
-                    for (int i = 0;i < lines.size(); i++) {
-                        mc.fontRenderer.drawString(matrixStack, lines.get(i), 0, (mc.fontRenderer.FONT_HEIGHT + 1) * i, 0xFFFFFF);
+                        for (int i = 0; i < lines.size(); i++) {
+                            mc.fontRenderer.drawString(matrixStack, lines.get(i), 0, (mc.fontRenderer.FONT_HEIGHT + 1) * i, 0xFFFFFF);
+                        }
                     }
                 }
 
