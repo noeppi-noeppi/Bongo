@@ -35,7 +35,7 @@ public class TeamsCommand implements Command<CommandSource> {
             //noinspection ConstantConditions
             world.getServer().getPlayerList().getPlayers().forEach(teamPlayer -> {
                 if (team.hasPlayer(teamPlayer)) {
-                    tc.append(new StringTextComponent(" ")).append(player.getDisplayName());
+                    tc.append(new StringTextComponent(" ")).append(teamPlayer.getDisplayName());
                 }
             });
 

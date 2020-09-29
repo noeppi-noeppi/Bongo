@@ -10,7 +10,6 @@ import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -43,6 +42,18 @@ public class EventListener {
         World world = event.getPlayer().getEntityWorld();
         if (!world.isRemote && world instanceof ServerWorld && event.getPlayer() instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(world);
+            if (bongo.running()) {
+                boolean playerFound = false;
+                for (Team team : bongo.getTeams()) {
+                    if (team.hasPlayer(event.getPlayer())) {
+                        playerFound = true;
+                    }
+                }
+                if (!playerFound && !event.getPlayer().hasPermissionLevel(2)) {
+                    ((ServerPlayerEntity) event.getPlayer()).connection.disconnect(new TranslationTextComponent("bongo.disconnect"));
+                    return;
+                }
+            }
             for (Task task : bongo.tasks()) {
                 if (task != null)
                     task.syncToClient(world.getServer(), (ServerPlayerEntity) event.getPlayer());
