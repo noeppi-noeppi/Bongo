@@ -6,7 +6,7 @@
     "friendlyFire": false,
     "lockTaskOnDeath": false,
     "consumeItems": false,
-    "teleportsPerTeam": 3
+    "teleportsPerTeam": 0
   },
   "tasks": [
     {
