@@ -156,6 +156,7 @@ public class Bongo extends WorldSavedData {
             team.clearBackPack(true);
             team.resetCompleted(true);
             team.resetLocked(true);
+            team.teleportsLeft(getSettings().teleportsPerTeam);
             uids.addAll(team.getPlayers());
         }
         if (world != null) {

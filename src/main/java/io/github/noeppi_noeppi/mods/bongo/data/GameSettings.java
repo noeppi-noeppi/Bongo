@@ -15,6 +15,7 @@ public class GameSettings {
     public final boolean friendlyFire;
     public final boolean lockTaskOnDeath;
     public final boolean consumeItems;
+    public final int teleportsPerTeam;
 
     public GameSettings(CompoundNBT nbt) {
         if (nbt.contains("winCondition", Constants.NBT.TAG_STRING)) {
@@ -53,6 +54,12 @@ public class GameSettings {
             consumeItems = false;
         }
 
+        if (nbt.contains("teleportsPerTeam")) {
+            teleportsPerTeam = nbt.getInt("teleportsPerTeam");
+        } else {
+            teleportsPerTeam = 0;
+        }
+
         this.nbt = new CompoundNBT();
         this.nbt.putString("winCondition", winCondition.id);
         this.nbt.putBoolean("invulnerable", invulnerable);
@@ -60,6 +67,7 @@ public class GameSettings {
         this.nbt.putBoolean("friendlyFire", friendlyFire);
         this.nbt.putBoolean("lockTaskOnDeath", lockTaskOnDeath);
         this.nbt.putBoolean("consumeItems", consumeItems);
+        this.nbt.putInt("teleportsPerTeam", teleportsPerTeam);
     }
 
     public CompoundNBT getTag() {

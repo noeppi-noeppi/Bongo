@@ -23,6 +23,7 @@ public class Team {
 
     private int completed;
     private int locked;
+    private int teleportsLeft;
     private final List<UUID> players;
     private final ItemStackHandler backpack;
 
@@ -32,6 +33,7 @@ public class Team {
         this.color = color;
         this.completed = 0;
         this.locked = 0;
+        teleportsLeft = 0;
         this.players = new ArrayList<>();
         this.backpack = new ItemStackHandler(27);
     }
@@ -107,10 +109,33 @@ public class Team {
         }
     }
 
+    public int teleportsLeft() {
+        return teleportsLeft;
+    }
+
+    public void teleportsLeft(int teleportsLeft) {
+        this.teleportsLeft = teleportsLeft;
+        bongo.markDirty();
+    }
+
+    public boolean consumeTeleport() {
+        if (teleportsLeft < 0) {
+            return true;
+        } else if (teleportsLeft > 0) {
+            teleportsLeft -= 1;
+            bongo.markDirty();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putInt("completed", completed);
         nbt.putInt("locked", locked);
+        nbt.putInt("teleportsLeft", teleportsLeft);
+
         ListNBT playerList = new ListNBT();
         for (UUID uuid : players) {
             CompoundNBT uuidTag = new CompoundNBT();
@@ -125,6 +150,7 @@ public class Team {
     public void deserializeNBT(CompoundNBT nbt) {
         completed = nbt.getInt("completed");
         locked = nbt.getInt("locked");
+        teleportsLeft = nbt.getInt("teleportsLeft");
 
         if (nbt.contains("players", Constants.NBT.TAG_LIST)) {
             ListNBT playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
@@ -143,6 +169,7 @@ public class Team {
         completed = 0;
         locked = 0;
         players.clear();
+        teleportsLeft = 0;
         clearBackPack(true);
         bongo.markDirty(suppressBingoSync);
     }

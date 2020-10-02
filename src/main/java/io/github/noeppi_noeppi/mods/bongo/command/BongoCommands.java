@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.item.DyeColor;
 import net.minecraftforge.event.RegisterCommandsEvent;
 
@@ -34,6 +35,10 @@ public class BongoCommands {
                 Commands.literal("teamchat").executes(new TeamChatCommand())
         ).then(
                 Commands.literal("dump").requires(cs -> cs.hasPermissionLevel(2)).executes(new DumpCommand()).then(Commands.argument("everything", BoolArgumentType.bool()).executes(new DumpCommand()))
+        ).then(
+                Commands.literal("teleport").then(Commands.argument("target", EntityArgument.player()).executes(new TeleportCommand()))
+        ).then(
+                Commands.literal("tp").then(Commands.argument("target", EntityArgument.player()).executes(new TeleportCommand()))
         ));
     }
 }
