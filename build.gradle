@@ -103,6 +103,10 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = project.archivesBaseName
+            version = project.version
+
             artifact jar
 
             pom {
@@ -117,7 +121,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file:/${System.getProperty("user.home")}/maven"
+            url "/var/www/maven"
         }
     }
 }

@@ -176,6 +176,13 @@ public class RenderOverlay {
                         lines.add(I18n.format("bongo.wc." + bongo.getSettings().winCondition.id));
                     }
 
+                    if (bongo.getSettings().teleportsPerTeam != 0 && !bongo.won()) {
+                        boolean hasRunningTeam = team != null && bongo.running();
+                        int tpLeft = hasRunningTeam ? team.teleportsLeft() : bongo.getSettings().teleportsPerTeam;
+                        String tpLeftStr = tpLeft < 0 ? I18n.format("bongo.infinite") : Integer.toString(tpLeft);
+                        lines.add(I18n.format(hasRunningTeam ? "bongo.tp_left": "bongo.tp_team", tpLeftStr));
+                    }
+
                     if (bongo.running() || bongo.won()) {
                         long millis;
                         if (bongo.won()) {

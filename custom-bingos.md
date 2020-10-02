@@ -69,6 +69,12 @@ If `consumeItems` is set to true and someone completes a task, the item (or what
 
 *Default: false*
 
+### Teleports per team
+
+`teleportsPerTeam` specifies the amount of teleports each team has using `/bingo teleport`. A negative number means infinite teleports, 0 disables this feature.
+
+*Default: 0*
+
 ## Tasks
 
 `tasks` is a list of tasks. A task is an object. All tasks share the following properties:
