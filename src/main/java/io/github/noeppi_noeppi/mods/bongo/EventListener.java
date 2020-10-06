@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -131,6 +132,29 @@ public class EventListener {
 
     @SubscribeEvent
     public void damage(LivingHurtEvent event) {
+        if (!event.getEntityLiving().getEntityWorld().isRemote && event.getEntityLiving() instanceof PlayerEntity && !event.getSource().canHarmInCreative()) {
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            Bongo bongo = Bongo.get(player.getEntityWorld());
+            Team team = bongo.getTeam(player);
+            if (bongo.running() && team != null) {
+                if (event.getSource().getTrueSource() instanceof PlayerEntity) {
+                    PlayerEntity source = (PlayerEntity) event.getSource().getTrueSource();
+                    if (!bongo.getSettings().pvp) {
+                        event.setCanceled(true);
+                    } else if (team.hasPlayer(source)) {
+                        if (!bongo.getSettings().friendlyFire) {
+                            event.setCanceled(true);
+                        }
+                    }
+                } else if (bongo.getSettings().invulnerable) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void attack(LivingAttackEvent event) {
         if (!event.getEntityLiving().getEntityWorld().isRemote && event.getEntityLiving() instanceof PlayerEntity && !event.getSource().canHarmInCreative()) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             Bongo bongo = Bongo.get(player.getEntityWorld());

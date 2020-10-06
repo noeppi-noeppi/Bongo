@@ -26,7 +26,6 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
     public static final ResourceLocation CROWN_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/player/crown.png");
     public static final RenderType CROWN_TYPE = RenderType.getEntityCutout(CROWN_TEXTURE);
 
-
     public CrownRenderer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> entityRendererIn) {
         super(entityRendererIn);
     }
