@@ -4,9 +4,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
-import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -32,7 +32,7 @@ public class CreateCommand implements Command<CommandSource> {
         }
         bongo.activate();
 
-        Util.broadcast(world, new TranslationTextComponent("bongo.info").append(player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.create.done")));
+        ServerMessages.broadcast(world, new TranslationTextComponent("bongo.info").append(player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.create.done")));
 
         return 0;
     }

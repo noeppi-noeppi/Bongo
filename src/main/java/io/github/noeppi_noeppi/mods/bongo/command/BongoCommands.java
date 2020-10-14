@@ -2,8 +2,8 @@ package io.github.noeppi_noeppi.mods.bongo.command;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import io.github.noeppi_noeppi.libx.command.UppercaseEnumArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
-import io.github.noeppi_noeppi.mods.bongo.command.arg.UppercaseEnumArgument;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.item.DyeColor;

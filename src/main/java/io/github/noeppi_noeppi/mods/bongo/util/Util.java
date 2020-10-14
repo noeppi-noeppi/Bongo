@@ -2,23 +2,15 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.client.Minecraft;
-import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.command.arguments.IArgumentSerializer;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.UUID;
 
 public class Util {
 
@@ -69,24 +61,6 @@ public class Util {
         }
     }
 
-    public static void broadcast(World world, ITextComponent message) {
-        MinecraftServer server = world.getServer();
-        if (server != null) {
-            server.getPlayerList().getPlayers().forEach(player -> player.sendMessage(message, player.getUniqueID()));
-        }
-    }
-
-    public static void broadcastExcept(World world, PlayerEntity exclude, ITextComponent message) {
-        UUID uid = exclude.getGameProfile().getId();
-        MinecraftServer server = world.getServer();
-        if (server != null) {
-            server.getPlayerList().getPlayers().forEach(player -> {
-                if (!uid.equals(player.getGameProfile().getId()))
-                    player.sendMessage(message, player.getUniqueID());
-            });
-        }
-    }
-
     public static void broadcastTeam(World world, Team team, ITextComponent message) {
         MinecraftServer server = world.getServer();
         if (server != null) {
@@ -94,21 +68,6 @@ public class Util {
                 if (team.hasPlayer(player))
                     player.sendMessage(message, player.getUniqueID());
             });
-        }
-    }
-
-    @Deprecated
-    public static MinecraftServer getClientServer() {
-        return DistExecutor.unsafeRunForDist(() -> Minecraft.getInstance()::getIntegratedServer, () -> () -> null);
-    }
-
-    public static void registerGenericCommandArgument(String name, Class<?> clazz, IArgumentSerializer<?> ias) {
-        try {
-            Method method = ObfuscationReflectionHelper.findMethod(ArgumentTypes.class, "func_218136_a", String.class, Class.class, IArgumentSerializer.class);
-            method.setAccessible(true);
-            method.invoke(null, name, clazz, ias);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
         }
     }
 

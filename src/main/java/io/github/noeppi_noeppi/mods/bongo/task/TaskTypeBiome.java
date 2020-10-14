@@ -12,6 +12,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -67,12 +68,12 @@ public class TaskTypeBiome implements TaskType<Biome> {
 
     @Override
     public String getTranslatedContentName(Biome content) {
-        return I18n.format(content.getTranslationKey());
+        return I18n.format(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
     }
 
     @Override
     public ITextComponent getContentName(Biome content, MinecraftServer server) {
-        return new TranslationTextComponent(content.getTranslationKey());
+        return new TranslationTextComponent(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
     }
 
     @Override

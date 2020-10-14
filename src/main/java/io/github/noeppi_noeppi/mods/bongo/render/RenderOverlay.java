@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import io.github.noeppi_noeppi.libx.render.RenderHelper;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.Keybinds;
@@ -23,10 +24,10 @@ import java.util.List;
 
 public class RenderOverlay {
 
-    public static final ResourceLocation BINGO_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/overlay/bingo.png");
-    public static final ResourceLocation BINGO_SLOTS_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/overlay/bingo_slots.png");
+    public static final ResourceLocation BINGO_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo.png");
+    public static final ResourceLocation BINGO_SLOTS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo_slots.png");
     public static final ResourceLocation BEACON_TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/beacon.png");
-    public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/overlay/completed_rects.png");
+    public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/completed_rects.png");
 
     @SubscribeEvent
     public void renderChat(RenderGameOverlayEvent.Pre event) {

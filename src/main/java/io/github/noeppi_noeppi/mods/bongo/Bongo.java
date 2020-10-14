@@ -8,7 +8,6 @@ import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
-import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import net.minecraft.client.Minecraft;
@@ -34,7 +33,7 @@ import java.util.function.Predicate;
 
 public class Bongo extends WorldSavedData {
 
-    public static final String ID = BongoMod.MODID;
+    public static final String ID = BongoMod.getInstance().modid;
 
     private static Bongo clientInstance;
     private static Minecraft mc = null;
@@ -168,7 +167,7 @@ public class Bongo extends WorldSavedData {
         }
         markDirty(true);
         if (world != null) {
-            BongoNetwork.updateBongo(world, BongoMessageType.START);
+            BongoMod.getNetwork().updateBongo(world, BongoMessageType.START);
         }
     }
 
@@ -183,7 +182,7 @@ public class Bongo extends WorldSavedData {
         if (world != null) {
             for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
                 player.refreshDisplayName();
-            BongoNetwork.updateBongo(world, BongoMessageType.STOP);
+            BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
         }
     }
 
@@ -378,7 +377,7 @@ public class Bongo extends WorldSavedData {
     public void markDirty(boolean suppressBingoSync) {
         super.markDirty();
         if (world != null && !suppressBingoSync) {
-            BongoNetwork.updateBongo(world);
+            BongoMod.getNetwork().updateBongo(world);
         }
     }
 
@@ -421,7 +420,7 @@ public class Bongo extends WorldSavedData {
         updateTooltipPredicate();
         markDirty(true);
         if (world != null) {
-            BongoNetwork.updateBongo(world, BongoMessageType.CREATE);
+            BongoMod.getNetwork().updateBongo(world, BongoMessageType.CREATE);
         }
     }
 
@@ -459,7 +458,7 @@ public class Bongo extends WorldSavedData {
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 //
             } catch (Throwable e) {
-                BongoMod.LOGGER.warn("Could not reload JEI item list: ", e);
+                BongoMod.getInstance().logger.warn("Could not reload JEI item list: ", e);
             }
         }
     }

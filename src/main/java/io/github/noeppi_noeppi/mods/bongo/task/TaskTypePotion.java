@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
+import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.util.PotionItemRenderCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -50,7 +50,7 @@ public class TaskTypePotion implements TaskType<Effect> {
 
     @Override
     public void renderSlotContent(Minecraft mc, Effect content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
-        RenderHelper.renderItemGui(matrixStack, buffer, PotionItemRenderCache.getRenderStack(content), -2, -2, 19, false);
+        RenderHelperItem.renderItemGui(matrixStack, buffer, PotionItemRenderCache.getRenderStack(content), -2, -2, 19, false);
     }
 
     @Override

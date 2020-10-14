@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.bongo;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.resources.ReloadListener;
@@ -13,10 +12,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -31,6 +33,7 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -39,7 +42,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        BongoNetwork.updateBongo(event.getPlayer());
+        BongoMod.getNetwork().updateBongo(event.getPlayer());
         World world = event.getPlayer().getEntityWorld();
         if (!world.isRemote && world instanceof ServerWorld && event.getPlayer() instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(world);
@@ -64,7 +67,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void playerChangeDim(PlayerEvent.PlayerChangedDimensionEvent event) {
-        BongoNetwork.updateBongo(event.getPlayer());
+        BongoMod.getNetwork().updateBongo(event.getPlayer());
     }
 
     @SubscribeEvent
@@ -102,7 +105,10 @@ public class EventListener {
                     bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
                 }
             }
-            bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, event.player.getEntityWorld().getBiome(event.player.getPosition()));
+            // This is a bit hacky but it works
+            ResourceLocation biomeKey = event.player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
+            Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
+            bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, realBiome);
             if (bongo.running() && bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
                 event.player.getFoodStats().setFoodLevel(20);
                 event.player.setAir(event.player.getMaxAir());
