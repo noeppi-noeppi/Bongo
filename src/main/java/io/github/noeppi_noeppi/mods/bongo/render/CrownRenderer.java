@@ -36,7 +36,7 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
             Bongo bongo = Bongo.get(player.getEntityWorld());
             if (bongo.active() && bongo.won() && bongo.winningTeam().hasPlayer(player)) {
                 matrixStack.push();
-                if (player.isSneaking()) {
+                if (player.isSneaking() && !player.abilities.isFlying) {
                     matrixStack.translate(0, 0.25, 0);
                 }
                 matrixStack.rotate(Vector3f.YP.rotationDegrees(yaw));
