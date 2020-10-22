@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -73,7 +74,8 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
             matrixStack.rotate(Vector3f.ZP.rotationDegrees(180));
             matrixStack.rotate(Vector3f.YP.rotationDegrees(45));
             matrixStack.rotate(Vector3f.XP.rotationDegrees(2));
-            render.render(entity, 0, 0, matrixStack, buffer, 100);
+            entity.ticksExisted = ClientTickHandler.ticksInGame;
+            render.render(entity, 0, mc.getRenderPartialTicks(), matrixStack, buffer, 100);
         }
     }
 

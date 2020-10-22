@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
 
-    public static final ResourceLocation CROWN_TEXTURE = new ResourceLocation(BongoMod.MODID, "textures/player/crown.png");
+    public static final ResourceLocation CROWN_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/player/crown.png");
     public static final RenderType CROWN_TYPE = RenderType.getEntityCutout(CROWN_TEXTURE);
 
     public CrownRenderer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> entityRendererIn) {
@@ -36,7 +36,7 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
             Bongo bongo = Bongo.get(player.getEntityWorld());
             if (bongo.active() && bongo.won() && bongo.winningTeam().hasPlayer(player)) {
                 matrixStack.push();
-                if (player.isSneaking()) {
+                if (player.isSneaking() && !player.abilities.isFlying) {
                     matrixStack.translate(0, 0.25, 0);
                 }
                 matrixStack.rotate(Vector3f.YP.rotationDegrees(yaw));
