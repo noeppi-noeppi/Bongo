@@ -72,6 +72,11 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeBiome.INSTANCE);
         TaskTypes.registerType(TaskTypePotion.INSTANCE);
 
+        // SpookyJam 2020
+        TaskTypes.registerType(TaskTypeCalyx.INSTANCE);
+        TaskTypes.registerType(TaskTypeCorrupted.INSTANCE);
+        TaskTypes.registerType(TaskTypeSanity.INSTANCE);
+
         DefaultEffects.register();
 
         ArgumentTypes.register(modid + "_bongogame", GameDefArgument.class, new GameDefArgument.Serializer());

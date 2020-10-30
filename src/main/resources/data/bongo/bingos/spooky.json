@@ -1,0 +1,414 @@
+{
+  "settings": {
+    "winCondition": "bongo.default",
+    "invulnerable": false,
+    "pvp": false,
+    "friendlyFire": false,
+    "lockTaskOnDeath": false,
+    "consumeItems": false,
+    "teleportsPerTeam": 0
+  },
+  "tasks": [
+    {
+      "infection": 10,
+      "type": "spooky20.calyx",
+      "weight": 4
+    },
+    {
+      "infection": 30,
+      "type": "spooky20.calyx",
+      "weight": 4
+    },
+    {
+      "infection": 50,
+      "type": "spooky20.calyx",
+      "weight": 2
+    },
+
+    {
+      "block": "dicemccl:corrupted_cobblestone",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_granite",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_grass",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_gravel",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_ice",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_obsidian",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_sand",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+    {
+      "block": "dicemccl:corrupted_sandstone",
+      "type": "spooky20.corrupted",
+      "weight": 2
+    },
+
+    {
+      "sanity": 90,
+      "type": "spooky20.sanity",
+      "weight": 4
+    },
+    {
+      "sanity": 70,
+      "type": "spooky20.sanity",
+      "weight": 4
+    },
+    {
+      "sanity": 50,
+      "type": "spooky20.sanity",
+      "weight": 2
+    },
+
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_apple",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_rotten_flesh",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_potato",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_carrot",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_porkchop",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_bread",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_chicken",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_beef",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_pumpkin_pie",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cake",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_latte",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_rabbit",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_mutton",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_beetroot_soup",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_cod",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_salmon",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_sweet_berries",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_dried_kelp",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+
+    {
+      "id": "mystical_pumpkins:pumpkin_essence",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 3
+    },
+    {
+      "id": "mystical_pumpkins:aquasight_pumpkin",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 2
+    },
+    {
+      "id": "mystical_pumpkins:mire_pumpkin",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 2
+    },
+    {
+      "id": "mystical_pumpkins:luck_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:healing_pumpkin",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 2
+    },
+    {
+      "id": "mystical_pumpkins:wrath_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:floating_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:cinder_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:night_vision_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+
+    {
+      "id": "froglins:froglin_egg",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "potion": "froglins:healthiness",
+      "type": "bongo.potion",
+      "weight": 4
+    },
+    {
+      "id": "cucurbita:plant_oil_bucket",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 4
+    },
+    {
+      "id": "cucurbita:pumpkin_wand",
+      "Count": 1,
+      "tag": {},
+      "type": "bongo.item",
+      "weight": 4
+    },
+    {
+      "id": "cucurbita:bio_mass",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 4
+    },
+    {
+      "id": "cucurbita:pumpkin_pulp",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 4
+    },
+    {
+      "id": "cucurbita:pumpkin_jam",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 3
+    },
+
+    {
+      "id": "spookyarms:explosive_pumpkin",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 6
+    },
+    {
+      "id": "spookyarms:pumpkin_bullet",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 6
+    },
+    {
+      "id": "spookyarms:pumpkin_bazooka",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 2
+    },
+    {
+      "id": "spookyarms:pumpkin_pistol",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 3
+    },
+
+    {
+      "biome": "spooky_autumn_forests:autumn_forest",
+      "type": "bongo.biome",
+      "weight": 5
+    },
+    {
+      "biome": "spooky_autumn_forests:spooky_forest",
+      "type": "bongo.biome",
+      "weight": 3
+    },
+    {
+      "biome": "spooky_autumn_forests:nightmare_forest",
+      "type": "bongo.biome",
+      "weight": 3
+    },
+
+    {
+      "type": "bongo.entity",
+      "entity": "lorespawn:baby_spider",
+      "weight": 2
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "mystical_pumpkins:dragourd"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "froglins:froglin",
+      "weight": 6
+    },
+
+    {
+      "potion": "pumpkinpotions:deadly_aura",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:ghost",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:golem_aggression",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:knockback_boost",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:knockback_resistance",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:mob_dizziness",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:projectile_resistance",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:random_teleport",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:xp_boost",
+      "type": "bongo.potion"
+    },
+
+    {
+      "type": "bongo.entity",
+      "entity": "minecraft:bat",
+      "weight": 2
+    },
+    {
+      "id": "minecraft:jack_o_lantern",
+      "Count": 1,
+      "type": "bongo.item",
+      "weight": 5
+    },
+
+    {
+      "id": "minecraft:blackstone",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:hay_block",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:charcoal",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:target",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "spooky_autumn_forests:spooky_wood_log",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:soul_sand",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:soul_soil",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:soul_campfire",
+      "Count": 1,
+      "type": "bongo.item"
+    }
+  ]
+}

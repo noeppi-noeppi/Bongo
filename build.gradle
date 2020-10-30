@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 
 group = 'io.github.noeppi_noeppi.mods'
 archivesBaseName = 'Bongo'
-version = getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
+version = '1.16.3-1.0.1-spooky' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
 
 println "${archivesBaseName} version: ${version}"
 
@@ -36,6 +36,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArg "-Dmixin.env.disableRefMap=true"
             mods {
                 bongo {
                     source sourceSets.main
@@ -47,6 +48,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArg "-Dmixin.env.disableRefMap=true"
             mods {
                 bongo {
                     source sourceSets.main
@@ -59,6 +61,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             args '--mod', 'bongo', '--all', '--output', file('src/generated/resources/'), "--existing", file("src/main/resources")
+            jvmArg "-Dmixin.env.disableRefMap=true"
             mods {
                 bongo {
                     source sourceSets.main
@@ -98,7 +101,7 @@ dependencies {
 
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    compile fg.deobf('curse.maven:pumpkin-spice-everything:3070069')
+    compile fg.deobf('curse.maven:pumpkin-spice-everything:3097110')
     compile fg.deobf('curse.maven:corrupted-land:3089518')
     compile fg.deobf('curse.maven:immortuos-calyx:3083680')
     compile fg.deobf('curse.maven:spooky-arms:3089662')

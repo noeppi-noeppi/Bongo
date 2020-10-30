@@ -70,5 +70,11 @@
   "bongo.wc.bongo.rows": "One row",
   "bongo.wc.bongo.rows_and_columns": "A row or a column",
   "bongo.win": " won",
-  "bongo.winplayers": " won. Players:"
+  "bongo.winplayers": " won. Players:",
+  "bongo.calyx": "Infection: %s",
+  "bongo.corrupt": "Stand on",
+  "bongo.sanity": "Go below %s",
+  "biome.spooky_autumn_forests.autumn_forest": "Autumn Forest",
+  "biome.spooky_autumn_forests.spooky_forest": "Spooky Forest",
+  "biome.spooky_autumn_forests.nightmare_forest": "Nightmare Forest"
 }

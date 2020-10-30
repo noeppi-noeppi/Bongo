@@ -1,5 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.effect;
 
+import com.jedijoe.ImmortuosCalyx.Infection.InfectionManagerCapability;
+import io.github.championash5357.paranoia.api.util.CapabilityInstances;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
@@ -18,6 +20,11 @@ public class DefaultEffects {
             //noinspection ConstantConditions
             AdvancementCommand.Action.REVOKE.applyToAdvancements(player, player.getServer().getAdvancementManager().getAllAdvancements());
         });
+        StartingEffects.registerPlayerEffect((bongo, player) -> player.getCapability(InfectionManagerCapability.INSTANCE).ifPresent(manager -> manager.setInfectionProgress(0)));
+        StartingEffects.registerPlayerEffect((bongo, player) -> player.getCapability(CapabilityInstances.SANITY_CAPABILITY).ifPresent(sanity -> {
+            sanity.setMaxSanity(100, true);
+            sanity.setSanity(100, true);
+        }));
 
         TaskEffects.registerPlayerEffect((bongo, thePlayer, task) -> {
             Team team = bongo.getTeam(thePlayer);
