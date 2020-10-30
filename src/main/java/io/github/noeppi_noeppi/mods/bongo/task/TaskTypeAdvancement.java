@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
-import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
+import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
+import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
@@ -55,7 +55,7 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public void renderSlotContent(Minecraft mc, ResourceLocation content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
         ItemStack icon = ClientAdvancementInfo.getDisplay(content);
-        RenderHelper.renderItemGui(matrixStack, buffer, icon, 0, 0, 16, false);
+        RenderHelperItem.renderItemGui(matrixStack, buffer, icon, 0, 0, 16, false);
     }
 
     @Override
@@ -83,9 +83,9 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
         Advancement advancement = server.getAdvancementManager().getAdvancement(element);
         if (advancement != null) {
             if (syncTarget == null) {
-                BongoNetwork.syncAdvancement(advancement);
+                BongoMod.getNetwork().syncAdvancement(advancement);
             } else {
-                BongoNetwork.syncAdvancementTo(advancement, syncTarget);
+                BongoMod.getNetwork().syncAdvancementTo(advancement, syncTarget);
             }
         }
     }

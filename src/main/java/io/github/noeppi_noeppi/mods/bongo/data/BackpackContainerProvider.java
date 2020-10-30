@@ -1,6 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
-import io.github.noeppi_noeppi.mods.bongo.util.VanillaWrapper;
+import io.github.noeppi_noeppi.libx.inventory.VanillaWrapper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ChestContainer;

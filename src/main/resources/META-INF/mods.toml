@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[34,)"
 issueTrackerURL="https://github.com/noeppi-noeppi/bongo/issues"
 license="Apache-2.0"
 
@@ -16,13 +16,20 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[31,)"
+    versionRange="[34.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1]"
+    versionRange="[1.16.3]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="libx"
+    mandatory=true
+    versionRange="[1.16.3-1.0.1,)"
     ordering="NONE"
     side="BOTH"

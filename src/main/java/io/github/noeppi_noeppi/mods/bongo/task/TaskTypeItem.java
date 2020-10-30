@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import io.github.noeppi_noeppi.mods.bongo.render.RenderHelper;
+import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -49,7 +49,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public void renderSlotContent(Minecraft mc, ItemStack content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
-        RenderHelper.renderItemGui(matrixStack, buffer, content, 0, 0, 16, !bigBongo);
+        RenderHelperItem.renderItemGui(matrixStack, buffer, content, 0, 0, 16, !bigBongo);
     }
 
     @Override

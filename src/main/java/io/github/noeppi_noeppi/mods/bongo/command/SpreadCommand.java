@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -57,7 +58,7 @@ public class SpreadCommand implements Command<CommandSource> {
             for (PlayerEntity player : added) {
                 tc.append(new StringTextComponent(" ")).append(player.getDisplayName());
             }
-            Util.broadcast(world, tc);
+            ServerMessages.broadcast(world, tc);
         }
 
         return 0;
