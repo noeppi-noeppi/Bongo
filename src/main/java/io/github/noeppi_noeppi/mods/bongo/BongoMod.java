@@ -76,6 +76,7 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeCalyx.INSTANCE);
         TaskTypes.registerType(TaskTypeCorrupted.INSTANCE);
         TaskTypes.registerType(TaskTypeSanity.INSTANCE);
+        TaskTypes.registerType(TaskTypeWitch.INSTANCE);
 
         DefaultEffects.register();
 

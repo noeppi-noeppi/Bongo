@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 
 group = 'io.github.noeppi_noeppi.mods'
 archivesBaseName = 'Bongo'
-version = '1.16.3-1.0.1-spooky' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
+version = '1.16.3-1.0.1-spooky2' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
 
 println "${archivesBaseName} version: ${version}"
 
@@ -101,18 +101,18 @@ dependencies {
 
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    compile fg.deobf('curse.maven:pumpkin-spice-everything:3097110')
+    compile fg.deobf('curse.maven:pumpkin-spice-everything:3097389')
     compile fg.deobf('curse.maven:corrupted-land:3089518')
     compile fg.deobf('curse.maven:immortuos-calyx:3083680')
-    compile fg.deobf('curse.maven:spooky-arms:3089662')
+    compile fg.deobf('curse.maven:spooky-arms:3097847')
     compile fg.deobf('curse.maven:froglins:3085866')
-    compile fg.deobf('curse.maven:mystical-pumpkins:3093975')
-    compile fg.deobf('curse.maven:pumpkinpotions:3094368')
+    compile fg.deobf('curse.maven:mystical-pumpkins:3098387')
+    compile fg.deobf('curse.maven:pumpkinpotions:3097852')
     compile fg.deobf('curse.maven:spooky-autumn-forests:3094599')
     compile fg.deobf('curse.maven:paranoia:3088671')
     compile fg.deobf('curse.maven:lorespawn:3096584')
-    compile fg.deobf('curse.maven:undercoverwitches:3087711')
-    compile fg.deobf('curse.maven:cucurbita:3089504')
+    compile fg.deobf('curse.maven:undercoverwitches:3098759')
+    compile fg.deobf('curse.maven:cucurbita:3097930')
     compile fg.deobf('curse.maven:geckolib:3071704')
 }
 

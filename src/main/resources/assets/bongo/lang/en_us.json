@@ -76,5 +76,7 @@
   "bongo.sanity": "Go below %s",
   "biome.spooky_autumn_forests.autumn_forest": "Autumn Forest",
   "biome.spooky_autumn_forests.spooky_forest": "Spooky Forest",
-  "biome.spooky_autumn_forests.nightmare_forest": "Nightmare Forest"
+  "biome.spooky_autumn_forests.nightmare_forest": "Nightmare Forest",
+  "bongo.witch1": "Undercover Witches",
+  "bongo.witch2": "Right click tamed witch"
 }

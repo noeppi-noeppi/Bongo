@@ -1,9 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import com.dicemc.corruptedlands.ICorrupted;
-import com.jedijoe.ImmortuosCalyx.Infection.InfectionManager;
 import com.jedijoe.ImmortuosCalyx.Infection.InfectionManagerCapability;
-import io.github.championash5357.paranoia.api.callback.SanityCallbacks;
 import io.github.championash5357.paranoia.api.util.CapabilityInstances;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
@@ -12,6 +10,7 @@ import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.ReloadListener;
+import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -38,6 +37,7 @@ import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -131,6 +131,20 @@ public class EventListener {
 
             // Paranoia
             event.player.getCapability(CapabilityInstances.SANITY_CAPABILITY).ifPresent(sanity -> bongo.checkCompleted(TaskTypeSanity.INSTANCE, event.player, sanity.getSanity()));
+        }
+    }
+
+    @SubscribeEvent
+    public void playerRightClickEntity(PlayerInteractEvent.EntityInteract event) {
+        // Undercover Witches
+        if (event.getTarget() instanceof CatEntity) {
+            CatEntity cat = (CatEntity) event.getTarget();
+            if (cat.isTamed() && event.getPlayer().getUniqueID().equals(cat.getOwnerId())) {
+                if (cat.getTags().contains("undercover_witch")) {
+                    Bongo bongo = Bongo.get(event.getWorld());
+                    bongo.checkCompleted(TaskTypeWitch.INSTANCE, event.getPlayer(), TaskTypeWitch.INSTANCE);
+                }
+            }
         }
     }
 

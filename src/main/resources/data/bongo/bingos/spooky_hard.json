@@ -1,0 +1,125 @@
+{
+  "settings": {
+    "winCondition": "bongo.all",
+    "invulnerable": true,
+    "pvp": false,
+    "friendlyFire": false,
+    "lockTaskOnDeath": false,
+    "consumeItems": false,
+    "teleportsPerTeam": 0
+  },
+  "tasks": [
+    {
+      "id": "froglins:froglin_egg",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "cucurbita:pumpkin_stew",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_chorus_fruit",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "spookyarms:pumpkin_bullet",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "spookyarms:pumpkin_bazooka",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "cucurbita:melon_wand",
+      "Count": 1,
+      "tag": {},
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:healing_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:mire_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "mystical_pumpkins:eye_of_dread",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "pumpkin_spice_everything:pumpkin_spice_cooked_rabbit",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "immortuoscalyx:antiparasitic",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:carved_pumpkin",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "lorespawn:baby_spider"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "mystical_pumpkins:dragourd"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "minecraft:bat"
+    },
+    {
+      "biome": "spooky_autumn_forests:autumn_forest",
+      "type": "bongo.biome"
+    },
+    {
+      "biome": "spooky_autumn_forests:nightmare_forest",
+      "type": "bongo.biome"
+    },
+    {
+      "block": "dicemccl:corrupted_grass",
+      "type": "spooky20.corrupted"
+    },
+    {
+      "block": "dicemccl:corrupted_sandstone",
+      "type": "spooky20.corrupted"
+    },
+    {
+      "potion": "pumpkinpotions:deadly_aura",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "froglins:healthiness",
+      "type": "bongo.potion"
+    },
+    {
+      "potion": "pumpkinpotions:ghost",
+      "type": "bongo.potion"
+    },
+    {
+      "type": "spooky20.witch"
+    },
+    {
+      "sanity": 50,
+      "type": "spooky20.sanity"
+    },
+    {
+      "infection": 60,
+      "type": "spooky20.calyx"
+    }
+  ]
+}
