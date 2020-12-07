@@ -28,6 +28,7 @@ public class RenderOverlay {
     public static final ResourceLocation BINGO_SLOTS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo_slots.png");
     public static final ResourceLocation BEACON_TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/beacon.png");
     public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/completed_rects.png");
+    public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/icons.png");
 
     @SubscribeEvent
     public void renderChat(RenderGameOverlayEvent.Pre event) {

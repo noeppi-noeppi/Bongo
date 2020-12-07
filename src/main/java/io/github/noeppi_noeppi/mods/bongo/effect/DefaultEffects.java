@@ -4,6 +4,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.network.play.server.STitlePacket;
+import net.minecraft.stats.ServerStatisticsManager;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
@@ -17,6 +18,12 @@ public class DefaultEffects {
         StartingEffects.registerPlayerEffect((bongo, player) -> {
             //noinspection ConstantConditions
             AdvancementCommand.Action.REVOKE.applyToAdvancements(player, player.getServer().getAdvancementManager().getAllAdvancements());
+        });
+        StartingEffects.registerPlayerEffect((bongo, player) -> {
+            ServerStatisticsManager mgr = player.getServerWorld().getServer().getPlayerList().getPlayerStats(player);
+            mgr.statsData.keySet().forEach(stat -> mgr.statsData.put(stat, 0));
+            mgr.markAllDirty();
+            mgr.sendStats(player);
         });
 
         TaskEffects.registerPlayerEffect((bongo, thePlayer, task) -> {

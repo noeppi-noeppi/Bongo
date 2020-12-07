@@ -83,12 +83,17 @@ repositories {
         name = 'MelanX Maven'
         url = 'https://maven.melanx.de/'
     }
+    maven {
+        name = "CurseMaven"
+        url = "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:${minecraft_version}-${libx_version}")
+    compile fg.deobf('curse.maven:twitchspawn-273382:3098878')
 
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 }

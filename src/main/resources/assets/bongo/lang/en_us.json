@@ -40,6 +40,7 @@
   "bongo.task.complete": " has completed task ",
   "bongo.task.entity.name": "Kill Entity",
   "bongo.task.item.name": "Item",
+  "bongo.task.stat.name": "Statistic",
   "bongo.task.potion.name": "Potion Effect",
   "bongo.task_locked.death": "%s died. A task has been locked.",
   "bongo.team.black": "Team Black",

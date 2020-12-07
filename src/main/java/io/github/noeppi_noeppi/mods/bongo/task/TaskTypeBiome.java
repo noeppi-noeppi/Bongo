@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
@@ -99,7 +100,7 @@ public class TaskTypeBiome implements TaskType<Biome> {
         if (player == null) {
             return ForgeRegistries.BIOMES.getValues().stream();
         } else {
-            return Stream.of(player.getEntityWorld().getBiome(player.getPosition()));
+            return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
         }
     }
 }
