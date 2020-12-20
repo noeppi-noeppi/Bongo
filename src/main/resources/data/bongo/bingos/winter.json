@@ -1,0 +1,128 @@
+{
+  "settings": {
+    "invulnerable": true,
+    "winCondition": "bongo.all",
+    "friendlyFire": false,
+    "lockTaskOnDeath": false,
+    "teleportsPerTeam": 0,
+    "consumeItems": false,
+    "pvp": false
+  },
+  "tasks": [
+    {
+      "id": "festive_creepers:fireworks_crate",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "festive_creepers:festive_hat",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "coldsnaphorde:snowiersnowball",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "jolly_boxes:large_box",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "next_christmas:star",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "next_christmas:gingerbread_house",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "next_christmas:sweater_reindeer",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "next_christmas:sledge_spruce",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "snowyweaponry:diamond_cored_snowball",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "snowyweaponry:golden_snow_cone",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "next_christmas:speculaas",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:snowball",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:apple",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:spruce_sapling",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "id": "minecraft:paper",
+      "Count": 1,
+      "type": "bongo.item"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "coldsnaphorde:coldsnapsnowballer"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "workshopsofdoom:excavator"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "coldsnaphorde:coldsnapgunner"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "next_christmas:reindeer"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "festive_creepers:festive_creeper"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "coldsnaphorde:coldsnapstabber"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "minecraft:snow_golem"
+    },
+    {
+      "advancement": "workshopsofdoom:find_quarry_or_mines",
+      "type": "bongo.advancement"
+    },
+    {
+      "niceness": 25,
+      "type": "winter.niceness"
+    },
+    {
+      "biome": "next_christmas:christmas_forest",
+      "type": "bongo.biome"
+    }
+  ]
+}

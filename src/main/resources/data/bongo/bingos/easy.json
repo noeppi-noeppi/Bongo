@@ -10,34 +10,6 @@
   },
   "tasks": [
     {
-      "stat": "minecraft:fall_one_cm",
-      "category": "minecraft:custom",
-      "type": "bongo.stat",
-      "value": 1000,
-      "weight": 2000000
-    },
-    {
-      "stat": "minecraft:snowball",
-      "category": "minecraft:picked_up",
-      "type": "bongo.stat",
-      "value": 14,
-      "weight": 2000000
-    },
-    {
-      "stat": "minecraft:snow_golem",
-      "category": "minecraft:killed",
-      "type": "bongo.stat",
-      "value": 3,
-      "weight": 2000000
-    },
-    {
-      "stat": "minecraft:grass_block",
-      "category": "minecraft:mined",
-      "type": "bongo.stat",
-      "value": 1,
-      "weight": 2000000
-    },
-    {
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:acacia_boat"

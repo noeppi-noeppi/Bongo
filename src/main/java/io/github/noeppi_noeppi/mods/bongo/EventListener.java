@@ -1,5 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import io.github.championash5357.naughtyornice.api.capability.CapabilityInstances;
+import io.github.championash5357.naughtyornice.api.capability.INiceness;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -22,6 +24,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -37,6 +40,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EventListener {
 
@@ -113,6 +118,8 @@ public class EventListener {
                 event.player.getFoodStats().setFoodLevel(20);
                 event.player.setAir(event.player.getMaxAir());
             }
+            LazyOptional<INiceness> niceness = event.player.getCapability(CapabilityInstances.NICENESS_CAPABILITY);
+            niceness.ifPresent(n -> bongo.checkCompleted(TaskTypeNiceness.INSTANCE, event.player, (int) Math.round(n.getNiceness())));
         }
     }
 

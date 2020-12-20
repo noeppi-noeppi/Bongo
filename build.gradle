@@ -21,14 +21,14 @@ apply plugin: 'maven-publish'
 
 group = 'io.github.noeppi_noeppi.mods'
 archivesBaseName = 'Bongo'
-version = getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
+version = '1.16.3-1.0.4-winter1' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
 
 println "${archivesBaseName} version: ${version}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200916-1.16.2'
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -36,6 +36,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArg "-Dmixin.env.disableRefMap=true"
             mods {
                 bongo {
                     source sourceSets.main
@@ -47,6 +48,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArg "-Dmixin.env.disableRefMap=true"
             mods {
                 bongo {
                     source sourceSets.main
@@ -58,6 +60,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArg "-Dmixin.env.disableRefMap=true"
             args '--mod', 'bongo', '--all', '--output', file('src/generated/resources/'), "--existing", file("src/main/resources")
             mods {
                 bongo {
@@ -80,6 +83,10 @@ repositories {
         url "https://modmaven.k-4u.nl"
     }
     maven {
+        name = 'Patchouli'
+        url = 'https://maven.blamejared.com/'
+    }
+    maven {
         name = 'MelanX Maven'
         url = 'https://maven.melanx.de/'
     }
@@ -92,10 +99,25 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:${minecraft_version}-${libx_version}")
-    compile fg.deobf('curse.maven:twitchspawn-273382:3098878')
+    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-${libx_version}")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+
+    compile fg.deobf('curse.maven:jolly-boxes-410698:3128220')
+    compile fg.deobf('curse.maven:christmas-wish-in-a-bottle-421252:3122897')
+    compile fg.deobf('curse.maven:snowy-weaponry-424431:3129064')
+    compile fg.deobf('curse.maven:next-christmas-420409:3126380')
+    compile fg.deobf('curse.maven:festive-creepers-420919:3130796')
+    compile fg.deobf('curse.maven:cold-snap-horde-426031:3136906')
+    compile fg.deobf('curse.maven:workshops-of-doom-426387:3133380')
+    compile fg.deobf('curse.maven:naughty-or-nice-426690:3135674')
+
+    runtimeOnly fg.deobf('vazkii.patchouli:Patchouli:1.16-42')
+    runtimeOnly fg.deobf('curse.maven:patchouli-jam-425745:3141414')
+
+    compile fg.deobf('curse.maven:jellyfishing-397703:3128612')
+    compile fg.deobf('curse.maven:geckolib-388172:3120121')
+    compile fg.deobf('curse.maven:looot-420925:3131801')
 }
 
 jar {
