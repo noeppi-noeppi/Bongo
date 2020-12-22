@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 
 group = 'io.github.noeppi_noeppi.mods'
 archivesBaseName = 'Bongo'
-version = '1.16.3-1.0.4-winter1' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
+version = '1.16.3-1.0.4-winter2' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
 
 println "${archivesBaseName} version: ${version}"
 
@@ -111,6 +111,7 @@ dependencies {
     compile fg.deobf('curse.maven:cold-snap-horde-426031:3136906')
     compile fg.deobf('curse.maven:workshops-of-doom-426387:3133380')
     compile fg.deobf('curse.maven:naughty-or-nice-426690:3135674')
+    compile fg.deobf('curse.maven:yellow-snow-420856:3145436')
 
     runtimeOnly fg.deobf('vazkii.patchouli:Patchouli:1.16-42')
     runtimeOnly fg.deobf('curse.maven:patchouli-jam-425745:3141414')
