@@ -6,6 +6,7 @@ import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -75,7 +76,7 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
             matrixStack.rotate(Vector3f.YP.rotationDegrees(45));
             matrixStack.rotate(Vector3f.XP.rotationDegrees(2));
             entity.ticksExisted = ClientTickHandler.ticksInGame;
-            render.render(entity, 0, mc.getRenderPartialTicks(), matrixStack, buffer, 100);
+            render.render(entity, 0, 0, matrixStack, buffer, LightTexture.packLight(15, 15));
         }
     }
 

@@ -96,7 +96,7 @@ public class Bongo extends WorldSavedData {
         items = new ArrayList<>();
         for (int i = 0; i < 25; i++)
             items.add(Task.empty());
-        tooltipPredicate = stack -> false;
+        tooltipPredicate = null;
         active = false;
         running = false;
         teamWon = false;
@@ -442,6 +442,8 @@ public class Bongo extends WorldSavedData {
     }
 
     public boolean isTooltipStack(ItemStack stack) {
+        if (tooltipPredicate == null)
+            updateTooltipPredicate();
         return !stack.isEmpty() && tooltipPredicate.test(stack);
     }
 
