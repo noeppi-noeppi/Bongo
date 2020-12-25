@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
 
 import java.util.HashMap;
@@ -19,10 +20,14 @@ public class RenderEntityCache {
         } else {
             @SuppressWarnings("ConstantConditions")
             T entity = type.create(mc.world);
+            if (entity instanceof MobEntity) {
+                ((MobEntity) entity).setNoAI(true);
+            }
             // The game crashes if this is not there. But it does not crash in our render code
             // but when trying to render a chunk. Very weird.
-            if (entity instanceof SnowGolemEntity)
+            if (entity instanceof SnowGolemEntity) {
                 ((SnowGolemEntity) entity).setPumpkinEquipped(false);
+            }
             CACHE.put(type, entity);
             return entity;
         }
