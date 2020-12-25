@@ -7,7 +7,7 @@
   "bongo.cmd.create.less": "Nie ma wystarczająco dużo zadań w tym bingo.",
   "bongo.cmd.create.notfound": "Nie można znaleźć tej definicji gry.",
   "bongo.cmd.create.running": "Nie możesz utworzyć nowej gry, gdy poprzednia wciąż trwa. Najpierw zakończ trwającą grę.",
-  "bongo.cmd.spread.added": "Gracze w: ",
+  "bongo.cmd.spread.added": "  Gracze w: ",
   "bongo.cmd.spread.less": "Nie ma wystarczająco dużo graczy, by wypełnić następującą liczbę drużyn: %s.",
   "bongo.cmd.start.alreadyrunning": "Gra już trwa.",
   "bongo.cmd.start.done": " rozpoczął(-ęła) grę.",

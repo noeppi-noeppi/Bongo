@@ -7,7 +7,7 @@
   "bongo.cmd.create.less": "Dieses Bingo enthält zu wenige Aufgaben.",
   "bongo.cmd.create.notfound": "Diese Spiel-Definition wurde nicht gefunden.",
   "bongo.cmd.create.running": "Um ein neues Spiel zu erstellen muss das vorherige Spiel beendet werden. Nutze dazu /bingo stop",
-  "bongo.cmd.spread.added": "Spieler in ",
+  "bongo.cmd.spread.added": "  Spieler in ",
   "bongo.cmd.spread.less": "Es gibt nicht genug Spieler um %s Teams zu erstellen.",
   "bongo.cmd.start.alreadyrunning": "Es läuft bereits ein anderes Spiel.",
   "bongo.cmd.start.done": " hat das Spiel gestartet.",
