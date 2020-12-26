@@ -21,7 +21,7 @@ apply plugin: 'maven-publish'
 
 group = 'io.github.noeppi_noeppi.mods'
 archivesBaseName = 'Bongo'
-version = '1.16.3-1.0.4-winter2' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
+version = '1.16.3-1.0.4-winter3' //getVersion(group, archivesBaseName, "${minecraft_version}-${mod_version}")
 
 println "${archivesBaseName} version: ${version}"
 
