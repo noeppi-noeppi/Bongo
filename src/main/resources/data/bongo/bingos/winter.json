@@ -117,7 +117,7 @@
       "type": "bongo.advancement"
     },
     {
-      "niceness": 25,
+      "niceness": 10,
       "type": "winter.niceness"
     },
     {
