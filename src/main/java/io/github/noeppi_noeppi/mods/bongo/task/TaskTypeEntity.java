@@ -82,12 +82,12 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
 
     @Override
     public String getTranslatedContentName(EntityType<?> content) {
-        return I18n.format(content.getTranslationKey());
+        return content.getName().getStringTruncated(18);
     }
 
     @Override
     public ITextComponent getContentName(EntityType<?> content, MinecraftServer server) {
-        return new TranslationTextComponent(content.getTranslationKey());
+        return content.getName();
     }
 
     @Override

@@ -54,12 +54,8 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public String getTranslatedContentName(ItemStack content) {
-        String text = content.getTextComponent().getStringTruncated(16);
-        if (text.startsWith("["))
-            text = text.substring(1);
-        if (text.endsWith("]"))
-            text = text.substring(0, text.length() - 1);
-
+        String text = content.getDisplayName().getStringTruncated(16);
+        
         if (content.getCount() > 1)
             text += (" x " + content.getCount());
 
@@ -68,7 +64,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public ITextComponent getContentName(ItemStack content, MinecraftServer server) {
-        return content.getTextComponent();
+        return content.getDisplayName();
     }
 
     @Override
@@ -82,16 +78,20 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public void consumeItem(ItemStack element, PlayerEntity player) {
-        int slot = -1;
-        for (ItemStack theStack : player.inventory.mainInventory) {
-            if (ItemStack.areItemsEqualIgnoreDurability(element, theStack) && element.getCount() <= theStack.getCount()) {
-                if (Util.matchesNBT(element.getTag(), theStack.getTag())) {
-                    slot = player.inventory.getSlotFor(theStack);
+        int removeLeft = element.getCount();
+        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++) {
+            if (removeLeft <= 0) {
+                break;
+            }
+            ItemStack playerSlot = player.inventory.getStackInSlot(slot);
+            if (ItemStack.areItemsEqualIgnoreDurability(element, playerSlot)) {
+                if (Util.matchesNBT(element.getTag(), playerSlot.getTag())) {
+                    int rem = Math.min(removeLeft, playerSlot.getCount());
+                    playerSlot.shrink(rem);
+                    player.inventory.setInventorySlotContents(slot, playerSlot.isEmpty() ? ItemStack.EMPTY : playerSlot);
+                    removeLeft -= rem;
                 }
             }
-        }
-        if (slot >= 0) {
-            player.inventory.decrStackSize(slot, element.getCount());
         }
     }
 

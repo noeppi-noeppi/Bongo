@@ -40,6 +40,7 @@
   "bongo.task.complete": " hat eine Aufgabe beendet: ",
   "bongo.task.entity.name": "Mob töten",
   "bongo.task.item.name": "Gegenstand",
+  "bongo.task.stat.name": "Statistik",
   "bongo.task.potion.name": "Trank-Effekt",
   "bongo.task_locked.death": "%s ist gestorben. Eine Aufgabe wurde gesperrt.",
   "bongo.team.black": "Team Schwarz",

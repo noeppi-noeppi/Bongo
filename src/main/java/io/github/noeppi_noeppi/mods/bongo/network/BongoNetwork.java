@@ -33,7 +33,7 @@ public class BongoNetwork extends NetworkX {
 
     public void updateBongo(World world) {
         if (!world.isRemote) {
-            instance.send(PacketDistributor.DIMENSION.with(world::getDimensionKey), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(world)));
+            instance.send(PacketDistributor.ALL.noArg(), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(world)));
         }
     }
 

@@ -69,7 +69,7 @@ public class TaskTypeBiome implements TaskType<Biome> {
 
     @Override
     public String getTranslatedContentName(Biome content) {
-        return I18n.format(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
+        return new TranslationTextComponent(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content))).getStringTruncated(18);
     }
 
     @Override

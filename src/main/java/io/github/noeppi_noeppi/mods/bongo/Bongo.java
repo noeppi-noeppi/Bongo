@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Bongo extends WorldSavedData {
 
@@ -441,6 +442,10 @@ public class Bongo extends WorldSavedData {
         }
     }
 
+    public <T> Stream<T> getElementsOf(TaskType<T> type) {
+        return items.stream().map(task -> task.getElement(type)).filter(Objects::nonNull);
+    }
+    
     public boolean isTooltipStack(ItemStack stack) {
         if (tooltipPredicate == null)
             updateTooltipPredicate();

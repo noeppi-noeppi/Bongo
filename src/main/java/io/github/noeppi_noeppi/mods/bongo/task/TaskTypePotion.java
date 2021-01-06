@@ -71,6 +71,11 @@ public class TaskTypePotion implements TaskType<Effect> {
     }
 
     @Override
+    public void consumeItem(Effect element, PlayerEntity player) {
+        player.removePotionEffect(element);
+    }
+
+    @Override
     public CompoundNBT serializeNBT(Effect element) {
         CompoundNBT nbt = new CompoundNBT();
         //noinspection ConstantConditions

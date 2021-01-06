@@ -33,12 +33,12 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
 
     @Override
     public String getTranslatedName() {
-        return "";
+        return "Empty";
     }
 
     @Override
     public String getTranslationKey() {
-        return "";
+        return "Empty";
     }
 
     @Override

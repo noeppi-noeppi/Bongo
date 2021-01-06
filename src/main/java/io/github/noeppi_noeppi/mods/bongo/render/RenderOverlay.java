@@ -146,6 +146,7 @@ public class RenderOverlay {
                             RenderHelper.renderText(task.getTranslatedName(), matrixStack, buffer);
 
                             matrixStack.translate(0, 8 / 0.3, 10);
+                            matrixStack.scale(0.8f, 0.8f, 1);
 
                             RenderHelper.renderText(task.getTranslatedContentName(), matrixStack, buffer);
 

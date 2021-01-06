@@ -4,6 +4,7 @@ import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
+import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.stats.ServerStatisticsManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -91,7 +93,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void playerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0) {
+        if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0 && event.player instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(event.player.world);
             for (ItemStack stack : event.player.inventory.mainInventory) {
                 if (!stack.isEmpty()) {
@@ -113,6 +115,11 @@ public class EventListener {
                 event.player.getFoodStats().setFoodLevel(20);
                 event.player.setAir(event.player.getMaxAir());
             }
+
+            ServerStatisticsManager mgr = ((ServerPlayerEntity) event.player).getServerWorld().getServer().getPlayerList().getPlayerStats(event.player);
+            bongo.getElementsOf(TaskTypeStat.INSTANCE)
+                    .map(value -> new StatAndValue(value.stat, mgr.getValue(value.stat)))
+                    .forEach(value -> bongo.checkCompleted(TaskTypeStat.INSTANCE, event.player, value));
         }
     }
 

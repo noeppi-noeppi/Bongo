@@ -7,6 +7,7 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
@@ -83,10 +84,11 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
         IVertexBuilder vertex = buffer.getBuffer(CROWN_TYPE);
         Matrix4f model = matrixStack.getLast().getMatrix();
         Matrix3f normal = matrixStack.getLast().getNormal();
-        vertex.pos(model, (float) x, (float) (y + height), 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(0, 1).overlay(overlay).lightmap(15728880).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
-        vertex.pos(model, (float) (x + width), (float) (y + height), 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(1, 1).overlay(overlay).lightmap(15728880).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
-        vertex.pos(model, (float) (x + width), (float) y, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(1, 0).overlay(overlay).lightmap(15728880).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
-        vertex.pos(model, (float) x, (float) y, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(0, 0).overlay(overlay).lightmap(15728880).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        int light = LightTexture.packLight(15, 15);
+        vertex.pos(model, (float) x, (float) (y + height), 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(0, 1).overlay(overlay).lightmap(light).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertex.pos(model, (float) (x + width), (float) (y + height), 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(1, 1).overlay(overlay).lightmap(light).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertex.pos(model, (float) (x + width), (float) y, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(1, 0).overlay(overlay).lightmap(light).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertex.pos(model, (float) x, (float) y, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).tex(0, 0).overlay(overlay).lightmap(light).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
     }
 
     public static void register() {

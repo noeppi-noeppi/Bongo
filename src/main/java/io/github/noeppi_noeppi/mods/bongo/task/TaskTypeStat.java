@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -22,10 +21,10 @@ import net.minecraft.stats.ServerStatisticsManager;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
@@ -35,6 +34,8 @@ import java.util.stream.Stream;
 public class TaskTypeStat implements TaskType<StatAndValue> {
 
     public static final TaskTypeStat INSTANCE = new TaskTypeStat();
+    
+    public static final ResourceLocation STAT_ICONS_TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/stats_icons.png");
 
     private TaskTypeStat() {
 
@@ -66,6 +67,31 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
         if (value instanceof IItemProvider) {
             ItemStack renderStack = new ItemStack((IItemProvider) value, content.value);
             RenderHelperItem.renderItemGui(matrixStack, buffer, renderStack, 0, 0, 16, false);
+            int x = -1;
+            if (content.stat.getType() == Stats.ITEM_CRAFTED) {
+                x = 19;
+            } else if (content.stat.getType() == Stats.ITEM_USED) {
+                x = 37;
+            } else if (content.stat.getType() == Stats.BLOCK_MINED) {
+                x = 55;
+            } else if (content.stat.getType() == Stats.ITEM_BROKEN) {
+                x = 74;
+            } else if (content.stat.getType() == Stats.ITEM_PICKED_UP) {
+                x = 91;
+            } else if (content.stat.getType() == Stats.ITEM_DROPPED) {
+                x = 109;
+            }
+            if (x >= 0) {
+                matrixStack.push();
+                matrixStack.translate(9, -1, 100);
+                matrixStack.scale(0.5f, 0.5f, 1);
+                Minecraft.getInstance().getTextureManager().bindTexture(RenderOverlay.ICONS_TEXTURE);
+                AbstractGui.blit(matrixStack, 0, 0, 0, 32, 0, 16, 16, 256, 256);
+                matrixStack.translate(0, 0, 10);
+                Minecraft.getInstance().getTextureManager().bindTexture(STAT_ICONS_TEXTURE);
+                AbstractGui.blit(matrixStack, 0, 0, 0, x, 19, 16, 16, 128, 128);
+                matrixStack.pop();
+            }
         } else if (value instanceof EntityType<?>) {
             TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, matrixStack, buffer, bigBongo);
         } else {
@@ -75,49 +101,51 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
                 mc.getTextureManager().bindTexture(textureLocation);
                 Texture texture = mc.getTextureManager().getTexture(textureLocation);
                 if (texture != null && texture.getGlTextureId() != MissingTextureSprite.getDynamicTexture().getGlTextureId()) {
-                    AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 32, 32, 256, 256);
                     foundCustomTex = true;
+                    matrixStack.push();
+                    matrixStack.scale(0.5f, 0.5f, 0.5f);
+                    AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 32, 32, 32, 32);
+                    matrixStack.pop();
                 }
             }
             if (!foundCustomTex) {
                 matrixStack.push();
                 matrixStack.scale(0.5f, 0.5f, 0.5f);
                 mc.getTextureManager().bindTexture(RenderOverlay.ICONS_TEXTURE);
-                AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 16, 16, 16, 16);
+                AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 32, 32, 256, 256);
                 matrixStack.pop();
             }
         }
         if (!bigBongo) {
             matrixStack.push();
             matrixStack.translate(0, 0, 200);
+            matrixStack.scale(2/3f, 2/3f, 1);
             FontRenderer fr = Minecraft.getInstance().fontRenderer;
-            String text = Integer.toString(content.value);
-            fr.renderString(text, (float) (17 - fr.getStringWidth(text)), 9, 0xffffff, true, matrixStack.getLast().getMatrix(), buffer, false, 0, 15728880);
+            String text = content.stat.format(content.value);
+            fr.renderString(text, (float) (25 - fr.getStringWidth(text)), 17, 0xffffff, true, matrixStack.getLast().getMatrix(), buffer, false, 0, 15728880);
             matrixStack.pop();
         }
     }
 
     @Override
     public String getTranslatedContentName(StatAndValue content) {
-        return getContentName(content, null).getUnformattedComponentText();
+        String text = getContentName(content, null).getStringTruncated(16);
+        return text + ": " + content.stat.format(content.value);
     }
 
     @Override
     public ITextComponent getContentName(StatAndValue content, @CheckForNull MinecraftServer server) {
-        IFormattableTextComponent tc = new StringTextComponent(" ");
+        ITextComponent tc = new StringTextComponent("");
         Object value = content.stat.getValue();
-        if (value instanceof Item) {
-            tc.append(((Item) value).getName());
-        } else if (value instanceof Block) {
-            tc.append(((Block) value).getTranslatedName());
+        if (value instanceof IItemProvider) {
+            tc = new ItemStack((IItemProvider) value).getDisplayName();
         } else if (value instanceof EntityType<?>) {
-            tc.append(((EntityType<?>) value).getName());
+            tc = ((EntityType<?>) value).getName();
         } else if (value instanceof ResourceLocation) {
-            tc.append(new StringTextComponent(((ResourceLocation) value).getPath().replace('_', ' ')));
+            return new StringTextComponent(((ResourceLocation) value).getPath().replace('_', ' '));
         }
-        return new TranslationTextComponent(content.stat.getType().getTranslationKey()).append(tc)
-                .append(new StringTextComponent(": " + content.value));
-
+        //noinspection ConstantConditions
+        return new TranslationTextComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).append(new StringTextComponent(" ")).append(tc);
     }
 
     @Override

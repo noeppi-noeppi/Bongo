@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.effect;
 
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.command.impl.AdvancementCommand;
+import net.minecraft.command.impl.TimeCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.stats.ServerStatisticsManager;
@@ -14,6 +15,7 @@ public class DefaultEffects {
 
     public static void register() {
 
+        StartingEffects.registerWorldEffect((bongo, world) -> world.func_241114_a_(600));
         StartingEffects.registerPlayerEffect((bongo, player) -> player.inventory.clear());
         StartingEffects.registerPlayerEffect((bongo, player) -> {
             //noinspection ConstantConditions

@@ -9,6 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
@@ -45,6 +47,7 @@ public class Task implements INBTSerializable<CompoundNBT> {
         ((TaskType<Object>) type).renderSlotContent(mc, element, matrixStack, buffer, bigBongo);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public String getTranslatedContentName() {
         //noinspection unchecked
         return ((TaskType<Object>) type).getTranslatedContentName(element);
@@ -98,5 +101,15 @@ public class Task implements INBTSerializable<CompoundNBT> {
     public Task copy() {
         //noinspection unchecked
         return new Task((TaskType<Object>) type, ((TaskType<Object>) type).copy(element));
+    }
+    
+    @Nullable
+    public <T> T getElement(TaskType<T> type) {
+        if (this.type == type) {
+            //noinspection unchecked
+            return (T) element;
+        } else {
+            return null;
+        }
     }
 }
