@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Util {
 
-    public static final List<DyeColor> PREFERRED_COLOR__ORDER = ImmutableList.of(
+    public static final List<DyeColor> PREFERRED_COLOR_ORDER = ImmutableList.of(
             DyeColor.ORANGE, DyeColor.LIME, DyeColor.LIGHT_BLUE, DyeColor.PINK, DyeColor.CYAN,
             DyeColor.YELLOW, DyeColor.RED, DyeColor.GREEN, DyeColor.BLUE, DyeColor.PURPLE,
             DyeColor.GRAY, DyeColor.MAGENTA, DyeColor.BLACK, DyeColor.WHITE, DyeColor.BROWN,

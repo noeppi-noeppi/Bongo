@@ -5,17 +5,20 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
+import io.github.noeppi_noeppi.mods.bongo.command.event.BongoChangeTeamEvent;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.util.Messages;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.MinecraftForge;
 
 public class LeaveCommand implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        PlayerEntity player = context.getSource().asPlayer();
+        ServerPlayerEntity player = context.getSource().asPlayer();
         Bongo bongo = Bongo.get(player.world);
 
         if (!bongo.active()) {
@@ -28,9 +31,14 @@ public class LeaveCommand implements Command<CommandSource> {
         if (team == null) {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.team.leavonojoin")).create();
         }
-        team.removePlayer(player);
-
-        Messages.onLeave(player.getEntityWorld(), player, team);
+        
+        BongoChangeTeamEvent event = new BongoChangeTeamEvent(player, bongo, team, null, new TranslationTextComponent("bongo.cmd.team.denied.leave"));
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            throw new SimpleCommandExceptionType(event.getFailureMessage()).create();
+        } else {
+            team.removePlayer(player);
+            Messages.onLeave(player.getEntityWorld(), player, team);
+        }
 
         return 0;
     }
