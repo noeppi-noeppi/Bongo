@@ -83,10 +83,6 @@ repositories {
         name = 'MelanX Maven'
         url = 'https://maven.melanx.de/'
     }
-    maven {
-        name = "CurseMaven"
-        url = "https://www.cursemaven.com"
-    }
 }
 
 dependencies {
