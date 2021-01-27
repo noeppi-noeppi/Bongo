@@ -5,6 +5,7 @@ import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
+import io.github.noeppi_noeppi.mods.bongo.effect.StoppingEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
 import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
@@ -173,6 +174,10 @@ public class Bongo extends WorldSavedData {
     }
 
     public void stop() {
+        Set<UUID> uids = new HashSet<>();
+        for (Team team : teams.values()) {
+            uids.addAll(team.getPlayers());
+        }
         this.active = false;
         this.running = false;
         this.teamWon = false;
@@ -181,8 +186,12 @@ public class Bongo extends WorldSavedData {
         playersInTcMode.clear();
         markDirty(true);
         if (world != null) {
-            for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
+            StoppingEffects.callWorldEffects(this, world);
+            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+                if (uids.contains(player.getGameProfile().getId()))
+                    StoppingEffects.callPlayerEffects(this, player);
                 player.refreshDisplayName();
+            }
             BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
         }
     }
