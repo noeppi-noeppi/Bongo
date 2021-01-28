@@ -29,33 +29,10 @@ public class StartCommand implements Command<CommandSource> {
         } else if (bongo.running() || bongo.won()) {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.start.alreadyrunning")).create();
         }
-        bongo.start();
-
-        if (CommandUtil.getArgumentOrDefault(context, "randomize_positions", Boolean.class, true)) {
-            Random random = new Random();
-            for (Team team : bongo.getTeams())
-                randomizeTeamAround(random, player.getServerWorld(), team, (int) Math.round(player.getPosX()), (int) Math.round(player.getPosZ()), 10000);
-        }
+        bongo.start(CommandUtil.getArgumentOrDefault(context, "randomize_positions", Boolean.class, true));
 
         ServerMessages.broadcast(player.getEntityWorld(), new TranslationTextComponent("bongo.info").append(player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.start.done")));
 
         return 0;
-    }
-
-    public static void randomizeTeamAround(Random random, ServerWorld world, Team team, int centerX, int centerZ, int radius) {
-        if (team.getPlayers().size() <= 0)
-            return;
-        int x = centerX + (random.nextInt(2 * radius) - radius);
-        int z = centerZ + (random.nextInt(2 * radius) - radius);
-        BlockPos.Mutable mpos = new BlockPos.Mutable(x, world.getHeight(), z);
-        //noinspection deprecation
-        while (mpos.getY() > 5 && world.getBlockState(mpos).isAir(world, mpos))
-            mpos.move(Direction.DOWN);
-        BlockPos pos = mpos.toImmutable().up();
-        world.getServer().getPlayerList().getPlayers().forEach(player -> {
-            if (team.hasPlayer(player)) {
-                player.teleport(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getRotationYawHead(), 0);
-            }
-        });
     }
 }

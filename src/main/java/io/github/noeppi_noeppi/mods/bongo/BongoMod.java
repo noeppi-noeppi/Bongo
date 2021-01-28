@@ -50,6 +50,7 @@ public class BongoMod extends ModX {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
+        MinecraftForge.EVENT_BUS.register(new DefaultEffects());
         MinecraftForge.EVENT_BUS.addListener(BongoCommands::register);
     }
 
@@ -72,9 +73,7 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeBiome.INSTANCE);
         TaskTypes.registerType(TaskTypePotion.INSTANCE);
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
-
-        DefaultEffects.register();
-
+        
         ArgumentTypes.register(modid + "_bongogame", GameDefArgument.class, new GameDefArgument.Serializer());
     }
 

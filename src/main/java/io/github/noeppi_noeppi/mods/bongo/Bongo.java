@@ -1,13 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
+import io.github.noeppi_noeppi.mods.bongo.command.event.*;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import io.github.noeppi_noeppi.mods.bongo.effect.StartingEffects;
-import io.github.noeppi_noeppi.mods.bongo.effect.StoppingEffects;
-import io.github.noeppi_noeppi.mods.bongo.effect.TaskEffects;
-import io.github.noeppi_noeppi.mods.bongo.effect.WinEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
@@ -20,10 +17,13 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
@@ -146,7 +146,7 @@ public class Bongo extends WorldSavedData {
         return running;
     }
 
-    public void start() {
+    public void start(boolean randomTeleportTeams) {
         this.active = true;
         this.running = true;
         this.teamWon = false;
@@ -161,11 +161,36 @@ public class Bongo extends WorldSavedData {
             uids.addAll(team.getPlayers());
         }
         if (world != null) {
-            StartingEffects.callWorldEffects(this, world);
+            BongoPickWorldEvent event = new BongoPickWorldEvent(this, world);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (event.getWorld() != world) {
+                int y = event.getWorld().getHeight();
+                BlockPos.Mutable pos = new BlockPos.Mutable(0, y, 0);
+                //noinspection deprecation
+                while (event.getWorld().getBlockState(pos).isAir() && y >= 0) {
+                    y -= 1;
+                    pos.setY(y);
+                }
+                int effectiveFinalY = y;
+                world.getServer().getPlayerList().getPlayers().forEach(player -> {
+                    if (uids.contains(player.getGameProfile().getId())) {
+                        player.teleport(
+                                event.getWorld(),
+                                0, effectiveFinalY + 1, 0,
+                                player.rotationYaw, player.rotationPitch
+                        );
+                    }
+                });
+            }
+            MinecraftForge.EVENT_BUS.post(new BongoStartEvent.World(this, event.getWorld()));
             world.getServer().getPlayerList().getPlayers().forEach(player -> {
-                if (uids.contains(player.getGameProfile().getId()))
-                    StartingEffects.callPlayerEffects(this, player);
+                if (uids.contains(player.getGameProfile().getId())) {
+                    MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Player(this, event.getWorld(), player));
+                }
             });
+            if (randomTeleportTeams){
+                randomizeTeams(event.getWorld());
+            }
         }
         markDirty(true);
         if (world != null) {
@@ -173,6 +198,31 @@ public class Bongo extends WorldSavedData {
         }
     }
 
+    private void randomizeTeams(ServerWorld world) {
+        Random random = new Random();
+        for (Team team : getTeams()) {
+            randomizeTeamAround(random, world, team, 0, 0, 10000);
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void randomizeTeamAround(Random random, ServerWorld world, Team team, int centerX, int centerZ, int radius) {
+        if (team.getPlayers().size() <= 0)
+            return;
+        int x = centerX + (random.nextInt(2 * radius) - radius);
+        int z = centerZ + (random.nextInt(2 * radius) - radius);
+        BlockPos.Mutable mpos = new BlockPos.Mutable(x, world.getHeight(), z);
+        //noinspection deprecation
+        while (mpos.getY() > 5 && world.getBlockState(mpos).isAir(world, mpos))
+            mpos.move(Direction.DOWN);
+        BlockPos pos = mpos.toImmutable().up();
+        world.getServer().getPlayerList().getPlayers().forEach(player -> {
+            if (team.hasPlayer(player)) {
+                player.teleport(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getRotationYawHead(), 0);
+            }
+        });
+    }
+    
     public void stop() {
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
@@ -186,10 +236,11 @@ public class Bongo extends WorldSavedData {
         playersInTcMode.clear();
         markDirty(true);
         if (world != null) {
-            StoppingEffects.callWorldEffects(this, world);
+            MinecraftForge.EVENT_BUS.post(new BongoStopEvent.World(this, this.world));
             for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                if (uids.contains(player.getGameProfile().getId()))
-                    StoppingEffects.callPlayerEffects(this, player);
+                if (uids.contains(player.getGameProfile().getId())) {
+                    MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getServerWorld(), player));
+                }
                 player.refreshDisplayName();
             }
             BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
@@ -287,7 +338,7 @@ public class Bongo extends WorldSavedData {
             }
         }
     }
-    
+
     public void reset() {
         for (Team team : teams.values())
             team.reset(true);
@@ -351,7 +402,7 @@ public class Bongo extends WorldSavedData {
                         task(i).consumeItem(player);
                     }
                     if (player instanceof ServerPlayerEntity) {
-                        TaskEffects.callPlayerEffects(this, (ServerPlayerEntity) player, task(i));
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayerEntity) player).getServerWorld(), (ServerPlayerEntity) player, task(i)));
                     }
                 }
             }
@@ -366,7 +417,7 @@ public class Bongo extends WorldSavedData {
                 teamWon = true;
                 winningTeam = team.color;
                 if (world != null) {
-                    WinEffects.callWorldEffects(this, world, team);
+                    MinecraftForge.EVENT_BUS.post(new BongoWinEvent(this, world, team));
                 }
                 ranUntil = System.currentTimeMillis();
                 playersInTcMode.clear();
@@ -454,7 +505,7 @@ public class Bongo extends WorldSavedData {
     public <T> Stream<T> getElementsOf(TaskType<T> type) {
         return items.stream().map(task -> task.getElement(type)).filter(Objects::nonNull);
     }
-    
+
     public boolean isTooltipStack(ItemStack stack) {
         if (tooltipPredicate == null)
             updateTooltipPredicate();
