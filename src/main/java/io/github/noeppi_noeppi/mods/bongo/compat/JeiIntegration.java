@@ -16,23 +16,23 @@ import java.util.stream.Stream;
 public class JeiIntegration {
 
     public static void reloadJeiTooltips() {
-        if (Minecraft.getInstance().getResourceManager() instanceof SimpleReloadableResourceManager) {
-            SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-            try {
+        try {
+            if (Minecraft.getInstance().getResourceManager() instanceof SimpleReloadableResourceManager) {
+                SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) Minecraft.getInstance().getResourceManager();
                 Class<?> c = Class.forName("mezz.jei.startup.ClientLifecycleHandler$JeiReloadListener");
                 for (IFutureReloadListener listener : resourceManager.reloadListeners) {
                     if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
                         ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
                     }
                 }
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                //
-            } catch (Throwable t) {
-                BongoMod.getInstance().logger.warn("Could not reload JEI item list: ", t);
             }
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            //
+        } catch (Throwable t) {
+            BongoMod.getInstance().logger.warn("Could not reload JEI item list: ", t);
         }
     }
-    
+
     public static void setBookmarks(Stream<ItemStack> stacks) {
         try {
             Object bookmarkList = getBookmarkList();
@@ -46,7 +46,7 @@ public class JeiIntegration {
             BongoMod.getInstance().logger.warn("Could not modify JEI bookmark list: ", t);
         }
     }
-    
+
     private static Object getBookmarkList() throws ReflectiveOperationException {
         Class<?> internalClass = Class.forName("mezz.jei.Internal");
         Field inputHandlerField = internalClass.getDeclaredField("inputHandler");
@@ -57,7 +57,7 @@ public class JeiIntegration {
         bookmarkListField.setAccessible(true);
         return bookmarkListField.get(inputHandler);
     }
-    
+
     private static void clearBookmarks(Object bookmarkList) throws ReflectiveOperationException {
         Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
         Field objectListField = bookmarkListClass.getDeclaredField("list");
@@ -70,14 +70,14 @@ public class JeiIntegration {
         ingredientList.clear();
         forceBookmarkUpdate(bookmarkList);
     }
-    
+
     private static void addBookmark(Object bookmarkList, ItemStack stack) throws ReflectiveOperationException {
         Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
         Method addMethod = bookmarkListClass.getDeclaredMethod("add", Object.class);
         addMethod.setAccessible(true);
         addMethod.invoke(bookmarkList, stack);
     }
-    
+
     // forces an update. add and clear will do this automatically.
     private static void forceBookmarkUpdate(Object bookmarkList) throws ReflectiveOperationException {
         Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
