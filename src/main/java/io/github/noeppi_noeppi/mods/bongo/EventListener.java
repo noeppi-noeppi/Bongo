@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -64,6 +65,7 @@ public class EventListener {
                 if (task != null)
                     task.syncToClient(world.getServer(), (ServerPlayerEntity) event.getPlayer());
             }
+            BongoMod.getNetwork().updateBongo(event.getPlayer(), BongoMessageType.FORCE);
         }
     }
 
@@ -95,31 +97,33 @@ public class EventListener {
     public void playerTick(TickEvent.PlayerTickEvent event) {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0 && event.player instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(event.player.world);
-            for (ItemStack stack : event.player.inventory.mainInventory) {
-                if (!stack.isEmpty()) {
-                    int count = 0;
-                    for (ItemStack checkStack : event.player.inventory.mainInventory) {
-                        if (ItemStack.areItemsEqual(stack, checkStack) && ItemStack.areItemStackTagsEqual(stack, checkStack))
-                            count += checkStack.getCount();
+            if (bongo.running() && bongo.getTeam(event.player) != null) {
+                for (ItemStack stack : event.player.inventory.mainInventory) {
+                    if (!stack.isEmpty()) {
+                        int count = 0;
+                        for (ItemStack checkStack : event.player.inventory.mainInventory) {
+                            if (ItemStack.areItemsEqual(stack, checkStack) && ItemStack.areItemStackTagsEqual(stack, checkStack))
+                                count += checkStack.getCount();
+                        }
+                        ItemStack test = stack.copy();
+                        test.setCount(count);
+                        bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
                     }
-                    ItemStack test = stack.copy();
-                    test.setCount(count);
-                    bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
                 }
-            }
-            // This is a bit hacky but it works
-            ResourceLocation biomeKey = event.player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
-            Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
-            bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, realBiome);
-            if (bongo.running() && bongo.getTeam(event.player) != null && bongo.getSettings().invulnerable) {
-                event.player.getFoodStats().setFoodLevel(20);
-                event.player.setAir(event.player.getMaxAir());
-            }
+                // This is a bit hacky but it works
+                ResourceLocation biomeKey = event.player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
+                Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
+                bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, realBiome);
+                if (bongo.getSettings().invulnerable) {
+                    event.player.getFoodStats().setFoodLevel(20);
+                    event.player.setAir(event.player.getMaxAir());
+                }
 
-            ServerStatisticsManager mgr = ((ServerPlayerEntity) event.player).getServerWorld().getServer().getPlayerList().getPlayerStats(event.player);
-            bongo.getElementsOf(TaskTypeStat.INSTANCE)
-                    .map(value -> new StatAndValue(value.stat, mgr.getValue(value.stat)))
-                    .forEach(value -> bongo.checkCompleted(TaskTypeStat.INSTANCE, event.player, value));
+                ServerStatisticsManager mgr = ((ServerPlayerEntity) event.player).getServerWorld().getServer().getPlayerList().getPlayerStats(event.player);
+                bongo.getElementsOf(TaskTypeStat.INSTANCE)
+                        .map(value -> new StatAndValue(value.stat, mgr.getValue(value.stat)))
+                        .forEach(value -> bongo.checkCompleted(TaskTypeStat.INSTANCE, event.player, value));
+            }
         }
     }
 

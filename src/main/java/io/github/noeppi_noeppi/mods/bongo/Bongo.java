@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.command.event.*;
+import io.github.noeppi_noeppi.mods.bongo.compat.JeiIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -12,12 +13,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -25,7 +26,7 @@ import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,12 +56,31 @@ public class Bongo extends WorldSavedData {
         clientInstance = bongo;
         if (mc == null)
             mc = Minecraft.getInstance();
-        if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP) {
+        if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP
+                || bongoMessageType == BongoMessageType.FORCE) {
             if (mc.player != null)
                 mc.player.refreshDisplayName();
             if (ClientConfig.addItemTooltips.get()) {
                 bongo.updateTooltipPredicate();
-                reloadJeiItems();
+                if (ClientConfig.addItemTooltips.get()) {
+                    JeiIntegration.reloadJeiTooltips();
+                    if (ClientConfig.modifyJeiBookamrks.get()) {
+                        if (bongo.running()) {
+                            NonNullList<ItemStack> stacks = NonNullList.create();
+                            ForgeRegistries.ITEMS.getValues().forEach(item -> {
+                                ItemGroup group = item.getGroup();
+                                if (group != null) {
+                                    item.fillItemGroup(group, stacks);
+                                } else {
+                                    stacks.add(new ItemStack(item));
+                                }
+                            });
+                            JeiIntegration.setBookmarks(stacks.stream().filter(bongo.tooltipPredicate));
+                        } else {
+                            JeiIntegration.setBookmarks(Stream.empty());
+                        }
+                    }
+                }
             }
         }
     }
@@ -510,23 +530,5 @@ public class Bongo extends WorldSavedData {
         if (tooltipPredicate == null)
             updateTooltipPredicate();
         return !stack.isEmpty() && tooltipPredicate.test(stack);
-    }
-
-    private static void reloadJeiItems() {
-        if (mc.getResourceManager() instanceof SimpleReloadableResourceManager) {
-            SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) mc.getResourceManager();
-            try {
-                Class<?> c = Class.forName("mezz.jei.startup.ClientLifecycleHandler$JeiReloadListener");
-                for (IFutureReloadListener listener : resourceManager.reloadListeners) {
-                    if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
-                        ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
-                    }
-                }
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                //
-            } catch (Throwable e) {
-                BongoMod.getInstance().logger.warn("Could not reload JEI item list: ", e);
-            }
-        }
     }
 }

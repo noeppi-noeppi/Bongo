@@ -4,5 +4,7 @@ public enum BongoMessageType {
 	START,
 	STOP,
 	CREATE,
-	GENERIC
+    // Will force to update everything on the client that may only be updated depending on the message type.
+    FORCE,
+    GENERIC
 }
