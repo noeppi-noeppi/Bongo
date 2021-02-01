@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
+import io.github.noeppi_noeppi.mods.bongo.data.StarterItems;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
@@ -136,6 +137,7 @@ public class EventListener {
             protected void apply(@Nonnull Object unused, @Nonnull IResourceManager resourceManager, @Nonnull IProfiler profiler) {
                 try {
                     GameDef.loadGameDefs(resourceManager);
+                    StarterItems.loadItems(resourceManager);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.effect;
 import io.github.noeppi_noeppi.mods.bongo.command.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.command.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.command.event.BongoWinEvent;
+import io.github.noeppi_noeppi.mods.bongo.data.StarterItems;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
@@ -24,6 +25,7 @@ public class DefaultEffects {
     @SubscribeEvent
     public void playerInit(BongoStartEvent.Player event) {
         event.getPlayer().inventory.clear();
+        StarterItems.give(event.getPlayer());
         AdvancementCommand.Action.REVOKE.applyToAdvancements(event.getPlayer(), event.getWorld().getServer().getAdvancementManager().getAllAdvancements());
         ServerStatisticsManager mgr = event.getWorld().getServer().getPlayerList().getPlayerStats(event.getPlayer());
         mgr.statsData.keySet().forEach(stat -> mgr.statsData.put(stat, 0));

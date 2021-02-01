@@ -175,6 +175,28 @@ Example:
 }
 ```
 
+## Starter items
+
+Starter items are given to each player at start of a bingo game. They can be added via a data pack. It's a json in `data/<datapack-id>/starter_items.json`. 
+
+Example:
+```json
+{
+  "items": [
+    {
+      "id": "minecraft:diamond_pickaxe",
+      "nbt": {
+        "Unbreakable": true
+      }
+    },
+    {
+      "id": "minecraft:bread",
+      "count": 32
+    }
+  ]
+}
+```
+
 ## The Dump Command
 
 Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or you server'S folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all posible nbt values though).
