@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Either;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,7 +10,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -17,82 +17,35 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class GameDef {
 
-    public static final Map<ResourceLocation, GameDef> GAMES = new HashMap<>();
+    public final GameTasks tasks;
+    public final GameSettings settings;
 
-    public final ResourceLocation id;
-    private final GameSettings settings;
-    private final List<Pair<Integer, Task>> tasks;
-    private final int totalWeight;
-    private final CompoundNBT nbt;
-
-    public GameDef(ResourceLocation id, CompoundNBT nbt) {
-        this.id = id;
-        this.tasks = new ArrayList<>();
-        int totalWeight = 0;
-        if (nbt.contains("tasks", Constants.NBT.TAG_LIST)) {
-            ListNBT taskList = nbt.getList("tasks", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < taskList.size(); i++) {
-                CompoundNBT compound = taskList.getCompound(i);
-                int weight = compound.getInt("weight");
-                if (weight <= 0) weight = 1;
-
-                Task task = Task.empty();
-                task.deserializeNBT(compound);
-                tasks.add(Pair.of(weight, task));
-                totalWeight += weight;
-            }
-        }
-
-        if (nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
-            settings = new GameSettings(nbt.getCompound("settings"));
-        } else {
-            settings = GameSettings.DEFAULT;
-        }
-        this.totalWeight = totalWeight;
-        this.nbt = nbt;
+    public GameDef(GameTasks tasks, GameSettings settings) {
+        this.tasks = tasks;
+        this.settings = settings;
     }
 
     public String createBongo(Bongo bongo) {
-        if (bongo.running())
+        if (bongo.running()) {
             bongo.stop();
-        if (tasks.size() < 25)
-            return "bongo.cmd.create.less";
-
-        Random random = new Random();
-        int weightLeft = totalWeight;
-        List<Task> theTasks = new ArrayList<>();
-        while (theTasks.size() < 25) {
-            int rand = random.nextInt(weightLeft);
-            int weightCounted = 0;
-            for (Pair<Integer, Task> pair : tasks) {
-                if (!theTasks.contains(pair.getRight())) {
-                    weightCounted += pair.getLeft();
-                    if (weightCounted > rand) {
-                        theTasks.add(pair.getRight());
-                        weightLeft -= pair.getLeft();
-                        break;
-                    }
-                }
-            }
         }
-        // If this was not here rare items sould be more likely to appear in the first row.
-        Collections.shuffle(theTasks);
+        Either<List<Task>, String> taskList = tasks.getBingoTasks();
+        if (taskList.right().isPresent() || !taskList.left().isPresent()) {
+            return taskList.right().isPresent() ? taskList.right().get() : "Unknown Error";
+        }
         bongo.setSettings(settings, true);
-        bongo.setTasks(theTasks);
+        bongo.setTasks(taskList.left().get());
         return null;
     }
 
-    public CompoundNBT getNbt() {
-        return nbt.copy();
-    }
+    public static <T> void loadData(IResourceManager rm, String path, Map<ResourceLocation, T> map, BiFunction<ResourceLocation, CompoundNBT, T> factory) throws IOException {
+        map.clear();
 
-    public static void loadGameDefs(IResourceManager rm) throws IOException {
-        GAMES.clear();
-
-        Collection<ResourceLocation> ids = rm.getAllResourceLocations("bingos", file -> file.endsWith(".json"));
+        Collection<ResourceLocation> ids = rm.getAllResourceLocations(path, file -> file.endsWith(".json"));
 
         for (ResourceLocation id : ids) {
             String realPath;
@@ -115,7 +68,7 @@ public class GameDef {
             } catch (CommandSyntaxException e) {
                 throw new IOException("Could not read JSON-NBT: " + e.getMessage(), e);
             }
-            GAMES.put(realId, new GameDef(realId, nbt));
+            map.put(realId, factory.apply(realId, nbt));
         }
     }
 }

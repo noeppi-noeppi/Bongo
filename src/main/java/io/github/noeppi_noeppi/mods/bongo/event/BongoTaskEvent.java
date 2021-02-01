@@ -1,4 +1,4 @@
-package io.github.noeppi_noeppi.mods.bongo.command.event;
+package io.github.noeppi_noeppi.mods.bongo.event;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;

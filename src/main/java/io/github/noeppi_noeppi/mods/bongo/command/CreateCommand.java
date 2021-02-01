@@ -7,6 +7,9 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
+import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
+import io.github.noeppi_noeppi.mods.bongo.data.GameTaskGroup;
+import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -23,7 +26,9 @@ public class CreateCommand implements Command<CommandSource> {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.running")).create();
         }
 
-        GameDef gd = context.getArgument("pattern", GameDef.class);
+        GameTasks gt = context.getArgument("tasks", GameTasks.class);
+        GameSettings gs = context.getArgument("settings", GameSettings.class);
+        GameDef gd = new GameDef(gt, gs);
         bongo.stop();
         bongo.reset();
         String err = gd.createBongo(bongo);

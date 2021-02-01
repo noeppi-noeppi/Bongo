@@ -1,13 +1,4 @@
 {
-  "settings": {
-    "winCondition": "bongo.default",
-    "invulnerable": true,
-    "pvp": false,
-    "friendlyFire": false,
-    "lockTaskOnDeath": false,
-    "consumeItems": false,
-    "teleportsPerTeam": 0
-  },
   "tasks": [
     {
       "type": "bongo.item",

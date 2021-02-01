@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
@@ -33,6 +34,8 @@ public class DumpCommand implements Command<CommandSource> {
             MinecraftServer server = context.getSource().getServer();
             Path base = server.getDataDirectory().toPath().resolve("bongo-dump");
             if (!Files.exists(base)) Files.createDirectories(base);
+            if (!Files.exists(base.resolve("bingo_tasks"))) Files.createDirectories(base.resolve("bingo_tasks"));
+            if (!Files.exists(base.resolve("bingo_settings"))) Files.createDirectories(base.resolve("bingo_settings"));
             int types = 0;
             for (TaskType<?> type : TaskTypes.getTypes()) {
                 ListNBT data = new ListNBT();
@@ -44,14 +47,18 @@ public class DumpCommand implements Command<CommandSource> {
                 });
 
                 JsonObject json = new JsonObject();
-                json.add("settings", NbtToJson.getJson(GameSettings.DEFAULT.getTag(), true));
                 json.add("tasks", NbtToJson.getJson(data, false));
-                Path path = base.resolve(type.getId().replace(".", "-") + ".json");
+                Path path = base.resolve("bingo_tasks").resolve(type.getId().replace(".", "-") + ".json");
                 BufferedWriter w = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
                 w.write(BongoMod.PRETTY_GSON.toJson(json));
                 w.close();
                 types += 1;
             }
+            JsonElement json = NbtToJson.getJson(GameSettings.DEFAULT.getTag(), true);
+            Path path = base.resolve("bingo_settings").resolve("default.json");
+            BufferedWriter w = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+            w.write(BongoMod.PRETTY_GSON.toJson(json));
+            w.close();
 
             context.getSource().sendFeedback(new StringTextComponent("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize().toString())).mergeStyle(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).setUnderlined(true)), true);
         } catch (IOException e) {

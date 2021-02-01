@@ -1,7 +1,8 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
-import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
+import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
+import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
@@ -97,7 +98,7 @@ public class EventListener {
     public void playerTick(TickEvent.PlayerTickEvent event) {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0 && event.player instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(event.player.world);
-            if (bongo.running() && bongo.getTeam(event.player) != null) {
+            if (bongo.canCompleteTasks(event.player)) {
                 for (ItemStack stack : event.player.inventory.mainInventory) {
                     if (!stack.isEmpty()) {
                         int count = 0;
@@ -139,7 +140,8 @@ public class EventListener {
             @Override
             protected void apply(@Nonnull Object unused, @Nonnull IResourceManager resourceManager, @Nonnull IProfiler profiler) {
                 try {
-                    GameDef.loadGameDefs(resourceManager);
+                    GameTasks.loadGameTasks(resourceManager);
+                    GameSettings.loadGameSettings(resourceManager);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

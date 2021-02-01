@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
-import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
+import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
+import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
@@ -74,7 +75,8 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypePotion.INSTANCE);
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
         
-        ArgumentTypes.register(modid + "_bongogame", GameDefArgument.class, new GameDefArgument.Serializer());
+        ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());
+        ArgumentTypes.register(modid + "_bongosettings", GameSettingsArgument.class, new GameSettingsArgument.Serializer());
     }
 
     @Override

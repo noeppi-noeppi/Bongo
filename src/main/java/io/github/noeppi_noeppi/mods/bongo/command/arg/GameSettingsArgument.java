@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
+import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.network.PacketBuffer;
@@ -20,28 +20,28 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class GameDefArgument implements ArgumentType<GameDef> {
+public class GameSettingsArgument implements ArgumentType<GameSettings> {
 
     @Nullable
-    private final Map<ResourceLocation, GameDef> games;
+    private final Map<ResourceLocation, GameSettings> games;
 
     private final ResourceLocationArgument rla = new ResourceLocationArgument();
 
-    public GameDefArgument(@Nullable Map<ResourceLocation, GameDef> games) {
+    public GameSettingsArgument(@Nullable Map<ResourceLocation, GameSettings> games) {
         this.games = games;
     }
 
-    public static GameDefArgument gameDef() {
-        return new GameDefArgument(null);
+    public static GameSettingsArgument gameSettings() {
+        return new GameSettingsArgument(null);
     }
 
-    public GameDef parse(StringReader reader) throws CommandSyntaxException {
+    public GameSettings parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation rl = rla.parse(reader);
-        GameDef gd = games().get(rl);
-        if (gd == null) {
+        GameSettings gs = games().get(rl);
+        if (gs == null) {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.notfound")).create();
         }
-        return gd;
+        return gs;
     }
 
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
@@ -62,42 +62,42 @@ public class GameDefArgument implements ArgumentType<GameDef> {
         return examples;
     }
 
-    private Map<ResourceLocation, GameDef> games() {
+    private Map<ResourceLocation, GameSettings> games() {
         if (games == null) {
-            return GameDef.GAMES;
+            return GameSettings.GAME_SETTINGS;
         } else {
             return games;
         }
     }
 
-    public static class Serializer implements IArgumentSerializer<GameDefArgument> {
+    public static class Serializer implements IArgumentSerializer<GameSettingsArgument> {
 
         @Override
-        public void write(GameDefArgument argument, PacketBuffer buffer) {
+        public void write(GameSettingsArgument argument, PacketBuffer buffer) {
             buffer.writeInt(argument.games().size());
-            for (GameDef gd : argument.games().values()) {
-                buffer.writeResourceLocation(gd.id);
-                buffer.writeCompoundTag(gd.getNbt());
+            for (GameSettings gs : argument.games().values()) {
+                buffer.writeResourceLocation(gs.id);
+                buffer.writeCompoundTag(gs.getTag());
             }
         }
 
         @Nonnull
         @Override
-        public GameDefArgument read(@Nonnull PacketBuffer buffer) {
+        public GameSettingsArgument read(@Nonnull PacketBuffer buffer) {
             int amount = buffer.readInt();
-            Map<ResourceLocation, GameDef> defs = new HashMap<>();
+            Map<ResourceLocation, GameSettings> defs = new HashMap<>();
             for (int i = 0;i < amount; i++) {
                 ResourceLocation id = buffer.readResourceLocation();
                 //noinspection ConstantConditions
-                defs.put(id, new GameDef(id, buffer.readCompoundTag()));
+                defs.put(id, new GameSettings(id, buffer.readCompoundTag()));
             }
-            return new GameDefArgument(defs);
+            return new GameSettingsArgument(defs);
         }
 
         @Override
-        public void write(GameDefArgument argument, @Nonnull JsonObject json) {
-            for (GameDef gd : argument.games().values())
-                json.addProperty(gd.id.toString(), gd.id.toString());
+        public void write(GameSettingsArgument argument, @Nonnull JsonObject json) {
+            for (GameSettings gs : argument.games().values())
+                json.addProperty(gs.id.toString(), gs.id.toString());
         }
     }
 }

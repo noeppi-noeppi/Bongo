@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.noeppi_noeppi.mods.bongo.command.event.*;
+import io.github.noeppi_noeppi.mods.bongo.event.*;
 import io.github.noeppi_noeppi.mods.bongo.compat.JeiIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
@@ -19,6 +19,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -287,6 +288,7 @@ public class Bongo extends WorldSavedData {
         if (winningTeam != null)
             nbt.putInt("winningTeam", winningTeam.ordinal());
 
+        nbt.putString("settings_id", settings.id.toString());
         nbt.put("settings", settings.getTag());
 
         for (DyeColor dc : DyeColor.values()) {
@@ -324,8 +326,8 @@ public class Bongo extends WorldSavedData {
             winningTeam = null;
         }
 
-        if (nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
-            settings = new GameSettings(nbt.getCompound("settings"));
+        if (nbt.contains("settings_id", Constants.NBT.TAG_STRING) && nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
+            settings = new GameSettings(new ResourceLocation(nbt.getString("settings_id")), nbt.getCompound("settings"));
         } else {
             settings = GameSettings.DEFAULT;
         }
@@ -410,6 +412,12 @@ public class Bongo extends WorldSavedData {
         return Collections.unmodifiableList(items);
     }
 
+    // Checks whether this player can complete tasks. This should be checked before for example looping
+    // through evey item in the players inventory.
+    public boolean canCompleteTasks(PlayerEntity player) {
+        return running() && getTeam(player) != null;
+    }
+    
     public <T> void checkCompleted(TaskType<T> type, PlayerEntity player, T compare) {
         if (!running)
             return;

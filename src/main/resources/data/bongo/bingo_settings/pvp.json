@@ -1,0 +1,30 @@
+{
+  "invulnerable": false,
+  "winCondition": "bongo.default",
+  "friendlyFire": false,
+  "lockTaskOnDeath": true,
+  "teleportsPerTeam": 1,
+  "consumeItems": false,
+  "pvp": true,
+  "startingInventory": [
+    {
+      "id": "minecraft:leather_helmet",
+      "Slot": "head"
+    },
+    {
+      "id": "minecraft:leather_chestplate",
+      "Slot": "chest"
+    },
+    {
+      "id": "minecraft:leather_leggings",
+      "Slot": "legs"
+    },
+    {
+      "id": "minecraft:leather_boots",
+      "Slot": "feet"
+    },
+    {
+      "id": "minecraft:stone_sword"
+    }
+  ]
+}

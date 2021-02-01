@@ -1,44 +1,47 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import io.github.noeppi_noeppi.libx.command.UppercaseEnumArgument;
-import io.github.noeppi_noeppi.mods.bongo.command.arg.GameDefArgument;
-import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.item.DyeColor;
 import net.minecraftforge.event.RegisterCommandsEvent;
 
+import static com.mojang.brigadier.arguments.BoolArgumentType.bool;
+import static com.mojang.brigadier.arguments.IntegerArgumentType.integer;
+import static io.github.noeppi_noeppi.libx.command.UppercaseEnumArgument.enumArgument;
+import static io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument.gameSettings;
+import static io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument.gameTasks;
+import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
+
 public class BongoCommands {
 
     public static void register(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("bp").executes(new BackPackCommand()));
-        event.getDispatcher().register(Commands.literal("tc").executes(new TeamChatCommand()));
+        event.getDispatcher().register(literal("bp").executes(new BackPackCommand()));
+        event.getDispatcher().register(literal("tc").executes(new TeamChatCommand()));
 
-        event.getDispatcher().register(Commands.literal("bingo").then(
-                Commands.literal("backpack").executes(new BackPackCommand())
+        event.getDispatcher().register(literal("bingo").then(
+                literal("backpack").executes(new BackPackCommand())
         ).then(
-                Commands.literal("join").then(Commands.argument("team", UppercaseEnumArgument.enumArgument(DyeColor.class)).executes(new JoinCommand()))
+                literal("join").then(argument("team", enumArgument(DyeColor.class)).executes(new JoinCommand()))
         ).then(
-                Commands.literal("leave").executes(new LeaveCommand())
+                literal("leave").executes(new LeaveCommand())
         ).then(
-                Commands.literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("pattern", GameDefArgument.gameDef()).executes(new CreateCommand()))
+                literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(argument("tasks", gameTasks()).then(argument("settings", gameSettings()).executes(new CreateCommand())))
         ).then(
-                Commands.literal("start").requires(cs -> cs.hasPermissionLevel(2)).executes(new StartCommand()).then(Commands.argument("randomize_positions", BoolArgumentType.bool()).executes(new StartCommand()))
+                literal("start").requires(cs -> cs.hasPermissionLevel(2)).executes(new StartCommand()).then(argument("randomize_positions", bool()).executes(new StartCommand()))
         ).then(
-                Commands.literal("stop").requires(cs -> cs.hasPermissionLevel(2)).executes(new StopCommand())
+                literal("stop").requires(cs -> cs.hasPermissionLevel(2)).executes(new StopCommand())
         ).then(
-                Commands.literal("spread").requires(cs -> cs.hasPermissionLevel(2)).then(Commands.argument("amount", IntegerArgumentType.integer(1, 16)).executes(new SpreadCommand()))
+                literal("spread").requires(cs -> cs.hasPermissionLevel(2)).then(argument("amount", integer(1, 16)).executes(new SpreadCommand()))
         ).then(
-                Commands.literal("teams").executes(new TeamsCommand())
+                literal("teams").executes(new TeamsCommand())
         ).then(
-                Commands.literal("teamchat").executes(new TeamChatCommand())
+                literal("teamchat").executes(new TeamChatCommand())
         ).then(
-                Commands.literal("dump").requires(cs -> cs.hasPermissionLevel(2)).executes(new DumpCommand()).then(Commands.argument("everything", BoolArgumentType.bool()).executes(new DumpCommand()))
+                literal("dump").requires(cs -> cs.hasPermissionLevel(2)).executes(new DumpCommand()).then(argument("everything", bool()).executes(new DumpCommand()))
         ).then(
-                Commands.literal("teleport").then(Commands.argument("target", EntityArgument.player()).executes(new TeleportCommand()))
+                literal("teleport").then(argument("target", EntityArgument.player()).executes(new TeleportCommand()))
         ).then(
-                Commands.literal("tp").then(Commands.argument("target", EntityArgument.player()).executes(new TeleportCommand()))
+                literal("tp").then(argument("target", EntityArgument.player()).executes(new TeleportCommand()))
         ));
     }
 }

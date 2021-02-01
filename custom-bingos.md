@@ -1,28 +1,29 @@
 # Create Custom Bingos
 
-Custom bingos can be added via [DataPacks](https://minecraft.gamepedia.com/Data_Pack). A custom bingo (also called a game definition) is a json file that goes into `data/<datapack-id>/bingos/<bingo-id>.json`. That JSON file should look like this:
+Custom bingos can be added via [DataPacks](https://minecraft.gamepedia.com/Data_Pack). You can add custom game tasks (defines what shows up on the bingo card) and custom game settings (defines whether players should be invulnerable or the starting inventory).
+
+## Settings
+
+Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/<bingo-id>.json`. That JSON file should look something like this:
 
 ```json
 {
-  "settings": {
-    "winCondition": "bongo.default",
-    "invulnerable": true,
-    "pvp": false,
-    "friendlyFire": false,
-    "lockTaskOnDeath": false,
-    "consumeItems": false
-  },
-  "tasks": [
+  "invulnerable": false,
+  "winCondition": "bongo.default",
+  "friendlyFire": false,
+  "lockTaskOnDeath": true,
+  "teleportsPerTeam": 1,
+  "consumeItems": false,
+  "pvp": true,
+  "startingInventory": [
     {
-      "type": "bongo.item",
-      "weight": 20,
-      "id": "minecraft:golden_apple"
+      "id": "minecraft:leather_helmet",
+      "Slot": "head"
     }
   ]
 }
 ```
 
-## Settings
 
 ### Win Condition
 
@@ -75,9 +76,50 @@ If `consumeItems` is set to true and someone completes a task, the item (or what
 
 *Default: 0*
 
+### Staring Inventory
+
+`startingInventory` is a list of items that each player gets when the game starts. Each item can have the following properties:
+
+```
+id       The ResourceLocation of the item used (minecraft:golden_apple)
+Count    (optional) How many items are required to complete this task
+tag      (optional) NBT-Data the item must have to be accepted
+Slot     (optional) In which slot the item should be placed.
+```
+
+Valid slots are:
+
+```
+mainhand   (default) The item is placed in the players main inventory. Can be used at most 36 times.
+offhand    The item is placed in the players offhand slot. Can be used only once.
+head       The item is placed in the players head slot. Can be used only once.
+chest      The item is placed in the players chest slot. Can be used only once.
+legs       The item is placed in the players legs slot. Can be used only once.
+feet       The item is placed in the players feet slot. Can be used only once.
+```
+
 ## Tasks
 
-`tasks` is a list of tasks. A task is an object. All tasks share the following properties:
+Your settings should be defined in a file in `data/<datapack-id>/bingo_tasks/<bingo-id>.json`. That JSON file should look something like this:
+
+```json
+{
+  "tasks": [
+    {
+      "type": "bongo.item",
+      "weight": 20,
+      "id": "minecraft:acacia_boat"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 20,
+      "id": "minecraft:acacia_button"
+    }
+  ]
+}
+```
+
+Each entry in the tasks list describes a task. All tasks share the following properties:
 
 ```
 type      The type of the task. (Items, Advancements, ...)
@@ -85,13 +127,40 @@ weight    (optional) How likely it is that this task gets into the bingo card. H
           values mean more likely. Default is 1
 ```
 
-For a valid game definition there must be at minimum 25 tasks.
+For a valid game tasks definition there must be at minimum 25 tasks.
 
 ## Task Types
 
 ### Empty
 
 This task will display nothing, and it can't be completed. Its type is `bongo.empty`. This task is mainly for internal use, but it can be useful if you want to restrict a random row and a random column.
+
+### Group
+
+This task type is a pseudo task type (`bongo.group`) that does not describe a specific task, but an array of tasks. When this task is picked, it'll then choose one of the tasks it contains randomly. The containing tasks may also have weights.
+
+Example:
+
+```json
+{
+  "type": "bongo.group",
+  "weight": 4,
+  "tasks": [
+    {
+      "type": "bongo.item",
+      "weight": 9,
+      "id": "minecraft:golden_apple"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 1,
+      "id": "minecraft:enchanted_golden_apple"
+    }
+  ]
+}
+```
+
+This task has a weight of `4`. If the task ist picked by that total weight of 4, It'll then choose either a golden apple (90% chance), or an enchanted golden apple (10% chance). 
 
 ### Item
 
@@ -175,9 +244,41 @@ Example:
 }
 ```
 
+### Statistic
+
+This task has the type `bongo.stat`. To complete it, a player must reach a value in the [statistics](https://minecraft.gamepedia.com/Statistics). When the game starts, all statistics are set to 0.
+
+Example:
+
+```json
+{
+  "type": "bongo.stat",
+  "category": "broken",
+  "stat": "minecraft:wooden_pickaxe",
+  "value": 10
+}
+```
+
+This would require a player to use up 10 wooden pickaxes.
+
+Other example:
+
+```json
+{
+  "type": "bongo.stat",
+  "category": "custom",
+  "stat": "minecraft:walk_one_cm",
+  "value": 100000
+}
+```
+
+This would require a player to walk 100 blocks.
+
+Valid categories are: `mined`, `crafted`, `used`, `broken`, `picked_up`, `dropped`, `killed`, `killed_by` and `custom`. While the first ones require an item, a block or an entity type respectively, the last category defines some special values. Those can be found [here](https://minecraft.gamepedia.com/Statistics#List_of_custom_statistic_names).
+
 ## The Dump Command
 
-Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or you server'S folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all posible nbt values though).
+Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or you server's folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all possible nbt values though).
 
 Because those lists can get quite big when playing in a large modpack you can also do `/bingo dump false` This will tell bongo to only dump elements that you as a player have in some way. 
   * For items, it dumps every item from your main inventory (with this you can also get NBT-Data out of the items).
@@ -185,3 +286,5 @@ Because those lists can get quite big when playing in a large modpack you can al
   * For entities, it dumps all entities that are within a 10x10x20 box around you,
   * For advancements, it dumps all advancements you currently have.
   * For potions, it dumps all potion effects that are currently active for you.
+
+For statistics the dump command will only work when used as `/bingo dump false`.
