@@ -97,7 +97,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public Predicate<ItemStack> bongoTooltipStack(ItemStack element) {
-        return stack -> ItemStack.areItemsEqual(element, stack);
+        return stack -> ItemStack.areItemsEqual(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag());
     }
 
     @Override
