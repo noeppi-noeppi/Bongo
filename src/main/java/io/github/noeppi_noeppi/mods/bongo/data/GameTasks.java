@@ -25,6 +25,9 @@ public class GameTasks {
     }
     
     public Either<List<Task>, String> getBingoTasks() {
+        if (rootGroup.getAvailableTasks() < 25) {
+            return Either.right("bongo.cmd.create.less");
+        }
         return rootGroup.choseTasks(new Random(), 25);
     }
     

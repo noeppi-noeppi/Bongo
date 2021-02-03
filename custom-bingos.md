@@ -139,6 +139,8 @@ This task will display nothing, and it can't be completed. Its type is `bongo.em
 
 This task type is a pseudo task type (`bongo.group`) that does not describe a specific task, but an array of tasks. When this task is picked, it'll then choose one of the tasks it contains randomly. The containing tasks may also have weights.
 
+*For groups, `weight` can also be an array of integer values. In that case each value is interpreted as a separate weight. If more than one of those separate weights are chosen during creation of the bingo, there will be more than one task chosen from that group. However, the smae task will never be chosen twice from the same group. Make sure that your group has at least as many tasks as weights.*
+
 Example:
 
 ```json

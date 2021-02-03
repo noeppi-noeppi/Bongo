@@ -4,13 +4,11 @@ import com.mojang.datafixers.util.Either;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NumberNBT;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class GameTaskGroup {
     
@@ -24,26 +22,59 @@ public class GameTaskGroup {
         int totalWeight = 0;
         for (int i = 0; i < taskList.size(); i++) {
             CompoundNBT compound = taskList.getCompound(i);
-            int weight = compound.getInt("weight");
-            if (weight <= 0) weight = 1;
+            boolean allowsForSpecialWeights = PSEUDO_TYPE.equals(compound.getString("type"));
+            int[] weights;
+            if (!compound.contains("weight")) {
+                weights = new int[]{ 1 };
+            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_LIST)) {
+                ListNBT weightsNBT = compound.getList("weight", Constants.NBT.TAG_INT);
+                weights = new int[weightsNBT.size()];
+                for (int j = 0; j < weightsNBT.size(); j++) {
+                    weights[j] = weightsNBT.getInt(j);
+                }
+            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_INT_ARRAY)) {
+                weights = compound.getIntArray("weight");
+            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_LONG_ARRAY)) {
+                weights = Arrays.stream(compound.getLongArray("weight")).mapToInt(l -> (int) l).toArray();
+            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_BYTE_ARRAY)) {
+                byte[] weightsNBT = compound.getByteArray("weight");
+                weights = new int[weightsNBT.length];
+                for (int j = 0; j < weightsNBT.length; j++) {
+                    weights[j] = weightsNBT[j];
+                }
+            } else if (compound.get("weight") instanceof NumberNBT) {
+                weights = new int[]{ compound.getInt("weight") };
+            } else {
+                throw new IllegalStateException("Invalid weight for task. weight must be an integer. Only for task groups it may be an array of integers.");
+            }
             
             Either<Task, GameTaskGroup> task = parseTask(compound);
             
-            tasks.add(Pair.of(weight, task));
-            totalWeight += weight;
+            for (int weight : weights) {
+                int realWeight = Math.max(weight, 1);
+                tasks.add(Pair.of(realWeight, task));
+                totalWeight += realWeight;
+            }
+            
         }
         this.totalWeight = totalWeight;
     }
     
+    public int getAvailableTasks() {
+        return tasks.size();
+    }
+    
     public Either<List<Task>, String> choseTasks(Random random, int taskAmount) {
         if (tasks.size() < taskAmount) {
-            return Either.right("bongo.cmd.create.less");
+            return Either.right("bongo.cmd.create.less.subgroup");
         }
 
         int weightLeft = totalWeight;
+        int collectedTasks = 0;
         List<Task> theTasks = new ArrayList<>();
+        Map<GameTaskGroup, Integer> theGroups = new HashMap<>();
         List<Integer> theTasksIndices = new ArrayList<>();
-        while (theTasks.size() < taskAmount) {
+        while (collectedTasks < taskAmount) {
             int rand = random.nextInt(weightLeft);
             int weightCounted = 0;
             for (int i = 0; i < tasks.size(); i++) {
@@ -55,16 +86,27 @@ public class GameTaskGroup {
                         if (taskDef.left().isPresent()) {
                             theTasks.add(taskDef.left().get());
                         } else if (taskDef.right().isPresent()) {
-                            Either<List<Task>, String> result = taskDef.right().get().choseTasks(random, 1);
-                            if (result.right().isPresent() || !result.left().isPresent()) {
-                                return Either.right(result.right().isPresent() ? result.right().get() : "Unknown Error");
+                            GameTaskGroup group = taskDef.right().get();
+                            if (!theGroups.containsKey(group)) {
+                                theGroups.put(group, 0);
                             }
-                            theTasks.add(result.left().get().get(0));
+                            theGroups.put(group, theGroups.get(group) + 1);
                         }
                         theTasksIndices.add(i);
+                        collectedTasks += 1;
                         weightLeft -= pair.getLeft();
                         break;
                     }
+                }
+            }
+        }
+        for (Map.Entry<GameTaskGroup, Integer> entry : theGroups.entrySet()) {
+            if (entry.getValue() > 0) {
+                Either<List<Task>, String> result = entry.getKey().choseTasks(random, entry.getValue());
+                if (result.right().isPresent() || !result.left().isPresent()) {
+                    return Either.right(result.right().isPresent() ? result.right().get() : "Unknown Error");
+                } else {
+                    theTasks.addAll(result.left().get());
                 }
             }
         }

@@ -5,6 +5,7 @@
   "bongo.cmd.bp.noteam": "Join a team to access your team's backpack.",
   "bongo.cmd.create.done": " created a new game.",
   "bongo.cmd.create.less": "There are not enough tasks in this Bingo.",
+  "bongo.cmd.create.less.subgroup": "There are not enough tasks in a subgroup of this Bingo.",
   "bongo.cmd.create.notfound": "This game definition could not be found.",
   "bongo.cmd.create.running": "You cannot create a new game while the previous one is still running. Stop the running game first.",
   "bongo.cmd.spread.added": "  Players in ",

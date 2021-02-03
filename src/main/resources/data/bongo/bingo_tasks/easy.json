@@ -1,6 +1,41 @@
 {
   "tasks": [
     {
+      "type": "bongo.group",
+      "weight": 100000,
+      "tasks": [
+        {
+          "type": "bongo.item",
+          "weight": 1,
+          "id": "minecraft:dragon_egg"
+        },
+        {
+          "type": "bongo.item",
+          "id": "minecraft:nether_star"
+        }
+      ]
+    },
+    {
+      "type": "bongo.group",
+      "weight": [100000, 100000],
+      "tasks": [
+        {
+          "type": "bongo.item",
+          "weight": 1,
+          "id": "minecraft:beacon"
+        },
+        {
+          "type": "bongo.item",
+          "weight": 2,
+          "id": "minecraft:player_head"
+        },
+        {
+          "type": "bongo.item",
+          "id": "minecraft:command_block"
+        }
+      ]
+    },
+    {
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:acacia_boat"
