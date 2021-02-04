@@ -5,6 +5,7 @@
   "bongo.cmd.bp.noteam": "Dołącz do drużyny, aby uzyskać dostęp do jej plecaka.",
   "bongo.cmd.create.done": " utworzył(a) nową grę.",
   "bongo.cmd.create.less": "Nie ma wystarczająco dużo zadań w tym Bingo.",
+  "bongo.cmd.create.less.subgroup": "Nie ma wystarczająco dużo zadań w podgrupie tego Bingo.",
   "bongo.cmd.create.notfound": "Nie można znaleźć tej definicji gry.",
   "bongo.cmd.create.running": "Nie możesz utworzyć nowej gry, gdy poprzednia wciąż trwa. Najpierw zatrzymaj trwającą grę.",
   "bongo.cmd.spread.added": "  Gracze w: ",
