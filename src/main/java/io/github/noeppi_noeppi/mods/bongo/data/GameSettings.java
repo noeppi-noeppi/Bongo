@@ -1,7 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -11,7 +10,6 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -135,9 +133,6 @@ public class GameSettings {
     public void fillStartingInventory(PlayerEntity player) {
         PlayerInventory inventory = player.inventory;
         inventory.clear();
-        if (ModList.get().isLoaded("curios")) {
-            CuriosIntegration.clearTrinkets(player);
-        }
         for (Pair<EquipmentSlotType, ItemStack> entry : startingInventory) {
             if (entry.getLeft() == EquipmentSlotType.MAINHAND) {
                 inventory.addItemStackToInventory(entry.getRight().copy());
@@ -147,6 +142,7 @@ public class GameSettings {
         }
     }
     
+
     public static void loadGameSettings(IResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_settings", GAME_SETTINGS, GameSettings::new);
         GAME_SETTINGS.put(DEFAULT.id, DEFAULT);
