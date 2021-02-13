@@ -19,6 +19,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -109,6 +110,11 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public Predicate<ItemStack> bongoTooltipStack(ResourceLocation element) {
         return ClientAdvancementInfo.getTooltipItem(element);
+    }
+
+    @Override
+    public Function<ResourceLocation, String> getSortKey() {
+        return ResourceLocation::toString;
     }
 
     @Override

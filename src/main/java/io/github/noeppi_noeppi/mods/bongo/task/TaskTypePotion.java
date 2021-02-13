@@ -17,6 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class TaskTypePotion implements TaskType<Effect> {
@@ -73,6 +74,16 @@ public class TaskTypePotion implements TaskType<Effect> {
     @Override
     public void consumeItem(Effect element, PlayerEntity player) {
         player.removePotionEffect(element);
+    }
+
+    @Override
+    public Function<Effect, String> getSortKey() {
+        return effect -> {
+            ResourceLocation rl = effect.getRegistryName();
+            if (rl == null)
+                return "null";
+            return rl.toString();
+        };
     }
 
     @Override

@@ -28,6 +28,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -167,6 +168,11 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
     public Predicate<ItemStack> bongoTooltipStack(StatAndValue element) {
         Item item = element.stat.getValue() instanceof IItemProvider ? ((IItemProvider) element.stat.getValue()).asItem() : null;
         return stack -> item != null && stack.getItem() == item;
+    }
+
+    @Override
+    public Function<StatAndValue, String> getSortKey() {
+        return statAndValue -> statAndValue.stat.getName();
     }
 
     @Override
