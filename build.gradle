@@ -83,12 +83,18 @@ repositories {
         name = 'MelanX Maven'
         url = 'https://maven.melanx.de/'
     }
+    maven {
+        name "Curios"
+        url "https://maven.theillusivec4.top/"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:${minecraft_version}-${libx_version}")
+
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0:api")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version.replace('-', ':')}")
 }

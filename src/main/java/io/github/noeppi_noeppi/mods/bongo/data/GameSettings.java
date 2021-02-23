@@ -142,6 +142,7 @@ public class GameSettings {
         }
     }
     
+
     public static void loadGameSettings(IResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_settings", GAME_SETTINGS, GameSettings::new);
         GAME_SETTINGS.put(DEFAULT.id, DEFAULT);
