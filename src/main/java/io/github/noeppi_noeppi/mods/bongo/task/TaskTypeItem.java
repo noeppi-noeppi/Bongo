@@ -12,10 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -93,6 +95,16 @@ public class TaskTypeItem implements TaskType<ItemStack> {
                 }
             }
         }
+    }
+
+    @Override
+    public Function<ItemStack, String> getSortKey() {
+        return stack -> {
+            ResourceLocation rl = stack.getItem().getRegistryName();
+            if (rl == null)
+                return "null";
+            return rl.toString();
+        };
     }
 
     @Override

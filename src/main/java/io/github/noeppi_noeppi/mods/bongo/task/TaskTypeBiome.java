@@ -6,7 +6,6 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,6 +19,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class TaskTypeBiome implements TaskType<Biome> {
@@ -93,6 +93,16 @@ public class TaskTypeBiome implements TaskType<Biome> {
     @Override
     public Biome deserializeNBT(CompoundNBT nbt) {
         return ForgeRegistries.BIOMES.getValue(new ResourceLocation(nbt.getString("biome")));
+    }
+
+    @Override
+    public Function<Biome, String> getSortKey() {
+        return b -> {
+            ResourceLocation rl = ForgeRegistries.BIOMES.getKey(b);
+            if (rl == null)
+                return "null";
+            return rl.toString();
+        };
     }
 
     @Override

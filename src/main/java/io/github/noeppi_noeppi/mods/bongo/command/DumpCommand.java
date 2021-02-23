@@ -39,7 +39,7 @@ public class DumpCommand implements Command<CommandSource> {
             int types = 0;
             for (TaskType<?> type : TaskTypes.getTypes()) {
                 ListNBT data = new ListNBT();
-                type.getAllElements(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer()).forEach(obj -> {
+                type.getAllElementsSorted(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer()).forEach(obj -> {
                     //noinspection unchecked
                     CompoundNBT taskNbt = ((TaskType<Object>) type).serializeNBT(obj);
                     taskNbt.putString("type", type.getId());

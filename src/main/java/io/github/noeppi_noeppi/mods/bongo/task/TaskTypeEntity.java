@@ -8,7 +8,6 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -23,10 +22,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -103,6 +102,16 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
         } else {
             return stack -> !stack.isEmpty() && stack.getItem() == item;
         }
+    }
+
+    @Override
+    public Function<EntityType<?>, String> getSortKey() {
+        return entityType -> {
+            ResourceLocation rl = entityType.getRegistryName();
+            if (rl == null)
+                return "null";
+            return rl.toString();
+        };
     }
 
     @Override
