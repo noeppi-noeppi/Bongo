@@ -10,7 +10,7 @@ public class BongoStartEvent extends Event {
     private final Bongo bongo;
     private final ServerWorld world;
 
-    public BongoStartEvent(Bongo bongo, ServerWorld world) {
+    private BongoStartEvent(Bongo bongo, ServerWorld world) {
         this.bongo = bongo;
         this.world = world;
     }
@@ -23,14 +23,14 @@ public class BongoStartEvent extends Event {
         return world;
     }
 
-    public static class World extends BongoStopEvent {
+    public static class World extends BongoStartEvent {
 
         public World(Bongo bongo, ServerWorld world) {
             super(bongo, world);
         }
     }
 
-    public static class Player extends BongoStopEvent {
+    public static class Player extends BongoStartEvent {
 
         private final ServerPlayerEntity player;
 

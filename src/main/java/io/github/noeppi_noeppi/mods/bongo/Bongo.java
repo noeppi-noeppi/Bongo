@@ -55,12 +55,14 @@ public class Bongo extends WorldSavedData {
 
     public static void updateClient(Bongo bongo, BongoMessageType bongoMessageType) {
         clientInstance = bongo;
-        if (mc == null)
+        if (mc == null) {
             mc = Minecraft.getInstance();
+        }
         if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP
                 || bongoMessageType == BongoMessageType.FORCE) {
-            if (mc.player != null)
+            if (mc.player != null) {
                 mc.player.refreshDisplayName();
+            }
             if (ClientConfig.addItemTooltips.get()) {
                 bongo.updateTooltipPredicate();
                 if (ClientConfig.addItemTooltips.get()) {

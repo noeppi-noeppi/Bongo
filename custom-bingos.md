@@ -139,7 +139,7 @@ This task will display nothing, and it can't be completed. Its type is `bongo.em
 
 This task type is a pseudo task type (`bongo.group`) that does not describe a specific task, but an array of tasks. When this task is picked, it'll then choose one of the tasks it contains randomly. The containing tasks may also have weights.
 
-*For groups, `weight` can also be an array of integer values. In that case each value is interpreted as a separate weight. If more than one of those separate weights are chosen during creation of the bingo, there will be more than one task chosen from that group. However, the smae task will never be chosen twice from the same group. Make sure that your group has at least as many tasks as weights.*
+*For groups, `weight` can also be an array of integer values. In that case each value is interpreted as a separate weight. If more than one of those separate weights are chosen during creation of the bingo, there will be more than one task chosen from that group. However, the same task will never be chosen twice from the same group. Make sure that your group has at least as many tasks as weights.*
 
 Example:
 
@@ -280,7 +280,7 @@ Valid categories are: `mined`, `crafted`, `used`, `broken`, `picked_up`, `droppe
 
 ## The Dump Command
 
-Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or you server's folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all possible nbt values though).
+Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or your server's folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all possible nbt values though).
 
 Because those lists can get quite big when playing in a large modpack you can also do `/bingo dump false` This will tell bongo to only dump elements that you as a player have in some way. 
   * For items, it dumps every item from your main inventory (with this you can also get NBT-Data out of the items).

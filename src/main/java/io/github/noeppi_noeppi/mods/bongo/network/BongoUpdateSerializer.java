@@ -24,7 +24,7 @@ public class BongoUpdateSerializer implements PacketSerializer<BongoUpdateSerial
     public BongoUpdateMessage decode(PacketBuffer buffer) {
         Bongo bongo = new Bongo();
         bongo.read(Objects.requireNonNull(buffer.readCompoundTag()));
-        return new BongoUpdateMessage(bongo, BongoMessageType.valueOf(buffer.readString()));
+        return new BongoUpdateMessage(bongo, BongoMessageType.valueOf(buffer.readString(32767)));
     }
 
     public static class BongoUpdateMessage {

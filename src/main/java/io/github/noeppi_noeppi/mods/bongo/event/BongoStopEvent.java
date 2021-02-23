@@ -10,7 +10,7 @@ public abstract class BongoStopEvent extends Event {
     private final Bongo bongo;
     private final ServerWorld world;
 
-    public BongoStopEvent(Bongo bongo, ServerWorld world) {
+    private BongoStopEvent(Bongo bongo, ServerWorld world) {
         this.bongo = bongo;
         this.world = world;
     }

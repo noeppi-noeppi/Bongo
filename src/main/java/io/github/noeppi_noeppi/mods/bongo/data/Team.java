@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
@@ -42,7 +43,7 @@ public class Team {
         return new TranslationTextComponent("bongo.team." + color.getString()).mergeStyle(Util.getTextFormatting(color));
     }
 
-    public TextFormatting getFormatting() {
+    public Style getFormatting() {
         return Util.getTextFormatting(color);
     }
 

@@ -5,12 +5,16 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Util {
 
@@ -20,44 +24,19 @@ public class Util {
             DyeColor.GRAY, DyeColor.MAGENTA, DyeColor.BLACK, DyeColor.WHITE, DyeColor.BROWN,
             DyeColor.LIGHT_GRAY
     );
+    
+    private static final Map<DyeColor, Color> COLOR_CACHE = new HashMap<>();
 
-    public static TextFormatting getTextFormatting(@Nullable DyeColor color) {
+    public static Style getTextFormatting(@Nullable DyeColor color) {
         if (color == null) {
-            return TextFormatting.RESET;
-        } else if (color == DyeColor.WHITE) {
-            return TextFormatting.WHITE;
-        } else if (color == DyeColor.ORANGE) {
-            return TextFormatting.GOLD;
-        } else if (color == DyeColor.MAGENTA) {
-            return TextFormatting.RED;
-        } else if (color == DyeColor.LIGHT_BLUE) {
-            return TextFormatting.BLUE;
-        } else if (color == DyeColor.YELLOW) {
-            return TextFormatting.YELLOW;
-        } else if (color == DyeColor.LIME) {
-            return TextFormatting.GREEN;
-        } else if (color == DyeColor.PINK) {
-            return TextFormatting.LIGHT_PURPLE;
-        } else if (color == DyeColor.GRAY) {
-            return TextFormatting.DARK_GRAY;
-        } else if (color == DyeColor.LIGHT_GRAY) {
-            return TextFormatting.GRAY;
-        } else if (color == DyeColor.CYAN) {
-            return TextFormatting.AQUA;
-        } else if (color == DyeColor.PURPLE) {
-            return TextFormatting.DARK_PURPLE;
-        } else if (color == DyeColor.BLUE) {
-            return TextFormatting.DARK_BLUE;
-        } else if (color == DyeColor.BROWN) {
-            return TextFormatting.DARK_AQUA;
-        } else if (color == DyeColor.GREEN) {
-            return TextFormatting.DARK_GREEN;
-        } else if (color == DyeColor.RED) {
-            return TextFormatting.DARK_RED;
-        } else if (color == DyeColor.BLACK) {
-            return TextFormatting.BLACK;
+            return Style.EMPTY.applyFormatting(TextFormatting.RESET);
         } else {
-            return TextFormatting.RESET;
+            if (!COLOR_CACHE.containsKey(color)) {
+                int colorValue = color.getColorValue();
+                float[] hsb = java.awt.Color.RGBtoHSB((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF, null);
+                COLOR_CACHE.put(color, Color.fromInt(java.awt.Color.HSBtoRGB(hsb[0], Math.min(1, hsb[1] + 0.1f), Math.min(1, hsb[2] + 0.1f))));
+            }
+            return Style.EMPTY.setColor(COLOR_CACHE.get(color));
         }
     }
 

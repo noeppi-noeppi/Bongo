@@ -114,9 +114,9 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public Stream<ResourceLocation> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
         if (player == null) {
-            return server.getAdvancementManager().getAllAdvancements().stream().map(Advancement::getId);
+            return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> adv.getDisplay() != null).map(Advancement::getId);
         } else {
-            return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> player.getAdvancements().getProgress(adv).isDone()).map(Advancement::getId);
+            return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> adv.getDisplay() != null).filter(adv -> player.getAdvancements().getProgress(adv).isDone()).map(Advancement::getId);
         }
     }
 }
