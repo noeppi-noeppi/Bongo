@@ -8,7 +8,6 @@ import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
-import io.github.noeppi_noeppi.mods.bongo.data.GameTaskGroup;
 import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;

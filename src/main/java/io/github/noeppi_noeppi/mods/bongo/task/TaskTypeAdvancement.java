@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -19,7 +20,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -112,9 +113,10 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
         return ClientAdvancementInfo.getTooltipItem(element);
     }
 
+    @Nullable
     @Override
-    public Function<ResourceLocation, String> getSortKey() {
-        return ResourceLocation::toString;
+    public Comparator<ResourceLocation> getSorting() {
+        return Util.COMPARE_RESOURCE;
     }
 
     @Override

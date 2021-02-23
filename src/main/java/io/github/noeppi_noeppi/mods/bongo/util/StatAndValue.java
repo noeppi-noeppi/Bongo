@@ -38,4 +38,9 @@ public class StatAndValue {
         //noinspection ConstantConditions
         return new StatAndValue(type.get(stat), value);
     }
+    
+    public ResourceLocation getValueId() {
+        //noinspection unchecked
+        return ((Registry<Object>) stat.getType().getRegistry()).getKey(stat.getValue());
+    }
 }

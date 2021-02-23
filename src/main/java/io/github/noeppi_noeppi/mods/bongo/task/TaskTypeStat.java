@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
@@ -28,7 +29,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
-import java.util.function.Function;
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -170,9 +171,12 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
         return stack -> item != null && stack.getItem() == item;
     }
 
+    @Nullable
     @Override
-    public Function<StatAndValue, String> getSortKey() {
-        return statAndValue -> statAndValue.stat.getName();
+    public Comparator<StatAndValue> getSorting() {
+        return Comparator.comparing((StatAndValue stat) -> stat.stat.getType().getRegistryName(), Util.COMPARE_RESOURCE)
+                .thenComparing(StatAndValue::getValueId, Util.COMPARE_RESOURCE)
+                .thenComparingInt((StatAndValue stat) -> stat.value);
     }
 
     @Override

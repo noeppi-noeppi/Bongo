@@ -1,10 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.effect;
 
-import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
+import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoWinEvent;
-import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.network.play.server.STitlePacket;
@@ -14,7 +13,6 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 
 public class DefaultEffects {
 
@@ -26,9 +24,6 @@ public class DefaultEffects {
     @SubscribeEvent
     public void playerInit(BongoStartEvent.Player event) {
         event.getPlayer().inventory.clear();
-        if (ModList.get().isLoaded("curios")) {
-            CuriosIntegration.clearTrinkets(event.getPlayer());
-        }
         event.getBongo().getSettings().fillStartingInventory(event.getPlayer());
         AdvancementCommand.Action.REVOKE.applyToAdvancements(event.getPlayer(), event.getWorld().getServer().getAdvancementManager().getAllAdvancements());
         ServerStatisticsManager mgr = event.getWorld().getServer().getPlayerList().getPlayerStats(event.getPlayer());

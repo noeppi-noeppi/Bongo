@@ -60,10 +60,12 @@ public enum WinCondition {
         };
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static BiFunction<Bongo, Team, Boolean> compose(IBooleanFunction combine, WinCondition c1, WinCondition c2) {
         return (bongo, team) -> combine.apply(c1.won(bongo, team), c2.won(bongo, team));
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static BiFunction<Bongo, Team, Boolean> compose(IBooleanFunction combine, WinCondition c1, WinCondition c2, WinCondition c3) {
         return (bongo, team) -> combine.apply(combine.apply(c1.won(bongo, team), c2.won(bongo, team)), c3.won(bongo, team));
     }

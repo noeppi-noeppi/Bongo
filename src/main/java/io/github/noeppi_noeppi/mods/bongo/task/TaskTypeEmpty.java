@@ -11,7 +11,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
@@ -75,11 +74,6 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     @Override
     public TaskTypeEmpty deserializeNBT(CompoundNBT nbt) {
         return this;
-    }
-
-    @Override
-    public Function<TaskTypeEmpty, String> getSortKey() {
-        return t -> "empty";
     }
 
     @Override

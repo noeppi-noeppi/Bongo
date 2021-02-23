@@ -15,7 +15,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -62,11 +61,10 @@ public interface TaskType<T> {
 
     }
 
-    Function<T, String> getSortKey();
+    @Nullable
+    default Comparator<T> getSorting() {
+        return null;
+    }
 
     Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player);
-
-    default Stream<T> getAllElementsSorted(MinecraftServer server, @Nullable ServerPlayerEntity player) {
-        return getAllElements(server, player).sorted(Comparator.comparing(getSortKey()));
-    }
 }

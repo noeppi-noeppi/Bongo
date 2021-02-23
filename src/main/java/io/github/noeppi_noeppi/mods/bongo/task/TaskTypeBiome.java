@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -11,7 +12,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -19,7 +19,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 public class TaskTypeBiome implements TaskType<Biome> {
@@ -69,12 +69,12 @@ public class TaskTypeBiome implements TaskType<Biome> {
 
     @Override
     public String getTranslatedContentName(Biome content) {
-        return new TranslationTextComponent(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content))).getStringTruncated(18);
+        return new TranslationTextComponent(net.minecraft.util.Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content))).getStringTruncated(18);
     }
 
     @Override
     public ITextComponent getContentName(Biome content, MinecraftServer server) {
-        return new TranslationTextComponent(Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
+        return new TranslationTextComponent(net.minecraft.util.Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
     }
 
     @Override
@@ -95,14 +95,10 @@ public class TaskTypeBiome implements TaskType<Biome> {
         return ForgeRegistries.BIOMES.getValue(new ResourceLocation(nbt.getString("biome")));
     }
 
+    @Nullable
     @Override
-    public Function<Biome, String> getSortKey() {
-        return b -> {
-            ResourceLocation rl = ForgeRegistries.BIOMES.getKey(b);
-            if (rl == null)
-                return "null";
-            return rl.toString();
-        };
+    public Comparator<Biome> getSorting() {
+        return Comparator.comparing(Biome::getRegistryName, Util.COMPARE_RESOURCE);
     }
 
     @Override

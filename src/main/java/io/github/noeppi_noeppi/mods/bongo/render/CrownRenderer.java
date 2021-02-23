@@ -22,6 +22,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+@SuppressWarnings("SameParameterValue")
 public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
 
     public static final ResourceLocation CROWN_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/player/crown.png");
@@ -70,6 +71,7 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void renderSprites(MatrixStack matrixStack, IRenderTypeBuffer buffer, double width, double height, float alpha, int overlay) {
         matrixStack.push();
         renderSprite(matrixStack, buffer, 0, 0, width, height, alpha, overlay);
@@ -80,6 +82,7 @@ public class CrownRenderer extends LayerRenderer<AbstractClientPlayerEntity, Pla
         matrixStack.pop();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void renderSprite(MatrixStack matrixStack, IRenderTypeBuffer buffer, double x, double y, double width, double height, float alpha, int overlay) {
         IVertexBuilder vertex = buffer.getBuffer(CROWN_TYPE);
         Matrix4f model = matrixStack.getLast().getMatrix();

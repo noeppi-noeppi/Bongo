@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -25,7 +26,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
+import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,16 +106,6 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
     }
 
     @Override
-    public Function<EntityType<?>, String> getSortKey() {
-        return entityType -> {
-            ResourceLocation rl = entityType.getRegistryName();
-            if (rl == null)
-                return "null";
-            return rl.toString();
-        };
-    }
-
-    @Override
     public CompoundNBT serializeNBT(EntityType<?> element) {
         CompoundNBT nbt = new CompoundNBT();
         //noinspection ConstantConditions
@@ -127,6 +118,12 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
         return ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("entity")));
     }
 
+    @Nullable
+    @Override
+    public Comparator<EntityType<?>> getSorting() {
+        return Comparator.comparing(EntityType::getRegistryName, Util.COMPARE_RESOURCE);
+    }
+    
     @Override
     public Stream<EntityType<?>> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
         if (player == null) {

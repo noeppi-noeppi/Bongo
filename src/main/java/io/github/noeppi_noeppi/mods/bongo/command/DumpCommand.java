@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 public class DumpCommand implements Command<CommandSource> {
 
@@ -39,7 +41,13 @@ public class DumpCommand implements Command<CommandSource> {
             int types = 0;
             for (TaskType<?> type : TaskTypes.getTypes()) {
                 ListNBT data = new ListNBT();
-                type.getAllElementsSorted(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer()).forEach(obj -> {
+                Stream<?> stream = type.getAllElements(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer());
+                Comparator<?> comparator = type.getSorting();
+                if (comparator != null) {
+                    //noinspection unchecked
+                    stream = stream.sorted((Comparator<Object>) comparator);
+                }
+                stream.forEach(obj -> {
                     //noinspection unchecked
                     CompoundNBT taskNbt = ((TaskType<Object>) type).serializeNBT(obj);
                     taskNbt.putString("type", type.getId());
