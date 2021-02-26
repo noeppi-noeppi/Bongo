@@ -82,4 +82,12 @@ public class Util {
         copy.merge(required);
         return copy.equals(actual);
     }
+
+    public static String formatTime(int hours, int minutes, int seconds) {
+        return hours > 0 ? (hours + ":") : "" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+    }
+
+    public static String formatTime(int hours, int minutes, int seconds, int decimal) {
+        return hours > 0 ? (hours + ":") : "" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds) + "." + decimal;
+    }
 }
