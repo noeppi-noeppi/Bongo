@@ -38,7 +38,8 @@ public class Util {
             if (!COLOR_CACHE.containsKey(color)) {
                 int colorValue = color.getColorValue();
                 float[] hsb = java.awt.Color.RGBtoHSB((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF, null);
-                COLOR_CACHE.put(color, Color.fromInt(java.awt.Color.HSBtoRGB(hsb[0], Math.min(1, hsb[1] + 0.1f), Math.min(1, hsb[2] + 0.1f))));
+                // Remove alpha bits as the value can not be serialized when using the alpha bits.
+                COLOR_CACHE.put(color, Color.fromInt(0x00FFFFFF & java.awt.Color.HSBtoRGB(hsb[0], Math.min(1, hsb[1] + 0.1f), Math.min(1, hsb[2] + 0.1f))));
             }
             return Style.EMPTY.setColor(COLOR_CACHE.get(color));
         }
@@ -67,10 +68,18 @@ public class Util {
     }
 
     public static String formatTime(int hours, int minutes, int seconds) {
-        return hours > 0 ? (hours + ":") : "" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+        if (hours == 0) {
+            return minutes + ":" + String.format("%02d", seconds);
+        } else {
+            return hours + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds);
+        }
     }
 
     public static String formatTime(int hours, int minutes, int seconds, int decimal) {
-        return hours > 0 ? (hours + ":") : "" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds) + "." + decimal;
+        if (hours == 0) {
+            return minutes + ":" + String.format("%02d", seconds) + "." + decimal;
+        } else {
+            return hours + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds) + "." + decimal;
+        }
     }
 }
