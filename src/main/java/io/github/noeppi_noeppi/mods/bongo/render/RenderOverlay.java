@@ -10,6 +10,7 @@ import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.data.WinCondition;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -197,11 +198,7 @@ public class RenderOverlay {
                         int sec = (int) ((millis / 1000) % 60);
                         int min = (int) ((millis / 60000) % 60);
                         int hour = (int) millis / 3600000;
-                        if (hour == 0) {
-                            lines.add(I18n.format("bongo.timer") + min + ":" + sec + "." + decimal);
-                        } else {
-                            lines.add(I18n.format("bongo.timer") + hour + ":" + min + ":" + sec + "." + decimal);
-                        }
+                        lines.add(I18n.format("bongo.timer") + Util.formatTime(hour, min, sec, decimal));
                     }
 
                     if (!lines.isEmpty()) {
