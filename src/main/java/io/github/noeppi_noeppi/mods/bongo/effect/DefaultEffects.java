@@ -18,7 +18,7 @@ public class DefaultEffects {
 
     @SubscribeEvent
     public void gameStart(BongoStartEvent.World event) {
-        event.getWorld().func_241114_a_(600);
+        event.getWorld().setDayTime(600);
     }
 
     @SubscribeEvent
