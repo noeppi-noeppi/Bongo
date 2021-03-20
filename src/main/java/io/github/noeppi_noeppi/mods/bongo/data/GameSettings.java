@@ -1,6 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
+import io.github.noeppi_noeppi.mods.bongo.registries.BongoPlayerTeleporter;
+import io.github.noeppi_noeppi.mods.bongo.registries.BongoRegistries;
+import io.github.noeppi_noeppi.mods.bongo.registries.DefaultPlayerTeleporter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -10,6 +13,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -35,6 +39,8 @@ public class GameSettings {
     public final boolean consumeItems;
     public final int teleportsPerTeam;
     private final List<Pair<EquipmentSlotType, ItemStack>> startingInventory;
+    private final List<ItemStack> backpackInventory;
+    private final BongoPlayerTeleporter teleporter;
 
     public GameSettings(ResourceLocation id, CompoundNBT nbt) {
         this.id = id;
@@ -108,6 +114,43 @@ public class GameSettings {
                 startingInventory.add(Pair.of(slotType, ItemStack.read(compound)));
             }
         }
+        
+        backpackInventory = new ArrayList<>();
+        if (nbt.contains("backpackInventory", Constants.NBT.TAG_LIST)) {
+            ListNBT list = nbt.getList("backpackInventory", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT compound = list.getCompound(i);
+                if (!compound.contains("Count")) {
+                    compound.putByte("Count", (byte) 1);
+                }
+                if (backpackInventory.size() > 27) {
+                    throw new IllegalStateException("Too many starting items in backpack. Not more than 27 are allowed.'");
+                } else {
+                    backpackInventory.add(ItemStack.read(compound));
+                }
+            }
+        }
+        
+        if (nbt.contains("teleporter")) {
+            String teleporterId = nbt.getString("teleporter");
+            //noinspection ConstantConditions
+            if (teleporterId == null || teleporterId.isEmpty()) {
+                this.teleporter = DefaultPlayerTeleporter.INSTANCE;
+            } else if (teleporterId.contains(":")) {
+                throw new IllegalStateException("Invalid name for player teleporter.");
+            } else {
+                ResourceLocation rl = ResourceLocation.tryCreate(teleporterId.replace('.', ':'));
+                BongoPlayerTeleporter tp = rl == null ? null : BongoRegistries.TELEPORTER.getValue(rl);
+                if (tp == null) {
+                    BongoMod.getInstance().logger.error("Player teleporter '" + teleporterId + "' not found. Using default.");
+                    this.teleporter = DefaultPlayerTeleporter.INSTANCE;
+                } else {
+                    this.teleporter = tp;
+                }
+            }
+        } else {
+            this.teleporter = DefaultPlayerTeleporter.INSTANCE;
+        }
 
         this.nbt = new CompoundNBT();
         this.nbt.putString("winCondition", winCondition.id);
@@ -124,6 +167,11 @@ public class GameSettings {
             startingInventoryNBT.add(compound);
         });
         this.nbt.put("startingInventory", startingInventoryNBT);
+        ListNBT backpackInventoryNBT = new ListNBT();
+        backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.write(new CompoundNBT())));
+        this.nbt.put("backpackInventory", backpackInventoryNBT);
+        ResourceLocation key = BongoRegistries.TELEPORTER.getKey(this.teleporter);
+        this.nbt.putString("teleporter", (Objects.requireNonNull(key == null ? DefaultPlayerTeleporter.INSTANCE.getRegistryName() : key)).toString().replace(':', '.'));
     }
 
     public CompoundNBT getTag() {
@@ -142,9 +190,24 @@ public class GameSettings {
         }
     }
     
+    public void fillBackPackInventory(Team team) {
+        team.clearBackPack(true);
+        IItemHandlerModifiable inventory = team.getBackPack();
+        int slot = 0;
+        for (ItemStack stack : backpackInventory) {
+            if (slot < inventory.getSlots()) {
+                inventory.setStackInSlot(slot, stack);
+                slot += 1;
+            }
+        }
+    }
 
     public static void loadGameSettings(IResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_settings", GAME_SETTINGS, GameSettings::new);
         GAME_SETTINGS.put(DEFAULT.id, DEFAULT);
+    }
+
+    public BongoPlayerTeleporter getTeleporter() {
+        return teleporter;
     }
 }

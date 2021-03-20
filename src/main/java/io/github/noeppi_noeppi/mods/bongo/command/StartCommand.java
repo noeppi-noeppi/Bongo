@@ -23,7 +23,7 @@ public class StartCommand implements Command<CommandSource> {
         } else if (bongo.running() || bongo.won()) {
             throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.start.alreadyrunning")).create();
         }
-        bongo.start(CommandUtil.getArgumentOrDefault(context, "randomize_positions", Boolean.class, true));
+        bongo.start();
 
         ServerMessages.broadcast(player.getEntityWorld(), new TranslationTextComponent("bongo.info").append(player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.start.done")));
 

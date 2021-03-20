@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.github.noeppi_noeppi.mods.bongo.event.*;
 import io.github.noeppi_noeppi.mods.bongo.compat.JeiIntegration;
@@ -46,7 +47,7 @@ public class Bongo extends WorldSavedData {
         if (!world.isRemote) {
             DimensionSavedDataManager storage = ((ServerWorld) world).getServer().func_241755_D_().getSavedData();
             Bongo bongo = storage.getOrCreate(Bongo::new, ID);
-            bongo.world = (ServerWorld) world;
+            bongo.world = ((ServerWorld) world).getServer().func_241755_D_();
             return bongo;
         } else {
             return clientInstance == null ? new Bongo() : clientInstance;
@@ -169,7 +170,7 @@ public class Bongo extends WorldSavedData {
         return running;
     }
 
-    public void start(boolean randomTeleportTeams) {
+    public void start() {
         this.active = true;
         this.running = true;
         this.teamWon = false;
@@ -178,6 +179,7 @@ public class Bongo extends WorldSavedData {
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
             team.clearBackPack(true);
+            settings.fillBackPackInventory(team);
             team.resetCompleted(true);
             team.resetLocked(true);
             team.teleportsLeft(getSettings().teleportsPerTeam);
@@ -186,33 +188,20 @@ public class Bongo extends WorldSavedData {
         if (world != null) {
             BongoPickWorldEvent event = new BongoPickWorldEvent(this, world);
             MinecraftForge.EVENT_BUS.post(event);
-            if (event.getWorld() != world) {
-                int y = event.getWorld().getHeight();
-                BlockPos.Mutable pos = new BlockPos.Mutable(0, y, 0);
-                //noinspection deprecation
-                while (event.getWorld().getBlockState(pos).isAir() && y >= 0) {
-                    y -= 1;
-                    pos.setY(y);
-                }
-                int effectiveFinalY = y;
-                world.getServer().getPlayerList().getPlayers().forEach(player -> {
-                    if (uids.contains(player.getGameProfile().getId())) {
-                        player.teleport(
-                                event.getWorld(),
-                                0, effectiveFinalY + 1, 0,
-                                player.rotationYaw, player.rotationPitch
-                        );
-                    }
-                });
-            }
-            MinecraftForge.EVENT_BUS.post(new BongoStartEvent.World(this, event.getWorld()));
+            ServerWorld gameWorld = event.getWorld();
+            MinecraftForge.EVENT_BUS.post(new BongoStartEvent.World(this, gameWorld));
             world.getServer().getPlayerList().getPlayers().forEach(player -> {
                 if (uids.contains(player.getGameProfile().getId())) {
-                    MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Player(this, event.getWorld(), player));
+                    MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Player(this, gameWorld, player));
                 }
             });
-            if (randomTeleportTeams){
-                randomizeTeams(event.getWorld());
+            Random random = new Random();
+            for (Team team : getTeams()) {
+                //noinspection UnstableApiUsage
+                List<ServerPlayerEntity> players = world.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
+                if (!players.isEmpty()) {
+                    settings.getTeleporter().teleportTeam(this, gameWorld, team, players, BlockPos.ZERO, 10000, random);
+                }
             }
         }
         markDirty(true);
