@@ -6,17 +6,11 @@ import de.melanx.skyblockbuilder.world.data.SkyblockSavedData;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStopEvent;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoPlayerTeleporter;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-
-import java.util.List;
-import java.util.Random;
 
 public class SkyblockBuilderIntegration {
     @SubscribeEvent
@@ -66,23 +60,5 @@ public class SkyblockBuilderIntegration {
                 }
             });
         });
-    }
-
-    private static class Teleporter extends BongoPlayerTeleporter {
-        @Override
-        public void teleportTeam(Bongo bongo, ServerWorld gameWorld, io.github.noeppi_noeppi.mods.bongo.data.Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random) {
-            SkyblockSavedData data = SkyblockSavedData.get(gameWorld);
-            PlayerList playerList = gameWorld.getServer().getPlayerList();
-            Team skyTeam = data.getTeam(team.color.name());
-            team.getPlayers().forEach(id -> {
-                assert skyTeam != null;
-                skyTeam.addPlayer(id);
-
-                ServerPlayerEntity player = playerList.getPlayerByUUID(id);
-                if (player != null) {
-                    WorldUtil.teleportToIsland(player, skyTeam);
-                }
-            });
-        }
     }
 }

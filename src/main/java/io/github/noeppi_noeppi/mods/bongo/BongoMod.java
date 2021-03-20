@@ -17,6 +17,7 @@ import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterSkyblock;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
@@ -91,6 +92,10 @@ public class BongoMod extends ModX {
 
         PlayerTeleporters.registerTeleporter(PlayerTeleporterDefault.INSTANCE);
         PlayerTeleporters.registerTeleporter(PlayerTeleporterNothing.INSTANCE);
+
+        if (ModList.get().isLoaded("skyblockbuilder")) {
+            PlayerTeleporters.registerTeleporter(PlayerTeleporterSkyblock.INSTANCE);
+        }
         
         ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());
         ArgumentTypes.register(modid + "_bongosettings", GameSettingsArgument.class, new GameSettingsArgument.Serializer());

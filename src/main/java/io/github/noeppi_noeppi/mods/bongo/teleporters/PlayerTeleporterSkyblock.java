@@ -1,24 +1,27 @@
-package io.github.noeppi_noeppi.mods.bongo.registries;
+package io.github.noeppi_noeppi.mods.bongo.teleporters;
 
 import de.melanx.skyblockbuilder.util.WorldUtil;
 import de.melanx.skyblockbuilder.world.data.SkyblockSavedData;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.List;
 import java.util.Random;
 
-public class SkyblockTeleporter extends BongoPlayerTeleporter {
+public class PlayerTeleporterSkyblock implements PlayerTeleporter {
 
-    public static final SkyblockTeleporter INSTANCE = new SkyblockTeleporter();
+    public static final PlayerTeleporterSkyblock INSTANCE = new PlayerTeleporterSkyblock();
 
-    private SkyblockTeleporter() {
-        this.setRegistryName(new ResourceLocation(BongoMod.getInstance().modid, "skyblock"));
+    private PlayerTeleporterSkyblock() {
+
+    }
+
+    @Override
+    public String getId() {
+        return "bongo.skyblock";
     }
 
     @Override
