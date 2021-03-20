@@ -24,6 +24,8 @@ public class DefaultEffects {
     @SubscribeEvent
     public void playerInit(BongoStartEvent.Player event) {
         event.getPlayer().inventory.clear();
+        event.getPlayer().func_195394_a(0);
+        event.getPlayer().setExperienceLevel(0);
         event.getBongo().getSettings().fillStartingInventory(event.getPlayer());
         AdvancementCommand.Action.REVOKE.applyToAdvancements(event.getPlayer(), event.getWorld().getServer().getAdvancementManager().getAllAdvancements());
         ServerStatisticsManager mgr = event.getWorld().getServer().getPlayerList().getPlayerStats(event.getPlayer());
