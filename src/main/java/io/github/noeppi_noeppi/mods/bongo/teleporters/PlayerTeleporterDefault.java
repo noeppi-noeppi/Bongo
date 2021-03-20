@@ -1,4 +1,4 @@
-package io.github.noeppi_noeppi.mods.bongo.registries;
+package io.github.noeppi_noeppi.mods.bongo.teleporters;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
@@ -12,12 +12,17 @@ import net.minecraft.world.server.ServerWorld;
 import java.util.List;
 import java.util.Random;
 
-public class DefaultPlayerTeleporter extends BongoPlayerTeleporter {
+public class PlayerTeleporterDefault implements PlayerTeleporter {
 
-    public static final DefaultPlayerTeleporter INSTANCE = new DefaultPlayerTeleporter();
+    public static final PlayerTeleporterDefault INSTANCE = new PlayerTeleporterDefault();
     
-    private DefaultPlayerTeleporter() {
-        this.setRegistryName(new ResourceLocation(BongoMod.getInstance().modid, "default"));
+    private PlayerTeleporterDefault() {
+        
+    }
+
+    @Override
+    public String getId() {
+        return "bongo.default";
     }
 
     @Override

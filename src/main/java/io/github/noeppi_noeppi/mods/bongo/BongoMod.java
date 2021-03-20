@@ -10,23 +10,20 @@ import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoPlayerTeleporter;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoRegistries;
-import io.github.noeppi_noeppi.mods.bongo.registries.DefaultPlayerTeleporter;
-import io.github.noeppi_noeppi.mods.bongo.registries.NoPlayerTeleporter;
 import io.github.noeppi_noeppi.mods.bongo.render.CrownRenderer;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import javax.annotation.Nonnull;
 
@@ -58,9 +55,6 @@ public class BongoMod extends ModX {
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
         
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(BongoRegistries::initRegistries);
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(BongoPlayerTeleporter.class, this::registerTeleporters);
-
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new DefaultEffects());
         MinecraftForge.EVENT_BUS.addListener(BongoCommands::register);
@@ -89,6 +83,9 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeBiome.INSTANCE);
         TaskTypes.registerType(TaskTypePotion.INSTANCE);
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
+
+        PlayerTeleporters.registerTeleporter(PlayerTeleporterDefault.INSTANCE);
+        PlayerTeleporters.registerTeleporter(PlayerTeleporterNothing.INSTANCE);
         
         ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());
         ArgumentTypes.register(modid + "_bongosettings", GameSettingsArgument.class, new GameSettingsArgument.Serializer());
@@ -99,12 +96,5 @@ public class BongoMod extends ModX {
         Keybinds.init();
         MinecraftForge.EVENT_BUS.register(new RenderOverlay());
         CrownRenderer.register();
-    }
-    
-    private void registerTeleporters(RegistryEvent.Register<BongoPlayerTeleporter> event) {
-        event.getRegistry().registerAll(
-                DefaultPlayerTeleporter.INSTANCE,
-                NoPlayerTeleporter.INSTANCE
-        );
     }
 }

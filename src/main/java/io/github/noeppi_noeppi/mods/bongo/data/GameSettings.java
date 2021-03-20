@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoPlayerTeleporter;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoRegistries;
-import io.github.noeppi_noeppi.mods.bongo.registries.DefaultPlayerTeleporter;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -40,7 +40,7 @@ public class GameSettings {
     public final int teleportsPerTeam;
     private final List<Pair<EquipmentSlotType, ItemStack>> startingInventory;
     private final List<ItemStack> backpackInventory;
-    private final BongoPlayerTeleporter teleporter;
+    private final PlayerTeleporter teleporter;
 
     public GameSettings(ResourceLocation id, CompoundNBT nbt) {
         this.id = id;
@@ -133,23 +133,15 @@ public class GameSettings {
         
         if (nbt.contains("teleporter")) {
             String teleporterId = nbt.getString("teleporter");
-            //noinspection ConstantConditions
-            if (teleporterId == null || teleporterId.isEmpty()) {
-                this.teleporter = DefaultPlayerTeleporter.INSTANCE;
-            } else if (teleporterId.contains(":")) {
-                throw new IllegalStateException("Invalid name for player teleporter.");
+            PlayerTeleporter tp = PlayerTeleporters.getTeleporter(teleporterId);
+            if (tp == null) {
+                BongoMod.getInstance().logger.error("Player Teleporter '" + teleporterId + "' not found. Using default.");
+                this.teleporter = PlayerTeleporterDefault.INSTANCE;
             } else {
-                ResourceLocation rl = ResourceLocation.tryCreate(teleporterId.replace('.', ':'));
-                BongoPlayerTeleporter tp = rl == null ? null : BongoRegistries.TELEPORTER.getValue(rl);
-                if (tp == null) {
-                    BongoMod.getInstance().logger.error("Player teleporter '" + teleporterId + "' not found. Using default.");
-                    this.teleporter = DefaultPlayerTeleporter.INSTANCE;
-                } else {
-                    this.teleporter = tp;
-                }
+                this.teleporter = tp;
             }
         } else {
-            this.teleporter = DefaultPlayerTeleporter.INSTANCE;
+            this.teleporter = PlayerTeleporterDefault.INSTANCE;
         }
 
         this.nbt = new CompoundNBT();
@@ -170,8 +162,7 @@ public class GameSettings {
         ListNBT backpackInventoryNBT = new ListNBT();
         backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.write(new CompoundNBT())));
         this.nbt.put("backpackInventory", backpackInventoryNBT);
-        ResourceLocation key = BongoRegistries.TELEPORTER.getKey(this.teleporter);
-        this.nbt.putString("teleporter", (Objects.requireNonNull(key == null ? DefaultPlayerTeleporter.INSTANCE.getRegistryName() : key)).toString().replace(':', '.'));
+        this.nbt.putString("teleporter", this.teleporter.getId());
     }
 
     public CompoundNBT getTag() {
@@ -207,7 +198,7 @@ public class GameSettings {
         GAME_SETTINGS.put(DEFAULT.id, DEFAULT);
     }
 
-    public BongoPlayerTeleporter getTeleporter() {
+    public PlayerTeleporter getTeleporter() {
         return teleporter;
     }
 }

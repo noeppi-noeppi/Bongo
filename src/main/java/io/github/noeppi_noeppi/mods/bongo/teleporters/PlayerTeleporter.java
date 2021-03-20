@@ -1,8 +1,7 @@
-package io.github.noeppi_noeppi.mods.bongo.registries;
+package io.github.noeppi_noeppi.mods.bongo.teleporters;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
@@ -16,7 +15,9 @@ import java.util.Random;
  * behaviour of player teleports. The registered can be set in the game settings.
  * The `teleportTeam` is called when the game starts.
  */
-public abstract class BongoPlayerTeleporter extends ForgeRegistryEntry<BongoPlayerTeleporter> {
+public interface PlayerTeleporter {
+
+    String getId();
     
     /**
      * This method should teleport a team in the world.
@@ -32,5 +33,5 @@ public abstract class BongoPlayerTeleporter extends ForgeRegistryEntry<BongoPlay
      * @param radius Theteleportation radius. This may be ignored by the implementation.
      * @param random A random to be used for random positions.
      */
-    public abstract void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random);
+    void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random);
 }
