@@ -7,13 +7,11 @@ import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
 import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
+import io.github.noeppi_noeppi.mods.bongo.compat.SkyblockBuilderIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoPlayerTeleporter;
-import io.github.noeppi_noeppi.mods.bongo.registries.BongoRegistries;
-import io.github.noeppi_noeppi.mods.bongo.registries.DefaultPlayerTeleporter;
-import io.github.noeppi_noeppi.mods.bongo.registries.NoPlayerTeleporter;
+import io.github.noeppi_noeppi.mods.bongo.registries.*;
 import io.github.noeppi_noeppi.mods.bongo.render.CrownRenderer;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
@@ -68,6 +66,10 @@ public class BongoMod extends ModX {
         if (ModList.get().isLoaded("curios")) {
             MinecraftForge.EVENT_BUS.register(new CuriosIntegration());
         }
+
+        if (ModList.get().isLoaded("skyblockbuilder")) {
+            MinecraftForge.EVENT_BUS.register(new SkyblockBuilderIntegration());
+        }
     }
 
     @Nonnull
@@ -106,5 +108,9 @@ public class BongoMod extends ModX {
                 DefaultPlayerTeleporter.INSTANCE,
                 NoPlayerTeleporter.INSTANCE
         );
+
+        if (ModList.get().isLoaded("skyblockbuilder")) {
+            event.getRegistry().register(SkyblockTeleporter.INSTANCE);
+        }
     }
 }
