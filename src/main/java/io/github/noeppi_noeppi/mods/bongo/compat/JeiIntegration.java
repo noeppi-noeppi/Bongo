@@ -5,13 +5,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 public class JeiIntegration {
 
@@ -33,12 +35,15 @@ public class JeiIntegration {
         }
     }
 
-    public static void setBookmarks(Stream<ItemStack> stacks) {
+    public static void setBookmarks(Set<ItemStack> stacks, Set<ResourceLocation> advancements) {
         try {
             Object bookmarkList = getBookmarkList();
             clearBookmarks(bookmarkList);
-            for (ItemStack stack : stacks.collect(Collectors.toSet())) {
+            for (ItemStack stack : stacks) {
                 addBookmark(bookmarkList, stack);
+            }
+            for (ResourceLocation advancement : advancements) {
+                addBookmark(bookmarkList, getAdvancementIngredient(advancement));
             }
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             //
@@ -71,11 +76,11 @@ public class JeiIntegration {
         forceBookmarkUpdate(bookmarkList);
     }
 
-    private static void addBookmark(Object bookmarkList, ItemStack stack) throws ReflectiveOperationException {
+    private static void addBookmark(Object bookmarkList, Object bookmark) throws ReflectiveOperationException {
         Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
         Method addMethod = bookmarkListClass.getDeclaredMethod("add", Object.class);
         addMethod.setAccessible(true);
-        addMethod.invoke(bookmarkList, stack);
+        addMethod.invoke(bookmarkList, bookmark);
     }
 
     // forces an update. add and clear will do this automatically.
@@ -98,5 +103,17 @@ public class JeiIntegration {
         saveBookmarksMethod.setAccessible(true);
         //noinspection JavaReflectionInvocation
         saveBookmarksMethod.invoke(bookmarkConfig, ingredientManager, ingredientList);
+    }
+    
+    @Nullable
+    private static Object getAdvancementIngredient(ResourceLocation id) throws ReflectiveOperationException {
+        if (!ModList.get().isLoaded("jea")) {
+            return null;
+        } else {
+            Class<?> jeaClass = Class.forName("de.melanx.jea.api.client.Jea");
+            Method getAdvancementMethod = jeaClass.getDeclaredMethod("getAdvancement", ResourceLocation.class);
+            getAdvancementMethod.setAccessible(true);
+            return getAdvancementMethod.invoke(null, id);
+        }
     }
 }

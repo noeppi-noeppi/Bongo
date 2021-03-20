@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
@@ -21,6 +22,7 @@ import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -111,6 +113,11 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     @Override
     public Predicate<ItemStack> bongoTooltipStack(ResourceLocation element) {
         return ClientAdvancementInfo.getTooltipItem(element);
+    }
+
+    @Override
+    public Set<ResourceLocation> bookmarkAdvancements(ResourceLocation element) {
+        return ImmutableSet.of(element);
     }
 
     @Nullable

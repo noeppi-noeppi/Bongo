@@ -36,6 +36,7 @@ import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -44,7 +45,7 @@ import java.io.IOException;
 
 public class EventListener {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW) // We need to run after JEA
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         BongoMod.getNetwork().updateBongo(event.getPlayer());
         World world = event.getPlayer().getEntityWorld();

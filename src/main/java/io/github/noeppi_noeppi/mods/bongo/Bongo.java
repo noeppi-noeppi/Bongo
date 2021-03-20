@@ -2,11 +2,12 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import io.github.noeppi_noeppi.mods.bongo.event.*;
+import com.google.common.collect.ImmutableSet;
 import io.github.noeppi_noeppi.mods.bongo.compat.JeiIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.event.*;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
@@ -14,12 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,7 +27,6 @@ import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,24 +64,19 @@ public class Bongo extends WorldSavedData {
             }
             if (ClientConfig.addItemTooltips.get()) {
                 bongo.updateTooltipPredicate();
-                if (ClientConfig.addItemTooltips.get()) {
-                    JeiIntegration.reloadJeiTooltips();
-                    if (ClientConfig.modifyJeiBookamrks.get()) {
-                        if (bongo.running()) {
-                            NonNullList<ItemStack> stacks = NonNullList.create();
-                            ForgeRegistries.ITEMS.getValues().forEach(item -> {
-                                ItemGroup group = item.getGroup();
-                                if (group != null) {
-                                    item.fillItemGroup(group, stacks);
-                                } else {
-                                    stacks.add(new ItemStack(item));
-                                }
-                            });
-                            JeiIntegration.setBookmarks(stacks.stream().filter(bongo.tooltipPredicate));
-                        } else {
-                            JeiIntegration.setBookmarks(Stream.empty());
-                        }
+                JeiIntegration.reloadJeiTooltips();
+            }
+            if (ClientConfig.modifyJeiBookamrks.get()) {
+                if (bongo.running()) {
+                    Set<ItemStack> stacks = new HashSet<>();
+                    Set<ResourceLocation> advancements = new HashSet<>();
+                    for (Task task : bongo.items) {
+                        stacks.addAll(task.bookmarkStacks());
+                        advancements.addAll(task.bookmarkAdvancements());
                     }
+                    JeiIntegration.setBookmarks(stacks, advancements);
+                } else {
+                    JeiIntegration.setBookmarks(ImmutableSet.of(), ImmutableSet.of());
                 }
             }
         }

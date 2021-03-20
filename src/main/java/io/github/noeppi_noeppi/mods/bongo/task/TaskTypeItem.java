@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -17,6 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -99,6 +101,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     @Override
     public Predicate<ItemStack> bongoTooltipStack(ItemStack element) {
         return stack -> ItemStack.areItemsEqual(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag());
+    }
+
+    @Override
+    public Set<ItemStack> bookmarkStacks(ItemStack element) {
+        return ImmutableSet.of(element);
     }
 
     @Override
