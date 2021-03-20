@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -9,12 +10,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -55,6 +58,14 @@ public interface TaskType<T> {
 
     default Predicate<ItemStack> bongoTooltipStack(T element) {
         return stack -> false;
+    }
+    
+    default Set<ItemStack> bookmarkStacks(T element) {
+        return ImmutableSet.of();
+    }
+    
+    default Set<ResourceLocation> bookmarkAdvancements(T element) {
+        return ImmutableSet.of();
     }
 
     default void consumeItem(T element, PlayerEntity player) {

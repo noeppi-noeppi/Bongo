@@ -8,12 +8,14 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class Task implements INBTSerializable<CompoundNBT> {
@@ -79,6 +81,16 @@ public class Task implements INBTSerializable<CompoundNBT> {
     public Predicate<ItemStack> bongoTooltipStack() {
         //noinspection unchecked
         return ((TaskType<Object>) type).bongoTooltipStack(element);
+    }
+    
+    public Set<ItemStack> bookmarkStacks() {
+        //noinspection unchecked
+        return ((TaskType<Object>) type).bookmarkStacks(element);
+    }
+    
+    public Set<ResourceLocation> bookmarkAdvancements() {
+        //noinspection unchecked
+        return ((TaskType<Object>) type).bookmarkAdvancements(element);
     }
 
     @Override

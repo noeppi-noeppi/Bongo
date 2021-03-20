@@ -26,5 +26,7 @@
     {
       "id": "minecraft:stone_sword"
     }
-  ]
+  ],
+  "backpackInventory": [],
+  "teleporter": "bongo.no_tp"
 }

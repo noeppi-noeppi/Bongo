@@ -1,4 +1,4 @@
-package io.github.noeppi_noeppi.mods.bongo.registries;
+package io.github.noeppi_noeppi.mods.bongo.teleporters;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
@@ -12,14 +12,19 @@ import net.minecraft.world.server.ServerWorld;
 import java.util.List;
 import java.util.Random;
 
-public class NoPlayerTeleporter extends BongoPlayerTeleporter {
+public class PlayerTeleporterNothing implements PlayerTeleporter {
 
-    public static final NoPlayerTeleporter INSTANCE = new NoPlayerTeleporter();
+    public static final PlayerTeleporterNothing INSTANCE = new PlayerTeleporterNothing();
     
-    private NoPlayerTeleporter() {
-        this.setRegistryName(new ResourceLocation(BongoMod.getInstance().modid, "no_tp"));
+    private PlayerTeleporterNothing() {
+        
     }
-    
+
+    @Override
+    public String getId() {
+        return "bongo.no_tp";
+    }
+
     @Override
     public void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random) {
         BlockPos.Mutable mpos = new BlockPos.Mutable(center.getX(), gameWorld.getHeight(), center.getZ());
@@ -28,6 +33,10 @@ public class NoPlayerTeleporter extends BongoPlayerTeleporter {
             mpos.move(Direction.DOWN);
         }
         BlockPos pos = mpos.toImmutable().up();
-        players.forEach(player -> player.teleport(gameWorld, center.getX() + 0.5, pos.getY(), center.getZ() + 0.5, player.getRotationYawHead(), 0));
+        players.forEach(player -> {
+            if (player.world != gameWorld) {
+                player.teleport(gameWorld, center.getX() + 0.5, pos.getY(), center.getZ() + 0.5, player.getRotationYawHead(), 0);
+            }
+        });
     }
 }

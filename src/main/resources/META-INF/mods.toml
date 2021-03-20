@@ -23,13 +23,13 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,)"
+    versionRange="[1.16.4,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.16.3-1.0.11,)"
+    versionRange="[1.16.3-1.0.23,)"
     ordering="NONE"
     side="BOTH"

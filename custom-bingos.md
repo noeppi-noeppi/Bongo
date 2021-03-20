@@ -20,7 +20,13 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
       "id": "minecraft:leather_helmet",
       "Slot": "head"
     }
-  ]
+  ],
+  "backpackInventory": [
+    {
+      "id": "minecraft:apple"
+    }
+  ],
+  "teleporter": "bongo.no_tp"
 }
 ```
 
@@ -96,6 +102,19 @@ head       The item is placed in the players head slot. Can be used only once.
 chest      The item is placed in the players chest slot. Can be used only once.
 legs       The item is placed in the players legs slot. Can be used only once.
 feet       The item is placed in the players feet slot. Can be used only once.
+```
+
+### Backpack Inventory
+
+`backpackInventory` is a list of items that each team gets in the backpack when the game starts. Unlike `startingInventory` here not each player but each team gets the items. It works the same as `startingInventory` with the exception that `Slot` is not available
+
+### Teleporter
+
+The teleporter specifies how bongo should teleport players when the game starts. Other mods may register their teleporters as well. Bongo has the following builtin teleporters:
+
+```
+bongo.default   (default) Teleports the player randomly through the world.
+bongo.no_tp     No teleportation.
 ```
 
 ## Tasks
