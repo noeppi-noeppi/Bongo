@@ -2,22 +2,20 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.melanx.skyblockbuilder.util.WorldUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
 import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
-import io.github.noeppi_noeppi.mods.bongo.compat.SkyblockBuilderIntegration;
+import io.github.noeppi_noeppi.mods.bongo.compat.SkyblockIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.CrownRenderer;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterSkyblock;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.*;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
@@ -66,7 +64,7 @@ public class BongoMod extends ModX {
         }
 
         if (ModList.get().isLoaded("skyblockbuilder")) {
-            MinecraftForge.EVENT_BUS.register(new SkyblockBuilderIntegration());
+            MinecraftForge.EVENT_BUS.register(new SkyblockIntegration.Events());
         }
     }
 
@@ -91,10 +89,11 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
 
         PlayerTeleporters.registerTeleporter(PlayerTeleporterDefault.INSTANCE);
+        PlayerTeleporters.registerTeleporter(PlayerTeleporterStandard.INSTANCE);
         PlayerTeleporters.registerTeleporter(PlayerTeleporterNothing.INSTANCE);
 
         if (ModList.get().isLoaded("skyblockbuilder")) {
-            PlayerTeleporters.registerTeleporter(PlayerTeleporterSkyblock.INSTANCE);
+            PlayerTeleporters.registerTeleporter(SkyblockIntegration.Teleporter.INSTANCE);
         }
         
         ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());

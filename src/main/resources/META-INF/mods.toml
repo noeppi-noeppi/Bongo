@@ -37,6 +37,6 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="skyblockbuilder"
     mandatory=false
-    versionRange="[1.0.17,)"
+    versionRange="[1.0.18,)"
     ordering="NONE"
     side="BOTH"

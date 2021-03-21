@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.data;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
