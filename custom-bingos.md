@@ -113,10 +113,10 @@ feet       The item is placed in the players feet slot. Can be used only once.
 The teleporter specifies how bongo should teleport players when the game starts. Other mods may register their teleporters as well. Bongo has the following builtin teleporters:
 
 ```
-bongo.default   (default) Auto detect best teleporter. (skyblock for skyblock worlds and standard for other worlds)
-bongo.standard  Teleports the player randomly through the world.
-bongo.no_tp     No teleportation.
-bongo.skyblok   (Only when SkyBlockBuilder is present) Teleports each team to a separate skyblock Island.
+bongo.default    (default) Auto detect best teleporter. (skyblock for skyblock worlds and standard for other worlds)
+bongo.standard   Teleports the player randomly through the world.
+bongo.no_tp      No teleportation.
+bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a separate skyblock Island.
 ```
 
 ## Tasks

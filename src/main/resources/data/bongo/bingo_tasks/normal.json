@@ -93,11 +93,6 @@
     {
       "type": "bongo.item",
       "weight": 10,
-      "id": "minecraft:bee_nest"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
       "id": "minecraft:beef"
     },
     {
@@ -247,16 +242,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 20,
-      "id": "minecraft:brain_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 20,
-      "id": "minecraft:brain_coral_fan"
-    },
-    {
-      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:bread"
     },
@@ -309,21 +294,6 @@
       "type": "bongo.item",
       "weight": 10,
       "id": "minecraft:brown_terracotta"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:bubble_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:bubble_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:bubble_coral_fan"
     },
     {
       "type": "bongo.item",
@@ -454,16 +424,6 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:coal_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:coal_ore"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:coarse_dirt"
     },
     {
       "type": "bongo.item",
@@ -708,22 +668,7 @@
     {
       "type": "bongo.item",
       "weight": 14,
-      "id": "minecraft:dead_brain_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
       "id": "minecraft:dead_brain_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_brain_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_bubble_coral"
     },
     {
       "type": "bongo.item",
@@ -733,27 +678,7 @@
     {
       "type": "bongo.item",
       "weight": 14,
-      "id": "minecraft:dead_bubble_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_fire_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
       "id": "minecraft:dead_fire_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_fire_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_horn_coral"
     },
     {
       "type": "bongo.item",
@@ -763,22 +688,7 @@
     {
       "type": "bongo.item",
       "weight": 14,
-      "id": "minecraft:dead_horn_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_tube_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
       "id": "minecraft:dead_tube_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:dead_tube_coral_fan"
     },
     {
       "type": "bongo.item",
@@ -829,11 +739,6 @@
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:diamond_leggings"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 20,
-      "id": "minecraft:diamond_ore"
     },
     {
       "type": "bongo.item",
@@ -912,11 +817,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 24,
-      "id": "minecraft:emerald_ore"
-    },
-    {
-      "type": "bongo.item",
       "weight": 10,
       "id": "minecraft:enchanting_table"
     },
@@ -957,21 +857,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:fire_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:fire_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:fire_coral_fan"
-    },
-    {
-      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:fishing_rod"
     },
@@ -1009,11 +894,6 @@
       "type": "bongo.item",
       "weight": 13,
       "id": "minecraft:ghast_tear"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 12,
-      "id": "minecraft:gilded_blackstone"
     },
     {
       "type": "bongo.item",
@@ -1147,11 +1027,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:grass_block"
-    },
-    {
-      "type": "bongo.item",
       "weight": 28,
       "id": "minecraft:gravel"
     },
@@ -1249,26 +1124,6 @@
       "type": "bongo.item",
       "weight": 22,
       "id": "minecraft:hopper_minecart"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 13,
-      "id": "minecraft:horn_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 13,
-      "id": "minecraft:horn_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 13,
-      "id": "minecraft:horn_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 22,
-      "id": "minecraft:ice"
     },
     {
       "type": "bongo.item",
@@ -1394,11 +1249,6 @@
       "type": "bongo.item",
       "weight": 18,
       "id": "minecraft:lapis_lazuli"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 17,
-      "id": "minecraft:lapis_ore"
     },
     {
       "type": "bongo.item",
@@ -1612,11 +1462,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 5,
-      "id": "minecraft:name_tag"
-    },
-    {
-      "type": "bongo.item",
       "weight": 8,
       "id": "minecraft:nether_brick"
     },
@@ -1644,16 +1489,6 @@
       "type": "bongo.item",
       "weight": 8,
       "id": "minecraft:nether_bricks"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 5,
-      "id": "minecraft:nether_gold_ore"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 5,
-      "id": "minecraft:nether_quartz_ore"
     },
     {
       "type": "bongo.item",
@@ -1787,11 +1622,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:packed_ice"
-    },
-    {
-      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:painting"
     },
@@ -1804,11 +1634,6 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:peony"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 12,
-      "id": "minecraft:phantom_membrane"
     },
     {
       "type": "bongo.item",
@@ -1839,11 +1664,6 @@
       "type": "bongo.item",
       "weight": 24,
       "id": "minecraft:piston"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 12,
-      "id": "minecraft:podzol"
     },
     {
       "type": "bongo.item",
@@ -2212,11 +2032,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 12,
-      "id": "minecraft:redstone_ore"
-    },
-    {
-      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:redstone_torch"
     },
@@ -2279,11 +2094,6 @@
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:scaffolding"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:scute"
     },
     {
       "type": "bongo.item",
@@ -2537,11 +2347,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:tall_grass"
-    },
-    {
-      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:target"
     },
@@ -2582,31 +2387,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:tube_coral"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:tube_coral_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:tube_coral_fan"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:turtle_egg"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 14,
-      "id": "minecraft:turtle_helmet"
-    },
-    {
-      "type": "bongo.item",
       "weight": 14,
       "id": "minecraft:twisting_vines"
     },
@@ -2634,11 +2414,6 @@
       "type": "bongo.item",
       "weight": 10,
       "id": "minecraft:warped_hyphae"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
-      "id": "minecraft:warped_nylium"
     },
     {
       "type": "bongo.item",
@@ -2912,11 +2687,6 @@
     },
     {
       "type": "bongo.entity",
-      "weight": 15,
-      "entity": "minecraft:phantom"
-    },
-    {
-      "type": "bongo.entity",
       "weight": 20,
       "entity": "minecraft:pig"
     },
@@ -2924,11 +2694,6 @@
       "type": "bongo.entity",
       "weight": 20,
       "entity": "minecraft:piglin"
-    },
-    {
-      "type": "bongo.entity",
-      "weight": 10,
-      "entity": "minecraft:pillager"
     },
     {
       "type": "bongo.entity",
@@ -3173,11 +2938,6 @@
     {
       "type": "bongo.advancement",
       "weight": 22,
-      "advancement": "minecraft:husbandry/silk_touch_nest"
-    },
-    {
-      "type": "bongo.advancement",
-      "weight": 22,
       "advancement": "minecraft:story/smelt_iron"
     },
     {
@@ -3209,11 +2969,6 @@
       "type": "bongo.advancement",
       "weight": 22,
       "advancement": "minecraft:adventure/root"
-    },
-    {
-      "type": "bongo.advancement",
-      "weight": 10,
-      "advancement": "minecraft:adventure/kill_all_mobs"
     },
     {
       "type": "bongo.advancement",
@@ -3259,11 +3014,6 @@
       "type": "bongo.advancement",
       "weight": 22,
       "advancement": "minecraft:nether/obtain_ancient_debris"
-    },
-    {
-      "type": "bongo.advancement",
-      "weight": 22,
-      "advancement": "minecraft:nether/summon_wither"
     },
     {
       "type": "bongo.advancement",
@@ -3323,11 +3073,6 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:plains"
     },
     {
@@ -3368,11 +3113,6 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:frozen_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:frozen_river"
     },
     {
@@ -3408,37 +3148,12 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:mountain_edge"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:jungle"
     },
     {
       "type": "bongo.biome",
       "weight": 15,
       "biome": "minecraft:jungle_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:jungle_edge"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:deep_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:stone_shore"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 10,
-      "biome": "minecraft:snowy_beach"
     },
     {
       "type": "bongo.biome",
@@ -3468,16 +3183,6 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:giant_tree_taiga"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:giant_tree_taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:wooded_mountains"
     },
     {
@@ -3498,32 +3203,12 @@
     {
       "type": "bongo.biome",
       "weight": 14,
-      "biome": "minecraft:wooded_badlands_plateau"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 14,
       "biome": "minecraft:badlands_plateau"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 11,
-      "biome": "minecraft:warm_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 11,
-      "biome": "minecraft:lukewarm_ocean"
     },
     {
       "type": "bongo.biome",
       "weight": 13,
       "biome": "minecraft:cold_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 11,
-      "biome": "minecraft:deep_warm_ocean"
     },
     {
       "type": "bongo.biome",
@@ -3539,86 +3224,6 @@
       "type": "bongo.biome",
       "weight": 11,
       "biome": "minecraft:deep_frozen_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 16,
-      "biome": "minecraft:sunflower_plains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 13,
-      "biome": "minecraft:desert_lakes"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 17,
-      "biome": "minecraft:gravelly_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:flower_forest"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 20,
-      "biome": "minecraft:taiga_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 17,
-      "biome": "minecraft:swamp_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 14,
-      "biome": "minecraft:ice_spikes"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:dark_forest_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:snowy_taiga_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:giant_spruce_taiga"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:giant_spruce_taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 10,
-      "biome": "minecraft:shattered_savanna"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 10,
-      "biome": "minecraft:shattered_savanna_plateau"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:eroded_badlands"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 22,
-      "biome": "minecraft:bamboo_jungle"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 22,
-      "biome": "minecraft:bamboo_jungle_hills"
     },
     {
       "type": "bongo.biome",
