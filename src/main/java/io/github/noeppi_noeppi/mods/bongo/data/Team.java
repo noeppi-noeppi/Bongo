@@ -1,8 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
+import io.github.noeppi_noeppi.mods.bongo.compat.MineMentionIntegration;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -11,6 +13,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -76,7 +79,7 @@ public class Team {
         return players.contains(player.getGameProfile().getId());
     }
 
-    public void addPlayer(UUID uid) {
+    private void addPlayer(UUID uid) {
         for (Team team : bongo.getTeams()) {
             team.removePlayer(uid);
         }
@@ -86,16 +89,18 @@ public class Team {
 
     public void addPlayer(PlayerEntity player) {
         addPlayer(player.getGameProfile().getId());
+        if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
         player.refreshDisplayName();
     }
 
-    public void removePlayer(UUID uid) {
+    private void removePlayer(UUID uid) {
         players.remove(uid);
         bongo.markDirty();
     }
 
     public void removePlayer(PlayerEntity player) {
         removePlayer(player.getGameProfile().getId());
+        if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
         player.refreshDisplayName();
     }
 
@@ -168,6 +173,7 @@ public class Team {
     public void reset(boolean suppressBingoSync) {
         completed = 0;
         locked = 0;
+        players.forEach(bongo::updateMentions);
         players.clear();
         teleportsLeft = 0;
         clearBackPack(true);

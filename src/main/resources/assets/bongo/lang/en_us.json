@@ -75,5 +75,7 @@
   "bongo.wc.bongo.rows": "One row",
   "bongo.wc.bongo.rows_and_columns": "A row or a column",
   "bongo.win": " won",
-  "bongo.winplayers": " won. Players:"
+  "bongo.winplayers": " won. Players:",
+  "bongo.mention": "Mention all players from your bingo team.",
+  "bongo.teamchat.disabled": "TeamChat is disabled. Use the MineMention mod instead."
 }

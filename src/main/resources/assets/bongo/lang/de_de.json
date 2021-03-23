@@ -75,5 +75,7 @@
   "bongo.wc.bongo.rows": "Eine Zeile",
   "bongo.wc.bongo.rows_and_columns": "Eine Zeile oder eine Spalte",
   "bongo.win": " won",
-  "bongo.winplayers": " hat gewonnen. Spieler:"
+  "bongo.winplayers": " hat gewonnen. Spieler:",
+  "bongo.mention": "Erwähne alle Spieler aus deinem Bingo Team.",
+  "bongo.teamchat.disabled": "TeamChat ist deaktiviert. Verwende stattdessen die MineMention Mod."
 }

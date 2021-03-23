@@ -8,6 +8,7 @@ import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
 import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
+import io.github.noeppi_noeppi.mods.bongo.compat.MineMentionIntegration;
 import io.github.noeppi_noeppi.mods.bongo.compat.SkyblockIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.effect.DefaultEffects;
@@ -94,6 +95,10 @@ public class BongoMod extends ModX {
 
         if (ModList.get().isLoaded("skyblockbuilder")) {
             PlayerTeleporters.registerTeleporter(SkyblockIntegration.Teleporter.INSTANCE);
+        }
+        
+        if (ModList.get().isLoaded("minemention")) {
+            MineMentionIntegration.setup();
         }
         
         ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());

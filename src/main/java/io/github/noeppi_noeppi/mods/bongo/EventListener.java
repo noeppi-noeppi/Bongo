@@ -38,6 +38,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -254,16 +255,18 @@ public class EventListener {
 
     @SubscribeEvent
     public void serverChat(ServerChatEvent event) {
-        Bongo bongo = Bongo.get(event.getPlayer().getEntityWorld());
-        if (bongo.teamChat(event.getPlayer())) {
-            Team team = bongo.getTeam(event.getPlayer());
-            if (team != null) {
-                event.setCanceled(true);
-                IFormattableTextComponent tc = new StringTextComponent("[");
-                tc.append(team.getName());
-                tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
-                tc.append(event.getComponent());
-                Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
+        if (!ModList.get().isLoaded("minemention")) {
+            Bongo bongo = Bongo.get(event.getPlayer().getEntityWorld());
+            if (bongo.teamChat(event.getPlayer())) {
+                Team team = bongo.getTeam(event.getPlayer());
+                if (team != null) {
+                    event.setCanceled(true);
+                    IFormattableTextComponent tc = new StringTextComponent("[");
+                    tc.append(team.getName());
+                    tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
+                    tc.append(event.getComponent());
+                    Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
+                }
             }
         }
     }

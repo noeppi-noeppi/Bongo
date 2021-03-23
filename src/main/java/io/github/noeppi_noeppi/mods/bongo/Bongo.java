@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import io.github.noeppi_noeppi.mods.bongo.compat.JeiIntegration;
+import io.github.noeppi_noeppi.mods.bongo.compat.MineMentionIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -27,6 +28,7 @@ import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -202,31 +204,6 @@ public class Bongo extends WorldSavedData {
             BongoMod.getNetwork().updateBongo(world, BongoMessageType.START);
         }
     }
-
-    private void randomizeTeams(ServerWorld world) {
-        Random random = new Random();
-        for (Team team : getTeams()) {
-            randomizeTeamAround(random, world, team, 0, 0, 10000);
-        }
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private void randomizeTeamAround(Random random, ServerWorld world, Team team, int centerX, int centerZ, int radius) {
-        if (team.getPlayers().size() <= 0)
-            return;
-        int x = centerX + (random.nextInt(2 * radius) - radius);
-        int z = centerZ + (random.nextInt(2 * radius) - radius);
-        BlockPos.Mutable mpos = new BlockPos.Mutable(x, world.getHeight(), z);
-        //noinspection deprecation
-        while (mpos.getY() > 5 && world.getBlockState(mpos).isAir(world, mpos))
-            mpos.move(Direction.DOWN);
-        BlockPos pos = mpos.toImmutable().up();
-        world.getServer().getPlayerList().getPlayers().forEach(player -> {
-            if (team.hasPlayer(player)) {
-                player.teleport(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getRotationYawHead(), 0);
-            }
-        });
-    }
     
     public void stop() {
         Set<UUID> uids = new HashSet<>();
@@ -242,11 +219,13 @@ public class Bongo extends WorldSavedData {
         markDirty(true);
         if (world != null) {
             MinecraftForge.EVENT_BUS.post(new BongoStopEvent.World(this, this.world));
-            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
-                if (uids.contains(player.getGameProfile().getId())) {
+            for (UUID uid : uids) {
+                ServerPlayerEntity player = world.getServer().getPlayerList().getPlayerByUUID(uid);
+                if (player != null) {
                     MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getServerWorld(), player));
+                    updateMentions(player);
+                    player.refreshDisplayName();
                 }
-                player.refreshDisplayName();
             }
             BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
         }
@@ -522,5 +501,20 @@ public class Bongo extends WorldSavedData {
         if (tooltipPredicate == null)
             updateTooltipPredicate();
         return !stack.isEmpty() && tooltipPredicate.test(stack);
+    }
+    
+    public void updateMentions(UUID player) {
+        if (this.world != null) {
+            ServerPlayerEntity entity = this.world.getServer().getPlayerList().getPlayerByUUID(player);
+            if (entity != null) {
+                updateMentions(entity);
+            }
+        }
+    }
+    
+    public void updateMentions(ServerPlayerEntity player) {
+        if (ModList.get().isLoaded("minemention")) {
+            MineMentionIntegration.availabilityChange(player);
+        }
     }
 }

@@ -17,4 +17,5 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.16.4-0.1.1")
     compileOnly fg.deobf("de.melanx.skyblockbuilder:skyblockbuilder-1.16.4:1.0.18")
+    compile fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.16.4-0.1.3")
 }
