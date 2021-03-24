@@ -47,12 +47,6 @@ public class SkyblockIntegration {
         }
         
         @SubscribeEvent
-        public void tcMessage(SkyblockTeamMessageEvent event) {
-            // Use the bongo team chat
-            event.setCanceled(true);
-        }
-        
-        @SubscribeEvent
         public void createTeam(SkyblockCreateTeamEvent event) {
             event.setCanceled(true);
         }
@@ -70,11 +64,6 @@ public class SkyblockIntegration {
         @SubscribeEvent
         public void opManage(SkyblockOpManageEvent event) {
             event.setCanceled(true);
-        }
-        
-        @SubscribeEvent
-        public void teamChatChange(SkyblockTeamChatChangeEvent event) {
-            event.setResult(Event.Result.DENY);
         }
         
         @SubscribeEvent

@@ -188,17 +188,30 @@ public class RenderOverlay {
                     }
 
                     if (bongo.running() || bongo.won()) {
-                        long millis;
-                        if (bongo.won()) {
-                            millis = bongo.ranUntil() - bongo.runningSince();
+                        if (!bongo.won() && bongo.tasksForWin() > 0) {
+                            lines.add(I18n.format("bongo.instantwin") + bongo.tasksForWin());
                         } else {
-                            millis = System.currentTimeMillis() - bongo.runningSince();
+                            long millis;
+                            boolean isTimer = true;
+                            if (bongo.won()) {
+                                millis = bongo.ranUntil() - bongo.runningSince();
+                            } else if (bongo.hasTimeLimit()) {
+                                isTimer = false;
+                                millis = Math.max(0, bongo.runningUntil() - System.currentTimeMillis());
+                            } else {
+                                millis = System.currentTimeMillis() - bongo.runningSince();
+                            }
+                            int decimal = (int) ((millis / 100) % 10);
+                            int sec = (int) ((millis / 1000) % 60);
+                            int min = (int) ((millis / 60000) % 60);
+                            int hour = (int) millis / 3600000;
+                            lines.add(I18n.format(isTimer ? "bongo.timer" : "bongo.timeleft") + Util.formatTime(hour, min, sec, decimal));
                         }
-                        int decimal = (int) ((millis / 100) % 10);
-                        int sec = (int) ((millis / 1000) % 60);
-                        int min = (int) ((millis / 60000) % 60);
-                        int hour = (int) millis / 3600000;
-                        lines.add(I18n.format("bongo.timer") + Util.formatTime(hour, min, sec, decimal));
+                    } else if (bongo.active() && bongo.hasTimeLimit() && bongo.getSettings().maxTime >= 0) {
+                        int sec = bongo.getSettings().maxTime % 60;
+                        int min = (bongo.getSettings().maxTime / 60) % 60;
+                        int hour = bongo.getSettings().maxTime / 3600;
+                        lines.add(I18n.format("bongo.maxtime") + Util.formatTime(hour, min, sec));
                     }
 
                     if (!lines.isEmpty()) {

@@ -16,6 +16,6 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.16.4-0.1.1")
-    compileOnly fg.deobf("de.melanx.skyblockbuilder:skyblockbuilder-1.16.4:1.0.18")
+    compileOnly fg.deobf("de.melanx.skyblockbuilder:skyblockbuilder-1.16.4:1.1.1")
     compile fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.16.4-0.1.3")
 }

@@ -57,6 +57,14 @@ public class Team {
         completed |= (1 << (slot % 25));
         bongo.markDirty();
     }
+    
+    public int completionAmount() {
+        int completed = 0;
+        for (int i = 0 ; i < 25; i++) {
+            completed += completed(i) ? 1 : 0;
+        }
+        return completed;
+    }
 
     public boolean locked(int slot) {
         return (locked & (1 << (slot % 25))) > 0;

@@ -19,7 +19,6 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -96,8 +95,11 @@ public class Bongo extends WorldSavedData {
     private boolean teamWon;
     private long runningSince = 0;
     private long ranUntil = 0;
+    private boolean hasTimeLimit = false;
+    private long runningUntil = 0;
+    private int taskAmountOutOfTime = -1;
     private DyeColor winningTeam;
-
+    
     public Bongo() {
         this(ID);
     }
@@ -154,6 +156,7 @@ public class Bongo extends WorldSavedData {
         this.active = true;
         this.running = false;
         this.teamWon = false;
+        this.hasTimeLimit = settings.maxTime >= 0;
         if (world != null) {
             for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
                 player.refreshDisplayName();
@@ -171,6 +174,12 @@ public class Bongo extends WorldSavedData {
         this.teamWon = false;
         this.runningSince = System.currentTimeMillis();
         this.ranUntil = 0;
+        if (this.hasTimeLimit) {
+            this.runningUntil = System.currentTimeMillis() + (1000l * settings.maxTime);
+        } else {
+            this.runningUntil = 0;
+        }
+        this.taskAmountOutOfTime = -1;
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
             team.clearBackPack(true);
@@ -247,6 +256,9 @@ public class Bongo extends WorldSavedData {
         nbt.putBoolean("teamWon", teamWon);
         nbt.putLong("runningSince", runningSince);
         nbt.putLong("ranUntil", ranUntil);
+        nbt.putBoolean("hasTimeLimit", hasTimeLimit);
+        nbt.putLong("runningUntil", runningUntil);
+        nbt.putInt("taskAmountOutOfTime", taskAmountOutOfTime);
 
         if (winningTeam != null)
             nbt.putInt("winningTeam", winningTeam.ordinal());
@@ -282,7 +294,10 @@ public class Bongo extends WorldSavedData {
         teamWon = nbt.getBoolean("teamWon");
         runningSince = nbt.getLong("runningSince");
         ranUntil = nbt.getLong("ranUntil");
-
+        hasTimeLimit = nbt.getBoolean("hasTimeLimit");
+        runningUntil = nbt.getLong("runningUntil");
+        taskAmountOutOfTime = nbt.getInt("taskAmountOutOfTime");
+        
         if (nbt.contains("winningTeam")) {
             winningTeam = DyeColor.values()[nbt.getInt("winningTeam")];
         } else {
@@ -402,20 +417,60 @@ public class Bongo extends WorldSavedData {
     }
 
     public void checkWin() {
+        if (hasTimeLimit && System.currentTimeMillis() > runningUntil) {
+            if (taskAmountOutOfTime >= 0) {
+                for (Team team : teams.values()) {
+                    if (team.completionAmount() >= taskAmountOutOfTime) {
+                        setWin(team);
+                        return;
+                    }
+                }
+            } else {
+                int max = 0;
+                for (Team team : teams.values()) {
+                    int amount = team.completionAmount();
+                    if (amount > max) max = amount;
+                }
+                Team winning = null;
+                for (Team team : teams.values()) {
+                    if (team.completionAmount() >= max) {
+                        if (winning == null) {
+                            winning = team;
+                        } else {
+                            taskAmountOutOfTime = Math.min(25, max + 1);
+                            markDirty();
+                            return;
+                        }
+                    }
+                }
+                if (winning == null) {
+                    taskAmountOutOfTime = Math.min(25, max + 1);
+                    markDirty();
+                    return;
+                } else {
+                    setWin(winning);
+                    return;
+                }
+            }
+        }
         for (Team team : teams.values()) {
             if (getSettings().winCondition.won(this, team)) {
-                running = false;
-                teamWon = true;
-                winningTeam = team.color;
-                if (world != null) {
-                    MinecraftForge.EVENT_BUS.post(new BongoWinEvent(this, world, team));
-                }
-                ranUntil = System.currentTimeMillis();
-                playersInTcMode.clear();
-                markDirty();
+                setWin(team);
                 return;
             }
         }
+    }
+    
+    private void setWin(Team team) {
+        running = false;
+        teamWon = true;
+        winningTeam = team.color;
+        if (world != null) {
+            MinecraftForge.EVENT_BUS.post(new BongoWinEvent(this, world, team));
+        }
+        ranUntil = System.currentTimeMillis();
+        playersInTcMode.clear();
+        markDirty();
     }
 
     public long runningSince() {
@@ -516,5 +571,17 @@ public class Bongo extends WorldSavedData {
         if (ModList.get().isLoaded("minemention")) {
             MineMentionIntegration.availabilityChange(player);
         }
+    }
+    
+    public boolean hasTimeLimit() {
+        return hasTimeLimit;
+    }
+    
+    public long runningUntil() {
+        return runningUntil;
+    }
+    
+    public int tasksForWin() {
+        return taskAmountOutOfTime;
     }
 }

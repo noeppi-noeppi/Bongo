@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.bongo.data;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -42,6 +41,7 @@ public class GameSettings {
     private final List<Pair<EquipmentSlotType, ItemStack>> startingInventory;
     private final List<ItemStack> backpackInventory;
     private final PlayerTeleporter teleporter;
+    public final int maxTime;
 
     public GameSettings(ResourceLocation id, CompoundNBT nbt) {
         this.id = id;
@@ -144,6 +144,12 @@ public class GameSettings {
         } else {
             this.teleporter = PlayerTeleporterDefault.INSTANCE;
         }
+        
+        if (nbt.contains("maxTime")) {
+            this.maxTime = nbt.getInt("maxTime");
+        } else {
+            this.maxTime = -1;
+        }
 
         this.nbt = new CompoundNBT();
         this.nbt.putString("winCondition", winCondition.id);
@@ -164,6 +170,7 @@ public class GameSettings {
         backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.write(new CompoundNBT())));
         this.nbt.put("backpackInventory", backpackInventoryNBT);
         this.nbt.putString("teleporter", this.teleporter.getId());
+        this.nbt.putInt("maxTime", this.maxTime);
     }
 
     public CompoundNBT getTag() {

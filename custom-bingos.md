@@ -26,7 +26,8 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
       "id": "minecraft:apple"
     }
   ],
-  "teleporter": "bongo.no_tp"
+  "teleporter": "bongo.no_tp",
+  "maxTime": -1
 }
 ```
 
@@ -118,6 +119,10 @@ bongo.standard   Teleports the player randomly through the world.
 bongo.no_tp      No teleportation.
 bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a separate skyblock Island.
 ```
+
+### maxTime
+
+`maxTime` is the maximum time allowed for this bingo. `-1` disables the feature (Default). If after `maxTime` seconds no team has won the bingo, the team with the most completed tasks will win the bingo. If there is more than one team with equal amounts of tasks, the team that first reaches `max + 1` tasks will win where max is the maximum amount of completed tasks any team has at the time the countdown runs out.
 
 ## Tasks
 

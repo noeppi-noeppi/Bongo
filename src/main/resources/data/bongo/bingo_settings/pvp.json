@@ -6,6 +6,7 @@
   "teleportsPerTeam": 1,
   "consumeItems": false,
   "pvp": true,
+  "maxTime": 65,
   "startingInventory": [
     {
       "id": "minecraft:leather_helmet",
