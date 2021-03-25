@@ -37,6 +37,7 @@ public class PlayerTeleporterNothing implements PlayerTeleporter {
             if (player.world != gameWorld) {
                 player.teleport(gameWorld, center.getX() + 0.5, pos.getY(), center.getZ() + 0.5, player.getRotationYawHead(), 0);
             }
+            player.func_242111_a(gameWorld.getDimensionKey(), player.getPosition(), 0, true, false);
         });
     }
 }

@@ -33,6 +33,9 @@ public class PlayerTeleporterStandard implements PlayerTeleporter {
             mpos.move(Direction.DOWN);
         }
         BlockPos pos = mpos.toImmutable().up();
-        players.forEach(player -> player.teleport(gameWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getRotationYawHead(), 0));
+        players.forEach(player -> {
+            player.teleport(gameWorld, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getRotationYawHead(), 0);
+            player.func_242111_a(gameWorld.getDimensionKey(), pos, 0, true, false);
+        });
     }
 }
