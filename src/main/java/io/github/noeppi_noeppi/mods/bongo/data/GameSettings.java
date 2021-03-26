@@ -21,7 +21,9 @@ import java.util.*;
 
 public class GameSettings {
 
-    public static final GameSettings DEFAULT = new GameSettings(new ResourceLocation(BongoMod.getInstance().modid, "default"), new CompoundNBT());
+    public static final ResourceLocation DEFAULT_ID = new ResourceLocation(BongoMod.getInstance().modid, "default");
+    public static final ResourceLocation CUSTOM_ID = new ResourceLocation(BongoMod.getInstance().modid, "custom");
+    public static final GameSettings DEFAULT = new GameSettings(DEFAULT_ID, new CompoundNBT());
     
     public static final Map<ResourceLocation, GameSettings> GAME_SETTINGS = new HashMap<>();
     static {
@@ -29,6 +31,9 @@ public class GameSettings {
     }
 
     public final ResourceLocation id;
+    // Internal use only. Only use in createCustom. Therefore marked deprecated
+    @Deprecated
+    private final CompoundNBT rawNbt;
     private final CompoundNBT nbt;
     
     public final WinCondition winCondition;
@@ -171,6 +176,13 @@ public class GameSettings {
         this.nbt.put("backpackInventory", backpackInventoryNBT);
         this.nbt.putString("teleporter", this.teleporter.getId());
         this.nbt.putInt("maxTime", this.maxTime);
+
+        // the default settings and already merged settings should still get the normal nbt for merging.
+        if (DEFAULT_ID.equals(id) || CUSTOM_ID.equals(id)) {
+            this.rawNbt = this.nbt.copy();
+        } else {
+            this.rawNbt = nbt;
+        }
     }
 
     public CompoundNBT getTag() {
@@ -208,5 +220,19 @@ public class GameSettings {
 
     public PlayerTeleporter getTeleporter() {
         return teleporter;
+    }
+    
+    public static GameSettings createCustom(GameSettings... settings) {
+        if (settings.length <= 0) {
+            return DEFAULT;
+        } else if (settings.length == 1) {
+            return settings[0];
+        } else {
+            CompoundNBT merged = new CompoundNBT();
+            for (GameSettings elem : settings) {
+                merged.merge(elem.rawNbt);
+            }
+            return new GameSettings(CUSTOM_ID, merged);
+        }
     }
 }

@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class GameSettingsArgument implements ArgumentType<GameSettings> {
+public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
 
     @Nullable
     private final Map<ResourceLocation, GameSettings> games;
@@ -35,22 +35,37 @@ public class GameSettingsArgument implements ArgumentType<GameSettings> {
         return new GameSettingsArgument(null);
     }
 
-    public GameSettings parse(StringReader reader) throws CommandSyntaxException {
-        ResourceLocation rl = rla.parse(reader);
-        GameSettings gs = games().get(rl);
-        if (gs == null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.notfound")).create();
+    public GameSettings[] parse(StringReader reader) throws CommandSyntaxException {
+        List<GameSettings> list = new ArrayList<>();
+        while(true) {
+            reader.skipWhitespace();
+            if (!reader.canRead()) break;
+            ResourceLocation rl = rla.parse(reader);
+            GameSettings gs = games().get(rl);
+            if (gs == null) {
+                throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.notfound")).create();
+            }
+            list.add(gs);
         }
-        return gs;
+        return list.toArray(new GameSettings[]{});
     }
 
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         StringReader reader = new StringReader(context.getInput());
         reader.setCursor(builder.getStart());
         String theString = reader.getRemaining().toLowerCase();
+        String start;
+        String current;
+        if (theString.contains(" ")) {
+            start = theString.substring(0, theString.lastIndexOf(' ') + 1);
+            current = theString.substring(theString.lastIndexOf(' ') + 1);
+        } else {
+            start = "";
+            current = theString;
+        }
         for (ResourceLocation rl : games().keySet()) {
-            if (rl.toString().toLowerCase().startsWith(theString))
-                builder.suggest(rl.toString());
+            if (rl.toString().toLowerCase().startsWith(current))
+                builder.suggest(start + rl.toString());
         }
         return CompletableFuture.completedFuture(builder.build());
     }

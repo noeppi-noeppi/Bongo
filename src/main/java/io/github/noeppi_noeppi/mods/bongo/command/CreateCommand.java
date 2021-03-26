@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import io.github.noeppi_noeppi.libx.command.CommandUtil;
 import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
@@ -26,8 +27,8 @@ public class CreateCommand implements Command<CommandSource> {
         }
 
         GameTasks gt = context.getArgument("tasks", GameTasks.class);
-        GameSettings gs = context.getArgument("settings", GameSettings.class);
-        GameDef gd = new GameDef(gt, gs);
+        GameSettings[] gs = CommandUtil.getArgumentOrDefault(context, "settings", GameSettings[].class, new GameSettings[]{});
+        GameDef gd = new GameDef(gt, GameSettings.createCustom(gs));
         bongo.stop();
         bongo.reset();
         String err = gd.createBongo(bongo);

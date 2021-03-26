@@ -25,7 +25,7 @@ public class BongoCommands {
         ).then(
                 literal("leave").executes(new LeaveCommand())
         ).then(
-                literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(argument("tasks", gameTasks()).then(argument("settings", gameSettings()).executes(new CreateCommand())))
+                literal("create").requires(cs -> cs.hasPermissionLevel(2)).then(argument("tasks", gameTasks()).executes(new CreateCommand()).then(argument("settings", gameSettings()).executes(new CreateCommand())))
         ).then(
                 literal("start").requires(cs -> cs.hasPermissionLevel(2)).executes(new StartCommand())
         ).then(
