@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import de.melanx.skyblockbuilder.events.*;
+import de.melanx.skyblockbuilder.util.WorldTypeUtil;
 import de.melanx.skyblockbuilder.util.WorldUtil;
 import de.melanx.skyblockbuilder.world.data.SkyblockSavedData;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
@@ -33,6 +34,10 @@ public class SkyblockIntegration {
         
         @SubscribeEvent
         public void onStop(BongoStopEvent.World event) {
+            if (!WorldUtil.isSkyblock(event.getWorld())) {
+                return;
+            }
+
             // Delete all skyblock teams that were created.
             SkyblockSavedData data = SkyblockSavedData.get(event.getWorld());
             de.melanx.skyblockbuilder.util.Team spawn = data.getSpawn();
