@@ -64,6 +64,9 @@
   "bongo.team.white": "Drużyna biała",
   "bongo.team.yellow": "Drużyna żółta",
   "bongo.timer": "Czas: ",
+  "bongo.timeleft": "Pozostało czasu: ",
+  "bongo.instantwin": "Zadań do wygranej: ",
+  "bongo.maxtime": "Maksymalny czas: ",
   "bongo.tooltip.required": "Przedmiot do Bingo",
   "bongo.tp_left": "Pozostało teleportów: %s",
   "bongo.tp_team": "Teleportów na drużynę: %s",
@@ -75,5 +78,7 @@
   "bongo.wc.bongo.rows": "Jeden rząd",
   "bongo.wc.bongo.rows_and_columns": "Rząd lub kolumna",
   "bongo.win": " wygrała",
-  "bongo.winplayers": " wygrała. Gracze:"
+  "bongo.winplayers": " wygrała. Gracze:",
+  "bongo.mention": "Wyślij wzmiankę do wszystkich graczy ze swojej drużyny Bingo.",
+  "bongo.teamchat.disabled": "TeamChat jest wyłączony. Zamiast niego skorzystaj z moda MineMention."
 }
