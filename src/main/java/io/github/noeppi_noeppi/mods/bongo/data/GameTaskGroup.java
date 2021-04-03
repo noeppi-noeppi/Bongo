@@ -9,6 +9,8 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GameTaskGroup {
     
@@ -113,6 +115,13 @@ public class GameTaskGroup {
         // If this was not here rare items would be more likely to appear in the first row.
         Collections.shuffle(theTasks);
         return Either.left(theTasks);
+    }
+    
+    public List<Task> getTasksSorted() {
+        return this.tasks.stream()
+                .map(Pair::getRight)
+                .flatMap(e -> e.left().map(Stream::of).orElse(Stream.empty()))
+                .collect(Collectors.toList());
     }
     
     public static Either<Task, GameTaskGroup> parseTask(CompoundNBT nbt) {

@@ -1,0 +1,6 @@
+{
+  "parent": "bongo:block/egg",
+  "textures": {
+    "egg": "mekanism:block/block_osmium"
+  }
+}

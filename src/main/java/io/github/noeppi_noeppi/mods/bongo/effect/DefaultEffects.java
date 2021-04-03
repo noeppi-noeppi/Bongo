@@ -4,6 +4,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoWinEvent;
+import io.github.noeppi_noeppi.mods.bongo.task.TaskTypeAlways;
 import net.minecraft.command.impl.AdvancementCommand;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.network.play.server.STitlePacket;
@@ -37,7 +38,7 @@ public class DefaultEffects {
     @SubscribeEvent
     public void playerTask(BongoTaskEvent event) {
         Team team = event.getBongo().getTeam(event.getPlayer());
-        if (team != null) {
+        if (team != null && event.getTask().getType() != TaskTypeAlways.INSTANCE) {
             IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.task.complete")).append(event.getTask().getContentName(event.getWorld().getServer()));
             event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.sendMessage(tc, player.getUniqueID());
@@ -51,21 +52,21 @@ public class DefaultEffects {
     @SubscribeEvent
     public void teamWin(BongoWinEvent event) {
         IFormattableTextComponent tc = event.getTeam().getName().append(new TranslationTextComponent("bongo.win"));
-            IFormattableTextComponent tcc = event.getTeam().getName().append(new TranslationTextComponent("bongo.winplayers"));
+        IFormattableTextComponent tcc = event.getTeam().getName().append(new TranslationTextComponent("bongo.winplayers"));
 
-            event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
-                if (event.getTeam().hasPlayer(player)) {
-                    tcc.append(new StringTextComponent(" "));
-                    IFormattableTextComponent pname = player.getDisplayName().deepCopy();
-                    pname.setStyle(Style.EMPTY.applyFormatting(TextFormatting.RESET).applyFormatting(TextFormatting.UNDERLINE).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @p " + player.getPosX() + " " + player.getPosY() + " " + player.getPosZ())));
-                    tcc.append(pname);
-                }
-            });
-
-            event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
-                player.sendMessage(tcc, player.getUniqueID());
-                player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, tc, 10, 60, 10));
-                player.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, player.getPosX(), player.getPosY(), player.getPosZ(), 1.2f, 1));
-            });
+        event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
+            if (event.getTeam().hasPlayer(player)) {
+                tcc.append(new StringTextComponent(" "));
+                IFormattableTextComponent pname = player.getDisplayName().deepCopy();
+                pname.setStyle(Style.EMPTY.applyFormatting(TextFormatting.RESET).applyFormatting(TextFormatting.UNDERLINE).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @p " + player.getPosX() + " " + player.getPosY() + " " + player.getPosZ())));
+                tcc.append(pname);
+            }
+        });
+        
+        event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
+            player.sendMessage(tcc, player.getUniqueID());
+            player.connection.sendPacket(new STitlePacket(STitlePacket.Type.TITLE, tc, 10, 60, 10));
+            player.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER, player.getPosX(), player.getPosY(), player.getPosZ(), 1.2f, 1));
+        });
     }
 }

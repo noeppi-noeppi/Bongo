@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import com.mojang.datafixers.util.Either;
+import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.IResourceManager;
@@ -25,10 +26,18 @@ public class GameTasks {
     }
     
     public Either<List<Task>, String> getBingoTasks() {
-        if (rootGroup.getAvailableTasks() < 25) {
-            return Either.right("bongo.cmd.create.less");
+        if (this.id.equals(new ResourceLocation(BongoMod.getInstance().modid, "easter"))) {
+            List<Task> tasks = rootGroup.getTasksSorted();
+            if (tasks.size() < 25) {
+                return Either.right("bongo.cmd.create.less");
+            }
+            return Either.left(tasks.subList(0, 25));
+        } else {
+            if (rootGroup.getAvailableTasks() < 25) {
+                return Either.right("bongo.cmd.create.less");
+            }
+            return rootGroup.choseTasks(new Random(), 25);
         }
-        return rootGroup.choseTasks(new Random(), 25);
     }
     
     public CompoundNBT getTag() {

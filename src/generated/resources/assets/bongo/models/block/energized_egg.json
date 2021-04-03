@@ -1,0 +1,6 @@
+{
+  "parent": "bongo:block/egg",
+  "textures": {
+    "egg": "powah:block/blazing_crystal_block"
+  }
+}

@@ -101,6 +101,7 @@ public class EventListener {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0 && event.player instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(event.player.world);
             if (bongo.canCompleteTasks(event.player)) {
+                bongo.checkCompleted(TaskTypeAlways.INSTANCE, event.player, TaskTypeAlways.INSTANCE);
                 for (ItemStack stack : event.player.inventory.mainInventory) {
                     if (!stack.isEmpty()) {
                         int count = 0;

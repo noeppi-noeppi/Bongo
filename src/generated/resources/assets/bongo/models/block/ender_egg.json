@@ -1,0 +1,6 @@
+{
+  "parent": "bongo:block/egg",
+  "textures": {
+    "egg": "minecraft:block/purpur_block"
+  }
+}

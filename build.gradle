@@ -4,18 +4,36 @@ buildscript {
 
 apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/mod.gradle'
 
+version='1.16.4-1-1-2-easter'
+
 repositories {
     maven { url = "https://dvs1.progwml6.com/files/maven/" }
     maven { url = "https://modmaven.k-4u.nl" }
     maven { url = "https://maven.melanx.de/" }
     maven { url = "https://maven.theillusivec4.top/" }
+    maven { url = 'https://www.cursemaven.com' }
+    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+    maven { url = 'https://maven.blamejared.com/' }
 }
 
 dependencies {
-    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.23")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0:api")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.27")
+    
+    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.27")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.0:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.0")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74:api")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.16.4-0.1.1")
     compileOnly fg.deobf("de.melanx.skyblockbuilder:skyblockbuilder-1.16.4:1.1.1")
     compile fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.16.4-0.1.3")
+    compile fg.deobf("curse.maven:create-328085:3167531")
+    compile fg.deobf("curse.maven:mana-and-artifice-406360:3244357")
+    runtimeOnly fg.deobf('software.bernie.geckolib:geckolib-forge-1.16.5:3.0.15')
+    compile fg.deobf('vazkii.botania:Botania:1.16.4-413')
+    runtimeOnly fg.deobf('vazkii.patchouli:Patchouli:1.16.4-48')
+    compile fg.deobf('curse.maven:mekanism-268560:3183270')
+    compile fg.deobf('curse.maven:cyclic-239286:3249448')
+    compile fg.deobf('curse.maven:lollipop-347954:3232534')
+    compile fg.deobf('curse.maven:powah-352656:3232535')
 }

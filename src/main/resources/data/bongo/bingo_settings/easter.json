@@ -1,0 +1,56 @@
+{
+  "invulnerable": true,
+  "maxTime": 5400,
+  "teleporter": "bongo.no_tp",
+  "winCondition": "bongo.all",
+  "friendlyFire": false,
+  "lockTaskOnDeath": false,
+  "teleportsPerTeam": 1,
+  "consumeItems": false,
+  "pvp": false,
+  "startingInventory": [
+    {
+      "id": "bongo:basket"
+    }
+  ],
+  "backpackInventory": [
+    {
+      "id": "minecraft:diamond",
+      "Count": 4
+    },
+    {
+      "id": "create:blaze_burner"
+    },
+    {
+      "id": "create:blaze_cake"
+    },
+    {
+      "id": "create:crushing_wheel",
+      "Count": 2
+    },
+    {
+      "id": "botania:white_petal",
+      "Count": 4
+    },
+    {
+      "id": "botania:brown_petal",
+      "Count": 2
+    },
+    {
+      "id": "botania:red_petal",
+      "Count": 2
+    },
+    {
+      "id": "botania:light_gray_petal",
+      "Count": 2
+    },
+    {
+      "id": "mana-and-artifice:guide_book",
+      "Count": 2
+    },
+    {
+      "id": "minecraft:rabbit_spawn_egg",
+      "Count": 2
+    }
+  ]
+}

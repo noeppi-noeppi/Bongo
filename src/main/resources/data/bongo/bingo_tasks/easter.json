@@ -1,0 +1,105 @@
+{
+  "tasks": [
+    {
+      "id": "bongo:wood_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:rock_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:ocean_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:nether_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:ender_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:mechanical_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:nature_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:magical_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:technology_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:mysterious_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "id": "bongo:energized_egg",
+      "type": "bongo.easter"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "type": "bongo.always"
+    },
+    {
+      "stat": "bongo:eggs_collected",
+      "category": "minecraft:custom",
+      "type": "bongo.stat",
+      "value": 10
+    },
+    {
+      "stat": "bongo:eggs_collected",
+      "category": "minecraft:custom",
+      "type": "bongo.stat",
+      "value": 25
+    },
+    {
+      "stat": "bongo:eggs_collected",
+      "category": "minecraft:custom",
+      "type": "bongo.stat",
+      "value": 50
+    },
+    {
+      "stat": "bongo:eggs_collected",
+      "category": "minecraft:custom",
+      "type": "bongo.stat",
+      "value": 100
+    },
+    {
+      "stat": "bongo:eggs_collected",
+      "category": "minecraft:custom",
+      "type": "bongo.stat",
+      "value": 200
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bongo:block/basket"
+    },
+    "facing=south": {
+      "model": "bongo:block/basket",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bongo:block/basket",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "bongo:block/basket",
+      "y": 90
+    }
+  }
+}

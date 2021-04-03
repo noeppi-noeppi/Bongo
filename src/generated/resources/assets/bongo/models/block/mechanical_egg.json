@@ -1,0 +1,6 @@
+{
+  "parent": "bongo:block/egg",
+  "textures": {
+    "egg": "create:block/brass_block"
+  }
+}
