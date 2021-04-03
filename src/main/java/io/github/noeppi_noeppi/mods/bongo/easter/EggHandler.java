@@ -47,9 +47,9 @@ public class EggHandler {
                 BlockPos target = null;
                 for (int i = 0; i < 20 && target == null; i++) {
                     BlockPos attempt = new BlockPos(
-                            world.rand.nextInt(48) - 24 + center.getX(),
-                            world.rand.nextInt(32) - 16 + center.getY(),
-                            world.rand.nextInt(48) - 24 + center.getZ()
+                            world.rand.nextInt(24) - 12 + center.getX(),
+                            world.rand.nextInt(16) - 8 + center.getY(),
+                            world.rand.nextInt(24) - 12 + center.getZ()
                     );
                     if (validPosition(world, attempt)) {
                         target = attempt;

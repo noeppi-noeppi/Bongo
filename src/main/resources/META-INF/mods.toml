@@ -30,7 +30,7 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.16.3-1.0.23,)"
+    versionRange="[1.16.3-1.0.27,)"
     ordering="NONE"
     side="BOTH"
 
