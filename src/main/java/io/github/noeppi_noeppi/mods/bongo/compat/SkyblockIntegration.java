@@ -1,8 +1,8 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
+import de.melanx.skyblockbuilder.data.SkyblockSavedData;
 import de.melanx.skyblockbuilder.events.*;
 import de.melanx.skyblockbuilder.util.WorldUtil;
-import de.melanx.skyblockbuilder.world.data.SkyblockSavedData;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStopEvent;
@@ -35,10 +35,10 @@ public class SkyblockIntegration {
         public void onStop(BongoStopEvent.World event) {
             // Delete all skyblock teams that were created.
             SkyblockSavedData data = SkyblockSavedData.get(event.getWorld());
-            de.melanx.skyblockbuilder.util.Team spawn = data.getSpawn();
+            de.melanx.skyblockbuilder.data.Team spawn = data.getSpawn();
             Arrays.stream(DyeColor.values()).forEach(color -> {
-                de.melanx.skyblockbuilder.util.Team island = data.getTeam("bongo_" + color.getTranslationKey());
-                if (island != null) {
+                de.melanx.skyblockbuilder.data.Team island = data.getTeam("bongo_" + color.getTranslationKey());
+                if (island != null && data.deleteTeam(island)) {
                     for (ServerPlayerEntity player : event.getWorld().getServer().getPlayerList().getPlayers()) {
                         if (island.hasPlayer(player)) WorldUtil.teleportToIsland(player, spawn);
                     }
@@ -93,7 +93,7 @@ public class SkyblockIntegration {
         @Override
         public void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random) {
             SkyblockSavedData data = SkyblockSavedData.get(gameWorld);
-            de.melanx.skyblockbuilder.util.Team island = data.getTeam("bongo_" + team.color.getTranslationKey());
+            de.melanx.skyblockbuilder.data.Team island = data.getTeam("bongo_" + team.color.getTranslationKey());
             if (island == null) island = data.createTeam("bongo_" + team.color.getTranslationKey());
             Objects.requireNonNull(island);
             for (ServerPlayerEntity player : players) {
