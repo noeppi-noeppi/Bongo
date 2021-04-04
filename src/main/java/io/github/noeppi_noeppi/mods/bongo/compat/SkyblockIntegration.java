@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import de.melanx.skyblockbuilder.data.SkyblockSavedData;
-import de.melanx.skyblockbuilder.events.*;
+import de.melanx.skyblockbuilder.util.CompatHelper;
 import de.melanx.skyblockbuilder.util.WorldUtil;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -11,7 +11,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Arrays;
@@ -20,7 +19,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class SkyblockIntegration {
-    
+
     public static boolean appliesFor(ServerWorld world) {
         try {
             return WorldUtil.isSkyblock(world);
@@ -28,9 +27,13 @@ public class SkyblockIntegration {
             return false;
         }
     }
-    
+
+    public static void disableSkyblockEvents() {
+        CompatHelper.disableAllTeamManagement(Bongo.ID);
+    }
+
     public static class Events {
-        
+
         @SubscribeEvent
         public void onStop(BongoStopEvent.World event) {
             // Delete all skyblock teams that were created.
@@ -45,44 +48,14 @@ public class SkyblockIntegration {
                 }
             });
         }
-        
-        @SubscribeEvent
-        public void createTeam(SkyblockCreateTeamEvent event) {
-            event.setCanceled(true);
-        }
-        
-        @SubscribeEvent
-        public void invitePlayer(SkyblockInvitationEvent event) {
-            event.setResult(Event.Result.DENY);
-        }
-        
-        @SubscribeEvent
-        public void manageTeam(SkyblockManageTeamEvent event) {
-            event.setResult(Event.Result.DENY);
-        }
-        
-        @SubscribeEvent
-        public void opManage(SkyblockOpManageEvent event) {
-            event.setCanceled(true);
-        }
-        
-        @SubscribeEvent
-        public void home(SkyblockTeleportHomeEvent event) {
-            event.setResult(Event.Result.DENY);
-        }
-        
-        @SubscribeEvent
-        public void visit(SkyblockVisitEvent event) {
-            event.setResult(Event.Result.DENY);
-        }
     }
-    
+
     public static class Teleporter implements PlayerTeleporter {
 
         public static final Teleporter INSTANCE = new Teleporter();
-        
+
         private Teleporter() {
-            
+
         }
 
         @Override
