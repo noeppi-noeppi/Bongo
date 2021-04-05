@@ -183,7 +183,7 @@ public class Bongo extends WorldSavedData {
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
             team.clearBackPack(true);
-            settings.fillBackPackInventory(team);
+            settings.fillBackPackInventory(team, true);
             team.resetCompleted(true);
             team.resetLocked(true);
             team.teleportsLeft(getSettings().teleportsPerTeam);
@@ -205,6 +205,7 @@ public class Bongo extends WorldSavedData {
                 List<ServerPlayerEntity> players = world.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
                 if (!players.isEmpty()) {
                     settings.getTeleporter().teleportTeam(this, gameWorld, team, players, BlockPos.ZERO, 10000, random);
+                    MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameWorld, team, players));
                 }
             }
         }

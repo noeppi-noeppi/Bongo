@@ -201,7 +201,7 @@ public class GameSettings {
         }
     }
     
-    public void fillBackPackInventory(Team team) {
+    public void fillBackPackInventory(Team team, boolean suppressBingoSync) {
         team.clearBackPack(true);
         IItemHandlerModifiable inventory = team.getBackPack();
         int slot = 0;
@@ -211,6 +211,7 @@ public class GameSettings {
                 slot += 1;
             }
         }
+        team.markDirty(suppressBingoSync);
     }
 
     public static void loadGameSettings(IResourceManager rm) throws IOException {

@@ -29,8 +29,7 @@ public class Team {
     private int teleportsLeft;
     private final List<UUID> players;
     private final ItemStackHandler backpack;
-
-
+    
     public Team(Bongo bongo, DyeColor color) {
         this.bongo = bongo;
         this.color = color;
@@ -112,6 +111,9 @@ public class Team {
         player.refreshDisplayName();
     }
 
+    /**
+     * IMPORTANT: You must mark the team dirty afterwards.
+     */
     public IItemHandlerModifiable getBackPack() {
         return backpack;
     }
@@ -175,6 +177,8 @@ public class Team {
 
         if (nbt.contains("backpack",Constants.NBT.TAG_COMPOUND)) {
             backpack.deserializeNBT(nbt.getCompound("backpack"));
+        } else {
+            backpack.deserializeNBT(new CompoundNBT());
         }
     }
 
@@ -244,5 +248,13 @@ public class Team {
 
     public void resetLocked() {
         resetLocked(false);
+    }
+    
+    public void markDirty(boolean suppressBingoSync) {
+        bongo.markDirty(suppressBingoSync);
+    }
+    
+    public void markDirty() {
+        bongo.markDirty();
     }
 }
