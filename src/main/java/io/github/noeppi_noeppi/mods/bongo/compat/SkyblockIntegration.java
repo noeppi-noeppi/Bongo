@@ -13,10 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class SkyblockIntegration {
 
@@ -38,12 +35,16 @@ public class SkyblockIntegration {
         public void onStop(BongoStopEvent.World event) {
             // Delete all skyblock teams that were created.
             SkyblockSavedData data = SkyblockSavedData.get(event.getWorld());
-            de.melanx.skyblockbuilder.data.Team spawn = data.getSpawn();
+            Optional<de.melanx.skyblockbuilder.data.Team> spawn = data.getSpawnOption();
+            if (!spawn.isPresent()) {
+                return;
+            }
+
             Arrays.stream(DyeColor.values()).forEach(color -> {
                 de.melanx.skyblockbuilder.data.Team island = data.getTeam("bongo_" + color.getTranslationKey());
                 if (island != null && data.deleteTeam(island)) {
                     for (ServerPlayerEntity player : event.getWorld().getServer().getPlayerList().getPlayers()) {
-                        if (island.hasPlayer(player)) WorldUtil.teleportToIsland(player, spawn);
+                        if (island.hasPlayer(player)) WorldUtil.teleportToIsland(player, spawn.get());
                     }
                 }
             });
