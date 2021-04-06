@@ -66,6 +66,7 @@ public class BongoMod extends ModX {
 
         if (ModList.get().isLoaded("skyblockbuilder")) {
             MinecraftForge.EVENT_BUS.register(new SkyblockIntegration.Events());
+            SkyblockIntegration.disableSkyblockEvents();
         }
     }
 
