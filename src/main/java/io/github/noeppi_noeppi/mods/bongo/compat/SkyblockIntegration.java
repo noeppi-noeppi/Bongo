@@ -4,29 +4,35 @@ import de.melanx.skyblockbuilder.data.SkyblockSavedData;
 import de.melanx.skyblockbuilder.util.CompatHelper;
 import de.melanx.skyblockbuilder.util.WorldUtil;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
+import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStopEvent;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.*;
 
 public class SkyblockIntegration {
 
+    public static void init() {
+        MinecraftForge.EVENT_BUS.register(new SkyblockIntegration.Events());
+        CompatHelper.disableAllTeamManagement(BongoMod.getInstance().modid);
+    }
+    
     public static boolean appliesFor(ServerWorld world) {
         try {
             return WorldUtil.isSkyblock(world);
         } catch (Exception | NoClassDefFoundError e) {
             return false;
         }
-    }
-
-    public static void disableSkyblockEvents() {
-        CompatHelper.disableAllTeamManagement(Bongo.ID);
     }
 
     public static class Events {
@@ -48,6 +54,26 @@ public class SkyblockIntegration {
                     }
                 }
             });
+        }
+        
+        @SubscribeEvent(priority = EventPriority.HIGH)
+        public void livingHurt(LivingHurtEvent event) {
+            if (event.getEntityLiving() instanceof ServerPlayerEntity && event.getSource().canHarmInCreative()
+                    && event.getEntityLiving().getPosY() < 0
+                    && World.OVERWORLD.equals(event.getEntityLiving().getEntityWorld().getDimensionKey())) {
+                ServerPlayerEntity player = ((ServerPlayerEntity) event.getEntityLiving());
+                if (appliesFor(player.getServerWorld())) {
+                    Bongo bongo = Bongo.get(player.getServerWorld());
+                    if (bongo.running()) {
+                        BlockPos pos = player.func_241140_K_();
+                        if (World.OVERWORLD.equals(player.func_241141_L_()) && pos != null) {
+                            event.setCanceled(true);
+                            player.teleport(player.getServerWorld(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
+                                    player.rotationYaw, player.rotationPitch);
+                        }
+                    }
+                }
+            }
         }
     }
 

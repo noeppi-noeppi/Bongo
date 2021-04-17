@@ -5,7 +5,9 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -81,5 +83,11 @@ public class Util {
         } else {
             return hours + ":" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds) + "." + decimal;
         }
+    }
+    
+    public static boolean validSpawn(World world, BlockPos pos) {
+        return world.getBlockState(pos).getBlock().canSpawnInBlock()
+                && world.getBlockState(pos.up()).getBlock().canSpawnInBlock()
+                && world.getBlockState(pos.down()).isSolidSide(world, pos, Direction.UP);
     }
 }
