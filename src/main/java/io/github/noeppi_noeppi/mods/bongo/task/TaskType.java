@@ -84,6 +84,4 @@ public interface TaskType<T, C> {
     }
 
     Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player);
-
-    T getDefaultElement();
 }
