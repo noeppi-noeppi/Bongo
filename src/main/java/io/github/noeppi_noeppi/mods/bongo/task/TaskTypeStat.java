@@ -188,9 +188,4 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             return Stream.empty();
         }
     }
-
-    @Override
-    public StatAndValue getDefaultElement() {
-        return new StatAndValue(Stats.CUSTOM.get(Stats.PLAY_ONE_MINUTE), 0);
-    }
 }

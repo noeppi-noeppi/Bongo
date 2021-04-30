@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
-import io.github.noeppi_noeppi.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -19,7 +18,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -137,10 +135,5 @@ public class TaskTypeAdvancement implements TaskTypeSimple<ResourceLocation> {
         } else {
             return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> adv.getDisplay() != null).filter(adv -> player.getAdvancements().getProgress(adv).isDone()).map(Advancement::getId);
         }
-    }
-
-    @Override
-    public ResourceLocation getDefaultElement() {
-        return Misc.MISSIGNO;
     }
 }

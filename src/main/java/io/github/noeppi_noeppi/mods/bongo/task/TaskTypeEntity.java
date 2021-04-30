@@ -19,11 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -135,10 +133,5 @@ public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
         } else {
             return player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosX() - 10, player.getPosY() - 5, player.getPosZ() - 10, player.getPosX() + 10, player.getPosY() + 5, player.getPosZ() + 10)).stream().<EntityType<?>>map(Entity::getType).collect(Collectors.toSet()).stream();
         }
-    }
-
-    @Override
-    public EntityType<?> getDefaultElement() {
-        return EntityType.ARMOR_STAND;
     }
 }

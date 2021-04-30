@@ -85,9 +85,4 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
     public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
         return Stream.empty();
     }
-
-    @Override
-    public TaskTypeEmpty getDefaultElement() {
-        return INSTANCE;
-    }
 }

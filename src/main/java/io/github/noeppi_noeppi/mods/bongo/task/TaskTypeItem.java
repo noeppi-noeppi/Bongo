@@ -141,9 +141,4 @@ public class TaskTypeItem implements TaskTypeSimple<ItemStack> {
             return player.inventory.mainInventory.stream().filter(stack -> !stack.isEmpty());
         } 
     }
-
-    @Override
-    public ItemStack getDefaultElement() {
-        return ItemStack.EMPTY;
-    }
 }

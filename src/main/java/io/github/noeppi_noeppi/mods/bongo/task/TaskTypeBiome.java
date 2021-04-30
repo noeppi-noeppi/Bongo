@@ -16,7 +16,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -108,10 +107,5 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
         } else {
             return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
         }
-    }
-
-    @Override
-    public Biome getDefaultElement() {
-        return ForgeRegistries.BIOMES.getValue(Biomes.PLAINS.getLocation());
     }
 }

@@ -157,9 +157,4 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
             return stack;
         }
     }
-
-    @Override
-    public TagWithCount getDefaultElement() {
-        return new TagWithCount(Misc.MISSIGNO, 1);
-    }
 }

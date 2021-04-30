@@ -11,9 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -102,10 +100,5 @@ public class TaskTypePotion implements TaskTypeSimple<Effect> {
         } else {
             return player.getActivePotionEffects().stream().map(EffectInstance::getPotion);
         }
-    }
-
-    @Override
-    public Effect getDefaultElement() {
-        return Effects.SPEED;
     }
 }
