@@ -39,7 +39,7 @@ public class DumpCommand implements Command<CommandSource> {
             if (!Files.exists(base.resolve("bingo_tasks"))) Files.createDirectories(base.resolve("bingo_tasks"));
             if (!Files.exists(base.resolve("bingo_settings"))) Files.createDirectories(base.resolve("bingo_settings"));
             int types = 0;
-            for (TaskType<?> type : TaskTypes.getTypes()) {
+            for (TaskType<?, ?> type : TaskTypes.getTypes()) {
                 ListNBT data = new ListNBT();
                 Stream<?> stream = type.getAllElements(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer());
                 Comparator<?> comparator = type.getSorting();
@@ -49,7 +49,7 @@ public class DumpCommand implements Command<CommandSource> {
                 }
                 stream.forEach(obj -> {
                     //noinspection unchecked
-                    CompoundNBT taskNbt = ((TaskType<Object>) type).serializeNBT(obj);
+                    CompoundNBT taskNbt = ((TaskType<Object, ?>) type).serializeNBT(obj);
                     taskNbt.putString("type", type.getId());
                     data.add(taskNbt);
                 });

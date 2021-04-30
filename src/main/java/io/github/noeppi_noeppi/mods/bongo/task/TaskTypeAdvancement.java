@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
+import io.github.noeppi_noeppi.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -26,7 +27,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
+public class TaskTypeAdvancement implements TaskTypeSimple<ResourceLocation> {
 
     public static final TaskTypeAdvancement INSTANCE = new TaskTypeAdvancement();
 
@@ -103,10 +104,13 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
 
     @Override
     public ResourceLocation deserializeNBT(CompoundNBT nbt) {
-        if (nbt.contains("advancement", Constants.NBT.TAG_STRING)) {
-            return new ResourceLocation(nbt.getString("advancement"));
-        } else {
-            return new ResourceLocation("minecraft", "invalid");
+        return Util.getLocationFor(nbt, "advancement");
+    }
+
+    @Override
+    public void validate(ResourceLocation element, MinecraftServer server) {
+        if (server.getAdvancementManager().getAdvancement(element) == null) {
+            throw new IllegalStateException("Advancement not found: " + element);
         }
     }
 
@@ -133,5 +137,10 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
         } else {
             return server.getAdvancementManager().getAllAdvancements().stream().filter(adv -> adv.getDisplay() != null).filter(adv -> player.getAdvancements().getProgress(adv).isDone()).map(Advancement::getId);
         }
+    }
+
+    @Override
+    public ResourceLocation getDefaultElement() {
+        return Misc.MISSIGNO;
     }
 }

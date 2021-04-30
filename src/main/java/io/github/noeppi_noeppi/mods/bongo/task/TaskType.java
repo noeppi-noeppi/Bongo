@@ -21,9 +21,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface TaskType<T> {
+public interface TaskType<T, C> {
 
     Class<T> getTaskClass();
+    
+    Class<C> getCompareClass();
 
     String getId();
 
@@ -42,11 +44,15 @@ public interface TaskType<T> {
 
     ITextComponent getContentName(T content, MinecraftServer server);
 
-    boolean shouldComplete(T element, PlayerEntity player, T compare);
+    boolean shouldComplete(T element, PlayerEntity player, C compare);
 
     CompoundNBT serializeNBT(T element);
 
     T deserializeNBT(CompoundNBT nbt);
+    
+    default void validate(T element, MinecraftServer server) {
+        
+    }
 
     default T copy(T element) {
         return element;
@@ -68,7 +74,7 @@ public interface TaskType<T> {
         return ImmutableSet.of();
     }
 
-    default void consumeItem(T element, PlayerEntity player) {
+    default void consumeItem(T element, C found, PlayerEntity player) {
 
     }
 
@@ -78,4 +84,6 @@ public interface TaskType<T> {
     }
 
     Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player);
+
+    T getDefaultElement();
 }

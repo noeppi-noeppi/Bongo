@@ -88,6 +88,7 @@ public class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeBiome.INSTANCE);
         TaskTypes.registerType(TaskTypePotion.INSTANCE);
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
+        TaskTypes.registerType(TaskTypeTag.INSTANCE);
 
         PlayerTeleporters.registerTeleporter(PlayerTeleporterDefault.INSTANCE);
         PlayerTeleporters.registerTeleporter(PlayerTeleporterStandard.INSTANCE);

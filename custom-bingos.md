@@ -304,6 +304,23 @@ This would require a player to walk 100 blocks.
 
 Valid categories are: `mined`, `crafted`, `used`, `broken`, `picked_up`, `dropped`, `killed`, `killed_by` and `custom`. While the first ones require an item, a block or an entity type respectively, the last category defines some special values. Those can be found [here](https://minecraft.gamepedia.com/Statistics#List_of_custom_statistic_names).
 
+### Tag
+
+This task has the type `bongo.tag`. To complete this task a player must have an item from an item tag in his inventory. Properties:
+
+```
+tag      The ResourceLocation of the item tag used (minecraft:leaves)
+Count    (optional) How many items are required to complete this task
+```
+Example:
+
+```json
+{
+  "type": "bongo.item",
+  "tag": "minecraft:leaves"
+}
+```
+
 ## The Dump Command
 
 Executing `/bingo dump` will create a folder called `bongo-dump` in your `.minecraft` folder or your server's folder. This will contain a file for every task type that contains a game definition with all possible elements of that task type. (Items won't have all possible nbt values though).

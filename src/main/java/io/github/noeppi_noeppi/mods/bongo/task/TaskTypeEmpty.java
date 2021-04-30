@@ -13,7 +13,7 @@ import net.minecraft.util.text.StringTextComponent;
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
+public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
 
     public static final TaskTypeEmpty INSTANCE = new TaskTypeEmpty();
 
@@ -24,6 +24,11 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     @Override
     public Class<TaskTypeEmpty> getTaskClass() {
         return TaskTypeEmpty.class;
+    }
+
+    @Override
+    public Class<Void> getCompareClass() {
+        return Void.class;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     }
 
     @Override
-    public boolean shouldComplete(TaskTypeEmpty element, PlayerEntity player, TaskTypeEmpty compare) {
+    public boolean shouldComplete(TaskTypeEmpty element, PlayerEntity player, Void compare) {
         return false;
     }
 
@@ -79,5 +84,10 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty> {
     @Override
     public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
         return Stream.empty();
+    }
+
+    @Override
+    public TaskTypeEmpty getDefaultElement() {
+        return INSTANCE;
     }
 }

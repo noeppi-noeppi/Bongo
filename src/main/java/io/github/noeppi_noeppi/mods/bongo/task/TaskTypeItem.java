@@ -9,6 +9,7 @@ import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +23,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class TaskTypeItem implements TaskType<ItemStack> {
+public class TaskTypeItem implements TaskTypeSimple<ItemStack> {
 
     public static final TaskTypeItem INSTANCE = new TaskTypeItem();
 
@@ -58,10 +59,9 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     @Override
     public String getTranslatedContentName(ItemStack content) {
         String text = content.getDisplayName().getStringTruncated(16);
-        
-        if (content.getCount() > 1)
+        if (content.getCount() > 1) {
             text += (" x " + content.getCount());
-
+        }
         return text;
     }
 
@@ -81,21 +81,9 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public void consumeItem(ItemStack element, PlayerEntity player) {
-        int removeLeft = element.getCount();
-        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++) {
-            if (removeLeft <= 0) {
-                break;
-            }
-            ItemStack playerSlot = player.inventory.getStackInSlot(slot);
-            if (ItemStack.areItemsEqualIgnoreDurability(element, playerSlot)) {
-                if (Util.matchesNBT(element.getTag(), playerSlot.getTag())) {
-                    int rem = Math.min(removeLeft, playerSlot.getCount());
-                    playerSlot.shrink(rem);
-                    player.inventory.setInventorySlotContents(slot, playerSlot.isEmpty() ? ItemStack.EMPTY : playerSlot);
-                    removeLeft -= rem;
-                }
-            }
-        }
+        Util.removeItems(player, element.getCount(),
+                stack -> ItemStack.areItemsEqualIgnoreDurability(element, stack)
+                        && Util.matchesNBT(element.getTag(), stack.getTag()));
     }
 
     @Override
@@ -118,7 +106,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
         if (!nbt.contains("Count")) {
             nbt.putByte("Count", (byte) 1);
         }
-        return ItemStack.read(nbt);
+        ItemStack stack = ItemStack.read(nbt);
+        if (stack.isEmpty()) {
+            throw new IllegalStateException("Empty/Invalid item stack: " + (nbt.getString("id").isEmpty() ? "null" : nbt.getString("id")));
+        }
+        return stack;
     }
 
     @Override
@@ -139,7 +131,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
             return ForgeRegistries.ITEMS.getValues().stream().flatMap(item -> {
                 if (item.getGroup() != null) {
                     NonNullList<ItemStack> nl = NonNullList.create();
-                    item.fillItemGroup(item.getGroup(), nl);
+                    item.fillItemGroup(ItemGroup.SEARCH, nl);
                     return nl.stream();
                 } else {
                     return Stream.of(new ItemStack(item));
@@ -147,6 +139,11 @@ public class TaskTypeItem implements TaskType<ItemStack> {
             }).filter(stack -> !stack.isEmpty());
         } else {
             return player.inventory.mainInventory.stream().filter(stack -> !stack.isEmpty());
-        }
+        } 
+    }
+
+    @Override
+    public ItemStack getDefaultElement() {
+        return ItemStack.EMPTY;
     }
 }

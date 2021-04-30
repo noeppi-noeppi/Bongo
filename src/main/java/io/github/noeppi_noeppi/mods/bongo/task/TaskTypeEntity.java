@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -31,7 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TaskTypeEntity implements TaskType<EntityType<?>> {
+public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
 
     public static final TaskTypeEntity INSTANCE = new TaskTypeEntity();
 
@@ -108,14 +109,17 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
     @Override
     public CompoundNBT serializeNBT(EntityType<?> element) {
         CompoundNBT nbt = new CompoundNBT();
-        //noinspection ConstantConditions
-        nbt.putString("entity", element.getRegistryName().toString());
+        Util.putByForgeRegistry(ForgeRegistries.ENTITIES, nbt, "entity", element);
         return nbt;
     }
 
     @Override
     public EntityType<?> deserializeNBT(CompoundNBT nbt) {
-        return ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("entity")));
+        EntityType<?> type = Util.getFromRegistry(ForgeRegistries.ENTITIES, nbt, "entity");
+        if (!type.isSummonable()) {
+            throw new IllegalStateException("Can't use non-summonable entity type for entity tasks: " + type.getRegistryName());
+        }
+        return type;
     }
 
     @Nullable
@@ -131,5 +135,10 @@ public class TaskTypeEntity implements TaskType<EntityType<?>> {
         } else {
             return player.getEntityWorld().getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosX() - 10, player.getPosY() - 5, player.getPosZ() - 10, player.getPosX() + 10, player.getPosY() + 5, player.getPosZ() + 10)).stream().<EntityType<?>>map(Entity::getType).collect(Collectors.toSet()).stream();
         }
+    }
+
+    @Override
+    public EntityType<?> getDefaultElement() {
+        return EntityType.ARMOR_STAND;
     }
 }

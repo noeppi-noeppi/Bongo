@@ -12,9 +12,9 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.39")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.60")
     
-    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.39")
+    compile fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.16.3-1.0.60")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.3-4.0.2.0:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.16.4-0.1.1")

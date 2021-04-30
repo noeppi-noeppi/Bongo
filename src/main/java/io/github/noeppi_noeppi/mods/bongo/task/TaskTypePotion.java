@@ -11,6 +11,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -20,7 +21,7 @@ import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-public class TaskTypePotion implements TaskType<Effect> {
+public class TaskTypePotion implements TaskTypeSimple<Effect> {
 
     public static final TaskTypePotion INSTANCE = new TaskTypePotion();
 
@@ -79,14 +80,13 @@ public class TaskTypePotion implements TaskType<Effect> {
     @Override
     public CompoundNBT serializeNBT(Effect element) {
         CompoundNBT nbt = new CompoundNBT();
-        //noinspection ConstantConditions
-        nbt.putString("potion", element.getRegistryName().toString());
+        Util.putByForgeRegistry(ForgeRegistries.POTIONS, nbt, "potion", element);
         return nbt;
     }
 
     @Override
     public Effect deserializeNBT(CompoundNBT nbt) {
-        return ForgeRegistries.POTIONS.getValue(new ResourceLocation(nbt.getString("potion")));
+        return Util.getFromRegistry(ForgeRegistries.POTIONS, nbt, "potion");
     }
 
     @Nullable
@@ -102,5 +102,10 @@ public class TaskTypePotion implements TaskType<Effect> {
         } else {
             return player.getActivePotionEffects().stream().map(EffectInstance::getPotion);
         }
+    }
+
+    @Override
+    public Effect getDefaultElement() {
+        return Effects.SPEED;
     }
 }

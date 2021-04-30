@@ -80,5 +80,6 @@
   "bongo.win": " won",
   "bongo.winplayers": " won. Players:",
   "bongo.mention": "Mention all players from your bingo team.",
-  "bongo.teamchat.disabled": "TeamChat is disabled. Use the MineMention mod instead."
+  "bongo.teamchat.disabled": "TeamChat is disabled. Use the MineMention mod instead.",
+  "bongo.task.tag.empty": "Error: Empty Tag"
 }

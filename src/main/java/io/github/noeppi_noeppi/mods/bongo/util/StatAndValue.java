@@ -19,23 +19,25 @@ public class StatAndValue {
 
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
-        //noinspection ConstantConditions
-        nbt.putString("category", stat.getType().getRegistryName().toString());
+        nbt.putString("category", "" + stat.getType().getRegistryName());
         //noinspection unchecked
         Registry<Object> registry = (Registry<Object>) stat.getType().getRegistry();
-        //noinspection ConstantConditions
-        nbt.putString("stat", registry.getKey(stat.getValue()).toString());
+        nbt.putString("stat", "" + registry.getKey(stat.getValue()));
         nbt.putInt("value", value);
         return nbt;
     }
 
     public static StatAndValue deserializeNBT(CompoundNBT nbt) {
+        ResourceLocation categoryRL = ResourceLocation.tryCreate(nbt.getString("category"));
+        if (categoryRL == null) throw new IllegalStateException("Invalid stat category id: " + nbt.getString("category"));
         //noinspection unchecked
-        StatType<Object> type = (StatType<Object>) ForgeRegistries.STAT_TYPES.getValue(new ResourceLocation(nbt.getString("category")));
-        //noinspection ConstantConditions
-        Object stat = type.getRegistry().getOrDefault(new ResourceLocation(nbt.getString("stat")));
+        StatType<Object> type = (StatType<Object>) ForgeRegistries.STAT_TYPES.getValue(categoryRL);
+        if (type == null) throw new IllegalStateException("Unknown stat category: " + categoryRL);
+        ResourceLocation statRL = ResourceLocation.tryCreate(nbt.getString("stat"));
+        if (statRL == null) throw new IllegalStateException("Invalid stat value id for " + categoryRL + ": " + nbt.getString("category"));
+        Object stat = type.getRegistry().getOrDefault(statRL);
+        if (stat == null) throw new IllegalStateException("Unknown stat value for " + categoryRL + ": " + statRL);
         int value = nbt.getInt("value");
-        //noinspection ConstantConditions
         return new StatAndValue(type.get(stat), value);
     }
     

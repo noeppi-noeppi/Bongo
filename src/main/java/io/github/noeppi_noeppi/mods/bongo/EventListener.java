@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import io.github.noeppi_noeppi.libx.event.DatapacksReloadedEvent;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
@@ -7,15 +8,18 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
+import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.stats.ServerStatisticsManager;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -39,10 +43,14 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class EventListener {
 
@@ -101,18 +109,39 @@ public class EventListener {
         if (!event.player.getEntityWorld().isRemote && event.player.ticksExisted % 20 == 0 && event.player instanceof ServerPlayerEntity) {
             Bongo bongo = Bongo.get(event.player.world);
             if (bongo.canCompleteTasks(event.player)) {
+                Map<ItemStack, Integer> stacks = new HashMap<>();
+                bongo.getElementsOf(TaskTypeItem.INSTANCE)
+                        .forEach(stack -> stacks.put(stack, 0));
+                
+                Map<TagWithCount, Integer> tags = new HashMap<>();
+                bongo.getElementsOf(TaskTypeTag.INSTANCE)
+                        .forEach(tag -> tags.put(tag, 0));
+                
                 for (ItemStack stack : event.player.inventory.mainInventory) {
                     if (!stack.isEmpty()) {
-                        int count = 0;
-                        for (ItemStack checkStack : event.player.inventory.mainInventory) {
-                            if (ItemStack.areItemsEqual(stack, checkStack) && ItemStack.areItemStackTagsEqual(stack, checkStack))
-                                count += checkStack.getCount();
+                        for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
+                            ItemStack test = entry.getKey();
+                            if (ItemStack.areItemsEqual(stack, test) && ItemStack.areItemStackTagsEqual(stack, test)) {
+                                entry.setValue(entry.getValue() + stack.getCount());
+                            }
                         }
-                        ItemStack test = stack.copy();
-                        test.setCount(count);
-                        bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
+                        for (Map.Entry<TagWithCount, Integer> entry : tags.entrySet()) {
+                            ITag<Item> test = entry.getKey().getTag();
+                            if (test.contains(stack.getItem())) {
+                                entry.setValue(entry.getValue() + stack.getCount());
+                            }
+                        }
                     }
                 }
+                
+                stacks.forEach((stack, count) -> {
+                    ItemStack test = stack.copy();
+                    test.setCount(count);
+                    bongo.checkCompleted(TaskTypeItem.INSTANCE, event.player, test);
+                });
+                
+                tags.forEach((tag, count) -> bongo.checkCompleted(TaskTypeTag.INSTANCE, event.player, tag.withCount(count)));
+                
                 // This is a bit hacky but it works
                 ResourceLocation biomeKey = event.player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
                 Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
@@ -130,6 +159,11 @@ public class EventListener {
         }
     }
 
+    @SubscribeEvent
+    public void serverStart(FMLServerStartedEvent event) {
+        GameTasks.validateAllTasks(event.getServer());
+    }
+    
     @SubscribeEvent
     public void resourcesReload(AddReloadListenerEvent event) {
         event.addListener(new ReloadListener<Object>() {
@@ -149,6 +183,11 @@ public class EventListener {
                 }
             }
         });
+    }
+    
+    @SubscribeEvent
+    public void resourcesReloaded(DatapacksReloadedEvent event) {
+        GameTasks.validateAllTasks(event.getServer());
     }
 
     @SubscribeEvent

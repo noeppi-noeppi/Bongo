@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -35,7 +36,17 @@ public class GameTasks {
         return nbt;
     }
     
+    public void validateTasks(MinecraftServer server) {
+        rootGroup.validateTasks(server);
+    }
+    
     public static void loadGameTasks(IResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_tasks", GAME_TASKS, GameTasks::new);
+    }
+    
+    public static void validateAllTasks(MinecraftServer server) {
+        for (GameTasks tasks : GAME_TASKS.values()) {
+            tasks.validateTasks(server);
+        }
     }
 }

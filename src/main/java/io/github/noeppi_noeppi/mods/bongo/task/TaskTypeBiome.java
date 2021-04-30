@@ -16,13 +16,14 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-public class TaskTypeBiome implements TaskType<Biome> {
+public class TaskTypeBiome implements TaskTypeSimple<Biome> {
 
     public static final TaskTypeBiome INSTANCE = new TaskTypeBiome();
 
@@ -85,14 +86,13 @@ public class TaskTypeBiome implements TaskType<Biome> {
     @Override
     public CompoundNBT serializeNBT(Biome element) {
         CompoundNBT nbt = new CompoundNBT();
-        //noinspection ConstantConditions
-        nbt.putString("biome", element.getRegistryName().toString());
+        Util.putByForgeRegistry(ForgeRegistries.BIOMES, nbt, "biome", element);
         return nbt;
     }
 
     @Override
     public Biome deserializeNBT(CompoundNBT nbt) {
-        return ForgeRegistries.BIOMES.getValue(new ResourceLocation(nbt.getString("biome")));
+        return Util.getFromRegistry(ForgeRegistries.BIOMES, nbt, "biome");
     }
 
     @Nullable
@@ -108,5 +108,10 @@ public class TaskTypeBiome implements TaskType<Biome> {
         } else {
             return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
         }
+    }
+
+    @Override
+    public Biome getDefaultElement() {
+        return ForgeRegistries.BIOMES.getValue(Biomes.PLAINS.getLocation());
     }
 }

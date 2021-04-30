@@ -397,7 +397,7 @@ public class Bongo extends WorldSavedData {
         return running() && getTeam(player) != null;
     }
     
-    public <T> void checkCompleted(TaskType<T> type, PlayerEntity player, T compare) {
+    public <C> void checkCompleted(TaskType<?, C> type, PlayerEntity player, C compare) {
         if (!running)
             return;
         Team team = getTeam(player);
@@ -406,7 +406,7 @@ public class Bongo extends WorldSavedData {
                 if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
                     team.complete(i);
                     if (getSettings().consumeItems) {
-                        task(i).consumeItem(player);
+                        task(i).consumeItem(player, compare);
                     }
                     if (player instanceof ServerPlayerEntity) {
                         MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayerEntity) player).getServerWorld(), (ServerPlayerEntity) player, task(i)));
@@ -549,7 +549,7 @@ public class Bongo extends WorldSavedData {
         }
     }
 
-    public <T> Stream<T> getElementsOf(TaskType<T> type) {
+    public <T> Stream<T> getElementsOf(TaskType<T, ?> type) {
         return items.stream().map(task -> task.getElement(type)).filter(Objects::nonNull);
     }
 

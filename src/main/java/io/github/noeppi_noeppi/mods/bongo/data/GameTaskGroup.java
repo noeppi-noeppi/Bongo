@@ -5,6 +5,7 @@ import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NumberNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -113,6 +114,14 @@ public class GameTaskGroup {
         // If this was not here rare items would be more likely to appear in the first row.
         Collections.shuffle(theTasks);
         return Either.left(theTasks);
+    }
+    
+    public void validateTasks(MinecraftServer server) {
+        for (Pair<Integer, Either<Task, GameTaskGroup>> entry : tasks) {
+            Either<Task, GameTaskGroup> task = entry.getRight();
+            task.left().ifPresent(t -> t.validate(server));
+            task.right().ifPresent(t -> t.validateTasks(server));
+        }
     }
     
     public static Either<Task, GameTaskGroup> parseTask(CompoundNBT nbt) {

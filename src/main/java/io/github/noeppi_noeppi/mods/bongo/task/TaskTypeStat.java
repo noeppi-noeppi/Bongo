@@ -33,7 +33,7 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class TaskTypeStat implements TaskType<StatAndValue> {
+public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
 
     public static final TaskTypeStat INSTANCE = new TaskTypeStat();
     
@@ -187,5 +187,10 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
         } else {
             return Stream.empty();
         }
+    }
+
+    @Override
+    public StatAndValue getDefaultElement() {
+        return new StatAndValue(Stats.CUSTOM.get(Stats.PLAY_ONE_MINUTE), 0);
     }
 }
