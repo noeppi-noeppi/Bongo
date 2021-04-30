@@ -18,6 +18,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Team {
 
@@ -27,6 +29,7 @@ public class Team {
     private int completed;
     private int locked;
     private int teleportsLeft;
+    private boolean redeemedEmergency;
     private final List<UUID> players;
     private final ItemStackHandler backpack;
     
@@ -132,13 +135,22 @@ public class Team {
         this.teleportsLeft = teleportsLeft;
         bongo.markDirty();
     }
+    
+    public boolean redeemedEmergency() {
+        return redeemedEmergency;
+    }
+    
+    public void redeemedEmergency(boolean redeemedEmergency) {
+        this.redeemedEmergency = redeemedEmergency;
+        markDirty();
+    }
 
     public boolean consumeTeleport() {
         if (teleportsLeft < 0) {
             return true;
         } else if (teleportsLeft > 0) {
             teleportsLeft -= 1;
-            bongo.markDirty();
+            markDirty();
             return true;
         } else {
             return false;
@@ -150,6 +162,7 @@ public class Team {
         nbt.putInt("completed", completed);
         nbt.putInt("locked", locked);
         nbt.putInt("teleportsLeft", teleportsLeft);
+        nbt.putBoolean("redeemedEmergency", redeemedEmergency);
 
         ListNBT playerList = new ListNBT();
         for (UUID uuid : players) {
@@ -166,6 +179,7 @@ public class Team {
         completed = nbt.getInt("completed");
         locked = nbt.getInt("locked");
         teleportsLeft = nbt.getInt("teleportsLeft");
+        redeemedEmergency = nbt.getBoolean("redeemedEmergency");
 
         if (nbt.contains("players", Constants.NBT.TAG_LIST)) {
             ListNBT playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
@@ -188,6 +202,7 @@ public class Team {
         players.forEach(bongo::updateMentions);
         players.clear();
         teleportsLeft = 0;
+        redeemedEmergency = false;
         clearBackPack(true);
         bongo.markDirty(suppressBingoSync);
     }
@@ -207,23 +222,24 @@ public class Team {
     }
 
     public boolean lockRandomTask() {
-        int notCompletedTasks = 0;
-        for (int i = 0; i < 25; i++) {
-            if (!completed(i) && !locked((i)))
-                notCompletedTasks += 1;
-        }
-        int task = new Random().nextInt(notCompletedTasks);
-        for (int i = 0; i < 25; i++) {
-            if (!completed(i) && !locked((i))) {
-                if (task == 0) {
-                    lock(i);
-                    return true;
-                } else {
-                    task -= 1;
-                }
+        return lockRandomTasks(1);
+    }
+    
+    public boolean lockRandomTasks(int amount) {
+        ArrayList<Integer> lockableTasks = IntStream.range(0, 25).boxed()
+                .filter(i -> !completed(i) && !locked((i)))
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (lockableTasks.size() < amount) {
+            return false;
+        } else {
+            Random random = new Random();
+            for (int i = 0; i < amount; i++) {
+                int lockIdx = random.nextInt(lockableTasks.size());
+                int taskId = lockableTasks.remove(lockIdx);
+                lock(taskId);
             }
+            return true;
         }
-        return false;
     }
 
     public void clearBackPack(boolean suppressBingoSync) {

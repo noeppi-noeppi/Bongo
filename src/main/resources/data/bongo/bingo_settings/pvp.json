@@ -4,7 +4,7 @@
   "friendlyFire": false,
   "lockTaskOnDeath": true,
   "teleportsPerTeam": 1,
-  "consumeItems": true,
+  "consumeItems": false,
   "pvp": true,
   "maxTime": -1,
   "startingInventory": [

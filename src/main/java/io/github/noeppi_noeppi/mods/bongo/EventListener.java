@@ -275,20 +275,7 @@ public class EventListener {
         if (event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().getEntityWorld().isRemote) {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             Bongo bongo = Bongo.get(player.getEntityWorld());
-            if (bongo.getSettings().lockTaskOnDeath) {
-                Team team = bongo.getTeam(player);
-                if (team != null && team.lockRandomTask()) {
-                    IFormattableTextComponent tc = new TranslationTextComponent("bongo.task_locked.death", player.getDisplayName());
-                    if (player instanceof ServerPlayerEntity) {
-                        ((ServerPlayerEntity) player).getServerWorld().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
-                            if (team.hasPlayer(thePlayer)) {
-                                thePlayer.sendMessage(tc, thePlayer.getUniqueID());
-                                thePlayer.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.MASTER, thePlayer.getPosX(), thePlayer.getPosY(), thePlayer.getPosZ(), 1f, 1));
-                            }
-                        });
-                    }
-                }
-            }
+            Util.handleTaskLocking(bongo, player);
         }
     }
 

@@ -42,6 +42,8 @@ public class BongoCommands {
                 literal("teleport").then(argument("target", EntityArgument.player()).executes(new TeleportCommand()))
         ).then(
                 literal("tp").then(argument("target", EntityArgument.player()).executes(new TeleportCommand()))
+        ).then(
+                literal("emergency").executes(new EmergencyCommand())
         ));
     }
 }

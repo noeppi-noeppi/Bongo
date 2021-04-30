@@ -182,7 +182,6 @@ public class Bongo extends WorldSavedData {
         this.taskAmountOutOfTime = -1;
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
-            team.clearBackPack(true);
             settings.fillBackPackInventory(team, true);
             team.resetCompleted(true);
             team.resetLocked(true);

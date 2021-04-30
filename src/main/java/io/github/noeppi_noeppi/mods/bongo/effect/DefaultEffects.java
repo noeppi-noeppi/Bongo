@@ -12,6 +12,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class DefaultEffects {
@@ -26,6 +27,7 @@ public class DefaultEffects {
         event.getPlayer().inventory.clear();
         event.getPlayer().func_195394_a(0);
         event.getPlayer().setExperienceLevel(0);
+        event.getPlayer().setGameType(GameType.SURVIVAL);
         event.getBongo().getSettings().fillStartingInventory(event.getPlayer());
         AdvancementCommand.Action.REVOKE.applyToAdvancements(event.getPlayer(), event.getWorld().getServer().getAdvancementManager().getAllAdvancements());
         ServerStatisticsManager mgr = event.getWorld().getServer().getPlayerList().getPlayerStats(event.getPlayer());

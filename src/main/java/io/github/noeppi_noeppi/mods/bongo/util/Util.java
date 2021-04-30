@@ -2,20 +2,22 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
 import io.github.noeppi_noeppi.libx.util.Misc;
+import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.play.server.SPlaySoundEffectPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -140,6 +142,23 @@ public class Util {
                 playerSlot.shrink(rem);
                 player.inventory.setInventorySlotContents(slot, playerSlot.isEmpty() ? ItemStack.EMPTY : playerSlot);
                 removeLeft -= rem;
+            }
+        }
+    }
+    
+    public static void handleTaskLocking(Bongo bongo, PlayerEntity player) {
+        if (bongo.running() && bongo.getSettings().lockTaskOnDeath) {
+            Team team = bongo.getTeam(player);
+            if (team != null && team.lockRandomTask()) {
+                IFormattableTextComponent tc = new TranslationTextComponent("bongo.task_locked.death", player.getDisplayName());
+                if (player instanceof ServerPlayerEntity) {
+                    ((ServerPlayerEntity) player).getServerWorld().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
+                        if (team.hasPlayer(thePlayer)) {
+                            thePlayer.sendMessage(tc, thePlayer.getUniqueID());
+                            thePlayer.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.MASTER, thePlayer.getPosX(), thePlayer.getPosY(), thePlayer.getPosZ(), 1f, 1));
+                        }
+                    });
+                }
             }
         }
     }

@@ -8,6 +8,7 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStopEvent;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.util.math.BlockPos;
@@ -68,6 +69,7 @@ public class SkyblockIntegration {
                         BlockPos pos = player.func_241140_K_();
                         if (World.OVERWORLD.equals(player.func_241141_L_()) && pos != null) {
                             event.setCanceled(true);
+                            Util.handleTaskLocking(bongo, player);
                             player.teleport(player.getServerWorld(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
                                     player.rotationYaw, player.rotationPitch);
                         }

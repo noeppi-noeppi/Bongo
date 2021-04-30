@@ -26,6 +26,11 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
       "id": "minecraft:apple"
     }
   ],
+  "emergencyItems": [
+    {
+      "id": "minecraft:lava_bucket"
+    }
+  ],
   "teleporter": "bongo.no_tp",
   "maxTime": -1
 }
@@ -107,7 +112,11 @@ feet       The item is placed in the players feet slot. Can be used only once.
 
 ### Backpack Inventory
 
-`backpackInventory` is a list of items that each team gets in the backpack when the game starts. Unlike `startingInventory` here not each player but each team gets the items. It works the same as `startingInventory` with the exception that `Slot` is not available
+`backpackInventory` is a list of items that each team gets in the backpack when the game starts. Unlike `startingInventory` here not each player but each team gets the items. It works the same as `startingInventory` with the exception that `Slot` is not available.
+
+### Emergency Items
+
+`emergencyItems` is a list of items that each team can get once per game with `/bingo emergency`. However on redeeming, 3 random tasks will get locked. It works the same as `startingInventory` with the exception that `Slot` is not available. An empty list will disable the feature.
 
 ### Teleporter
 

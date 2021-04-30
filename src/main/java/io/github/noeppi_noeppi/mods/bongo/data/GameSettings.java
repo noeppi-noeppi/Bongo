@@ -45,6 +45,7 @@ public class GameSettings {
     public final int teleportsPerTeam;
     private final List<Pair<EquipmentSlotType, ItemStack>> startingInventory;
     private final List<ItemStack> backpackInventory;
+    private final List<ItemStack> emergencyItems;
     private final PlayerTeleporter teleporter;
     public final int maxTime;
 
@@ -137,6 +138,18 @@ public class GameSettings {
             }
         }
         
+        emergencyItems = new ArrayList<>();
+        if (nbt.contains("emergencyItems", Constants.NBT.TAG_LIST)) {
+            ListNBT list = nbt.getList("emergencyItems", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT compound = list.getCompound(i);
+                if (!compound.contains("Count")) {
+                    compound.putByte("Count", (byte) 1);
+                }
+                emergencyItems.add(ItemStack.read(compound));
+            }
+        }
+        
         if (nbt.contains("teleporter")) {
             String teleporterId = nbt.getString("teleporter");
             PlayerTeleporter tp = PlayerTeleporters.getTeleporter(teleporterId);
@@ -174,6 +187,9 @@ public class GameSettings {
         ListNBT backpackInventoryNBT = new ListNBT();
         backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.write(new CompoundNBT())));
         this.nbt.put("backpackInventory", backpackInventoryNBT);
+        ListNBT emergencyItemsNBT = new ListNBT();
+        emergencyItems.forEach(stack -> emergencyItemsNBT.add(stack.write(new CompoundNBT())));
+        this.nbt.put("emergencyItems", emergencyItemsNBT);
         this.nbt.putString("teleporter", this.teleporter.getId());
         this.nbt.putInt("maxTime", this.maxTime);
 
@@ -207,11 +223,23 @@ public class GameSettings {
         int slot = 0;
         for (ItemStack stack : backpackInventory) {
             if (slot < inventory.getSlots()) {
-                inventory.setStackInSlot(slot, stack);
+                inventory.setStackInSlot(slot, stack.copy());
                 slot += 1;
             }
         }
         team.markDirty(suppressBingoSync);
+    }
+    
+    public boolean hasEmergencyItems() {
+        return !emergencyItems.isEmpty();
+    }
+    
+    public void giveEmergencyItems(PlayerEntity player) {
+        for (ItemStack stack : emergencyItems) {
+            if (!player.inventory.addItemStackToInventory(stack.copy())) {
+                player.dropItem(stack.copy(), false);
+            }
+        }
     }
 
     public static void loadGameSettings(IResourceManager rm) throws IOException {
