@@ -148,11 +148,6 @@
     {
       "type": "bongo.item",
       "weight": 10,
-      "id": "minecraft:bee_nest"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 10,
       "id": "minecraft:beef"
     },
     {
@@ -3252,18 +3247,8 @@
     },
     {
       "type": "bongo.entity",
-      "weight": 10,
-      "entity": "minecraft:mule"
-    },
-    {
-      "type": "bongo.entity",
       "weight": 14,
       "entity": "minecraft:ocelot"
-    },
-    {
-      "type": "bongo.entity",
-      "weight": 13,
-      "entity": "minecraft:panda"
     },
     {
       "type": "bongo.entity",
@@ -3507,11 +3492,6 @@
     },
     {
       "type": "bongo.advancement",
-      "weight": 22,
-      "advancement": "minecraft:adventure/honey_block_slide"
-    },
-    {
-      "type": "bongo.advancement",
       "weight": 20,
       "advancement": "minecraft:adventure/ol_betsy"
     },
@@ -3568,11 +3548,6 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:frozen_river"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:snowy_tundra"
     },
     {
@@ -3599,11 +3574,6 @@
       "type": "bongo.biome",
       "weight": 25,
       "biome": "minecraft:taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 25,
-      "biome": "minecraft:mountain_edge"
     },
     {
       "type": "bongo.biome",
@@ -3652,11 +3622,6 @@
     },
     {
       "type": "bongo.biome",
-      "weight": 24,
-      "biome": "minecraft:snowy_taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
       "weight": 15,
       "biome": "minecraft:wooded_mountains"
     },
@@ -3679,21 +3644,6 @@
       "type": "bongo.biome",
       "weight": 17,
       "biome": "minecraft:gravelly_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 20,
-      "biome": "minecraft:taiga_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:dark_forest_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:snowy_taiga_mountains"
     }
   ]
 }

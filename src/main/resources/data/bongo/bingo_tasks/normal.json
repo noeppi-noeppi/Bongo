@@ -2987,11 +2987,6 @@
     },
     {
       "type": "bongo.advancement",
-      "weight": 20,
-      "advancement": "minecraft:husbandry/obtain_netherite_hoe"
-    },
-    {
-      "type": "bongo.advancement",
       "weight": 22,
       "advancement": "minecraft:adventure/kill_a_mob"
     },
@@ -3004,11 +2999,6 @@
       "type": "bongo.advancement",
       "weight": 22,
       "advancement": "minecraft:nether/find_bastion"
-    },
-    {
-      "type": "bongo.advancement",
-      "weight": 8,
-      "advancement": "minecraft:adventure/hero_of_the_village"
     },
     {
       "type": "bongo.advancement",
@@ -3109,11 +3099,6 @@
       "type": "bongo.biome",
       "weight": 20,
       "biome": "minecraft:nether_wastes"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:frozen_river"
     },
     {
       "type": "bongo.biome",

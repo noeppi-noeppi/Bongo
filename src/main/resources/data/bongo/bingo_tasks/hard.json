@@ -3078,11 +3078,6 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:frozen_river"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:snowy_tundra"
     },
     {
@@ -3119,11 +3114,6 @@
       "type": "bongo.biome",
       "weight": 20,
       "biome": "minecraft:taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 20,
-      "biome": "minecraft:mountain_edge"
     },
     {
       "type": "bongo.biome",
@@ -3217,26 +3207,6 @@
     },
     {
       "type": "bongo.biome",
-      "weight": 16,
-      "biome": "minecraft:small_end_islands"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 16,
-      "biome": "minecraft:end_midlands"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 16,
-      "biome": "minecraft:end_highlands"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 16,
-      "biome": "minecraft:end_barrens"
-    },
-    {
-      "type": "bongo.biome",
       "weight": 11,
       "biome": "minecraft:warm_ocean"
     },
@@ -3253,11 +3223,6 @@
     {
       "type": "bongo.biome",
       "weight": 11,
-      "biome": "minecraft:deep_warm_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 11,
       "biome": "minecraft:deep_lukewarm_ocean"
     },
     {
@@ -3269,11 +3234,6 @@
       "type": "bongo.biome",
       "weight": 11,
       "biome": "minecraft:deep_frozen_ocean"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 10,
-      "biome": "minecraft:the_void"
     },
     {
       "type": "bongo.biome",
@@ -3313,16 +3273,6 @@
     {
       "type": "bongo.biome",
       "weight": 8,
-      "biome": "minecraft:modified_jungle"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 8,
-      "biome": "minecraft:modified_jungle_edge"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 8,
       "biome": "minecraft:tall_birch_forest"
     },
     {
@@ -3337,18 +3287,8 @@
     },
     {
       "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:snowy_taiga_mountains"
-    },
-    {
-      "type": "bongo.biome",
       "weight": 12,
       "biome": "minecraft:giant_spruce_taiga"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:giant_spruce_taiga_hills"
     },
     {
       "type": "bongo.biome",
@@ -3364,21 +3304,6 @@
       "type": "bongo.biome",
       "weight": 10,
       "biome": "minecraft:shattered_savanna_plateau"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:eroded_badlands"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:modified_wooded_badlands_plateau"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 12,
-      "biome": "minecraft:modified_badlands_plateau"
     },
     {
       "type": "bongo.biome",
