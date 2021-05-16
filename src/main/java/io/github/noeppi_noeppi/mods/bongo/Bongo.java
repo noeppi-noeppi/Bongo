@@ -407,6 +407,13 @@ public class Bongo extends WorldSavedData {
                     if (getSettings().consumeItems) {
                         task(i).consumeItem(player, compare);
                     }
+                    if (getSettings().lockout) {
+                        for (Team t : teams.values()) {
+                            if (!t.completed(i)) {
+                                t.lock(i);
+                            }
+                        }
+                    }
                     if (player instanceof ServerPlayerEntity) {
                         MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayerEntity) player).getServerWorld(), (ServerPlayerEntity) player, task(i)));
                     }

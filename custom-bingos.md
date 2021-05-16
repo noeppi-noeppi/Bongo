@@ -133,6 +133,10 @@ bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a
 
 `maxTime` is the maximum time allowed for this bingo. `-1` disables the feature (Default). If after `maxTime` seconds no team has won the bingo, the team with the most completed tasks will win the bingo. If there is more than one team with equal amounts of tasks, the team that first reaches `max + 1` tasks will win where max is the maximum amount of completed tasks any team has at the time the countdown runs out.
 
+### lockout
+
+Setting `lockout` to true will lock a task for all other teams as soon as one teams completes a task. Default is `false`.
+
 ## Tasks
 
 Your settings should be defined in a file in `data/<datapack-id>/bingo_tasks/<bingo-id>.json`. That JSON file should look something like this:

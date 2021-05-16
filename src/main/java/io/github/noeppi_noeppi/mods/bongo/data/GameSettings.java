@@ -48,6 +48,7 @@ public class GameSettings {
     private final List<ItemStack> emergencyItems;
     private final PlayerTeleporter teleporter;
     public final int maxTime;
+    public final boolean lockout;
 
     public GameSettings(ResourceLocation id, CompoundNBT nbt) {
         this.id = id;
@@ -168,6 +169,12 @@ public class GameSettings {
         } else {
             this.maxTime = -1;
         }
+        
+        if (nbt.contains("lockout")) {
+            this.lockout = nbt.getBoolean("lockout");
+        } else {
+            this.lockout = false;
+        }
 
         this.nbt = new CompoundNBT();
         this.nbt.putString("winCondition", winCondition.id);
@@ -192,6 +199,7 @@ public class GameSettings {
         this.nbt.put("emergencyItems", emergencyItemsNBT);
         this.nbt.putString("teleporter", this.teleporter.getId());
         this.nbt.putInt("maxTime", this.maxTime);
+        this.nbt.putBoolean("lockout", this.lockout);
 
         // the default settings and already merged settings should still get the normal nbt for merging.
         if (DEFAULT_ID.equals(id) || CUSTOM_ID.equals(id)) {
