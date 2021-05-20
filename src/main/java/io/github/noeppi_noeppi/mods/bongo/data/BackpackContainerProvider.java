@@ -28,7 +28,7 @@ public class BackpackContainerProvider implements INamedContainerProvider {
     @Nonnull
     @Override
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("bongo.backpack").append(team);
+        return new TranslationTextComponent("bongo.backpack").appendSibling(team);
     }
 
     @Nullable

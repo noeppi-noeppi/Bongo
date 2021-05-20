@@ -2,7 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.melanx.skyblockbuilder.util.WorldUtil;
 import io.github.noeppi_noeppi.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
@@ -81,6 +80,10 @@ public class BongoMod extends ModX {
 
     @Override
     protected void setup(FMLCommonSetupEvent event) {
+        if (ModList.get().isLoaded("skyblockbuilder")) {
+            SkyblockIntegration.setup();
+        }
+        
         TaskTypes.registerType(TaskTypeEmpty.INSTANCE);
         TaskTypes.registerType(TaskTypeItem.INSTANCE);
         TaskTypes.registerType(TaskTypeAdvancement.INSTANCE);

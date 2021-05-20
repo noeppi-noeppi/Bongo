@@ -25,8 +25,8 @@ public class DefaultEffects {
     @SubscribeEvent
     public void playerInit(BongoStartEvent.Player event) {
         event.getPlayer().inventory.clear();
-        event.getPlayer().func_195394_a(0);
         event.getPlayer().setExperienceLevel(0);
+        event.getPlayer().setExperience(0);
         event.getPlayer().setGameType(GameType.SURVIVAL);
         event.getBongo().getSettings().fillStartingInventory(event.getPlayer());
         AdvancementCommand.Action.REVOKE.applyToAdvancements(event.getPlayer(), event.getWorld().getServer().getAdvancementManager().getAllAdvancements());
@@ -40,7 +40,7 @@ public class DefaultEffects {
     public void playerTask(BongoTaskEvent event) {
         Team team = event.getBongo().getTeam(event.getPlayer());
         if (team != null) {
-            IFormattableTextComponent tc = team.getName().append(new TranslationTextComponent("bongo.task.complete")).append(event.getTask().getContentName(event.getWorld().getServer()));
+            IFormattableTextComponent tc = team.getName().appendSibling(new TranslationTextComponent("bongo.task.complete")).appendSibling(event.getTask().getContentName(event.getWorld().getServer()));
             event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.sendMessage(tc, player.getUniqueID());
                 if (team.hasPlayer(player)) {
@@ -52,15 +52,15 @@ public class DefaultEffects {
     
     @SubscribeEvent
     public void teamWin(BongoWinEvent event) {
-        IFormattableTextComponent tc = event.getTeam().getName().append(new TranslationTextComponent("bongo.win"));
-            IFormattableTextComponent tcc = event.getTeam().getName().append(new TranslationTextComponent("bongo.winplayers"));
+        IFormattableTextComponent tc = event.getTeam().getName().appendSibling(new TranslationTextComponent("bongo.win"));
+            IFormattableTextComponent tcc = event.getTeam().getName().appendSibling(new TranslationTextComponent("bongo.winplayers"));
 
             event.getWorld().getServer().getPlayerList().getPlayers().forEach(player -> {
                 if (event.getTeam().hasPlayer(player)) {
-                    tcc.append(new StringTextComponent(" "));
+                    tcc.appendSibling(new StringTextComponent(" "));
                     IFormattableTextComponent pname = player.getDisplayName().deepCopy();
                     pname.setStyle(Style.EMPTY.applyFormatting(TextFormatting.RESET).applyFormatting(TextFormatting.UNDERLINE).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @p " + player.getPosX() + " " + player.getPosY() + " " + player.getPosZ())));
-                    tcc.append(pname);
+                    tcc.appendSibling(pname);
                 }
             });
 

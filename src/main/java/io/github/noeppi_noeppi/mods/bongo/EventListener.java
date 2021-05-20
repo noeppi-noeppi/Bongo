@@ -143,7 +143,7 @@ public class EventListener {
                 tags.forEach((tag, count) -> bongo.checkCompleted(TaskTypeTag.INSTANCE, event.player, tag.withCount(count)));
                 
                 // This is a bit hacky but it works
-                ResourceLocation biomeKey = event.player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
+                ResourceLocation biomeKey = event.player.getEntityWorld().getDynamicRegistries().getRegistry(Registry.BIOME_KEY).getKey(event.player.getEntityWorld().getBiome(event.player.getPosition()));
                 Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
                 bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, realBiome);
                 if (bongo.getSettings().invulnerable) {
@@ -288,9 +288,9 @@ public class EventListener {
                 if (team != null) {
                     event.setCanceled(true);
                     IFormattableTextComponent tc = new StringTextComponent("[");
-                    tc.append(team.getName());
-                    tc.append(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
-                    tc.append(event.getComponent());
+                    tc.appendSibling(team.getName());
+                    tc.appendSibling(new StringTextComponent("] ").mergeStyle(TextFormatting.RESET));
+                    tc.appendSibling(event.getComponent());
                     Util.broadcastTeam(event.getPlayer().getEntityWorld(), team, tc);
                 }
             }

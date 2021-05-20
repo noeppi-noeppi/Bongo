@@ -44,9 +44,9 @@ public class Bongo extends WorldSavedData {
 
     public static Bongo get(World world) {
         if (!world.isRemote) {
-            DimensionSavedDataManager storage = ((ServerWorld) world).getServer().func_241755_D_().getSavedData();
+            DimensionSavedDataManager storage = ((ServerWorld) world).getServer().getOverworld().getSavedData();
             Bongo bongo = storage.getOrCreate(Bongo::new, ID);
-            bongo.world = ((ServerWorld) world).getServer().func_241755_D_();
+            bongo.world = ((ServerWorld) world).getServer().getOverworld();
             return bongo;
         } else {
             return clientInstance == null ? new Bongo() : clientInstance;

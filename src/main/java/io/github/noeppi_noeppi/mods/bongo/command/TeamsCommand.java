@@ -30,12 +30,12 @@ public class TeamsCommand implements Command<CommandSource> {
                 continue;
 
             IFormattableTextComponent tc = new TranslationTextComponent("bongo.cmd.spread.added");
-            tc.append(team.getName()).append(new StringTextComponent(":"));
+            tc.appendSibling(team.getName()).appendSibling(new StringTextComponent(":"));
 
             //noinspection ConstantConditions
             world.getServer().getPlayerList().getPlayers().forEach(teamPlayer -> {
                 if (team.hasPlayer(teamPlayer)) {
-                    tc.append(new StringTextComponent(" ")).append(teamPlayer.getDisplayName());
+                    tc.appendSibling(new StringTextComponent(" ")).appendSibling(teamPlayer.getDisplayName());
                 }
             });
 

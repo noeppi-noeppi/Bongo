@@ -10,12 +10,12 @@ import net.minecraft.world.World;
 public class Messages {
 
     public static void onJoin(World world, PlayerEntity player, Team team) {
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.joined").append(team.getName()), player.getUniqueID());
-        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.team.joinedother").append(team.getName())));
+        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.joined").appendSibling(team.getName()), player.getUniqueID());
+        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.team.joinedother").appendSibling(team.getName())));
     }
 
     public static void onLeave(World world, PlayerEntity player, Team team) {
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.left").append(team.getName()), player.getUniqueID());
-        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.team.leftother").append(team.getName())));
+        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.left").appendSibling(team.getName()), player.getUniqueID());
+        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.team.leftother").appendSibling(team.getName())));
     }
 }

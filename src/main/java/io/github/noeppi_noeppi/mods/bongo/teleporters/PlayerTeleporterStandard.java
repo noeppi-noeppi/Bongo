@@ -43,7 +43,7 @@ public class PlayerTeleporterStandard implements PlayerTeleporter {
         BlockPos effectiveFinalPos = pos;
         players.forEach(player -> {
             player.teleport(gameWorld, effectiveFinalPos.getX() + 0.5, effectiveFinalPos.getY(), effectiveFinalPos.getZ() + 0.5, player.getRotationYawHead(), 0);
-            player.func_242111_a(gameWorld.getDimensionKey(), effectiveFinalPos, 0, true, false);
+            player.setSpawnPoint(gameWorld.getDimensionKey(), effectiveFinalPos, 0, true, false);
         });
     }
 }

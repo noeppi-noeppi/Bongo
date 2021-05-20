@@ -105,7 +105,7 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
         if (player == null) {
             return ForgeRegistries.BIOMES.getValues().stream();
         } else {
-            return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
+            return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().getDynamicRegistries().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
         }
     }
 }

@@ -25,6 +25,9 @@ public class SkyblockIntegration {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new SkyblockIntegration.Events());
+    }
+
+    public static void setup() {
         CompatHelper.disableAllTeamManagement(BongoMod.getInstance().modid);
     }
     
@@ -66,8 +69,8 @@ public class SkyblockIntegration {
                 if (appliesFor(player.getServerWorld())) {
                     Bongo bongo = Bongo.get(player.getServerWorld());
                     if (bongo.running()) {
-                        BlockPos pos = player.func_241140_K_();
-                        if (World.OVERWORLD.equals(player.func_241141_L_()) && pos != null) {
+                        BlockPos pos = player.getSpawnPointPos();
+                        if (World.OVERWORLD.equals(player.getSpawnPointWorld()) && pos != null) {
                             event.setCanceled(true);
                             Util.handleTaskLocking(bongo, player);
                             player.teleport(player.getServerWorld(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,

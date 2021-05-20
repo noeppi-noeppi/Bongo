@@ -147,7 +147,7 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             return new StringTextComponent(((ResourceLocation) value).getPath().replace('_', ' '));
         }
         //noinspection ConstantConditions
-        return new TranslationTextComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).append(new StringTextComponent(" ")).append(tc);
+        return new TranslationTextComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).appendSibling(new StringTextComponent(" ")).appendSibling(tc);
     }
 
     @Override

@@ -60,9 +60,9 @@ public class SpreadCommand implements Command<CommandSource> {
                     added.add(player);
                 }
                 IFormattableTextComponent tc = new TranslationTextComponent("bongo.cmd.spread.added");
-                tc.append(team.getName()).append(new StringTextComponent(":"));
+                tc.appendSibling(team.getName()).appendSibling(new StringTextComponent(":"));
                 for (PlayerEntity player : added) {
-                    tc.append(new StringTextComponent(" ")).append(player.getDisplayName());
+                    tc.appendSibling(new StringTextComponent(" ")).appendSibling(player.getDisplayName());
                 }
                 ServerMessages.broadcast(world, tc);
             }

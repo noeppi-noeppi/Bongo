@@ -37,7 +37,7 @@ public class CreateCommand implements Command<CommandSource> {
         }
         bongo.activate();
 
-        ServerMessages.broadcast(world, new TranslationTextComponent("bongo.info").append(player.getDisplayName()).append(new TranslationTextComponent("bongo.cmd.create.done")));
+        ServerMessages.broadcast(world, new TranslationTextComponent("bongo.info").appendSibling(player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.create.done")));
 
         return 0;
     }
