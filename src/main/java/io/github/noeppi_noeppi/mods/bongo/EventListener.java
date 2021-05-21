@@ -258,9 +258,30 @@ public class EventListener {
             Team team = bongo.getTeam(player);
             if (team != null) {
                 ITextComponent tc = event.getDisplayname();
-                if (tc instanceof IFormattableTextComponent)
-                    ((IFormattableTextComponent) tc).mergeStyle(team.getFormatting());
+                if (tc instanceof IFormattableTextComponent) {
+                    tc = ((IFormattableTextComponent) tc).mergeStyle(team.getFormatting());
+                } else {
+                    tc = new StringTextComponent(event.getPlayer().getScoreboardName()).mergeStyle(team.getFormatting());
+                }
                 event.setDisplayname(tc);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void tablistName(PlayerEvent.TabListNameFormat event) {
+        PlayerEntity player = event.getPlayer();
+        Bongo bongo = Bongo.get(player.getEntityWorld());
+        if (bongo.active()) {
+            Team team = bongo.getTeam(player);
+            if (team != null) {
+                ITextComponent tc = event.getDisplayName();
+                if (tc instanceof IFormattableTextComponent) {
+                    tc = ((IFormattableTextComponent) tc).mergeStyle(team.getFormatting());
+                } else {
+                    tc = new StringTextComponent(event.getPlayer().getScoreboardName()).mergeStyle(team.getFormatting());
+                }
+                event.setDisplayName(tc);
             }
         }
     }

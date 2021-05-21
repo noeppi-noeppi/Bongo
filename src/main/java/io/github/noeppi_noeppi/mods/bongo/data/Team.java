@@ -101,6 +101,9 @@ public class Team {
         addPlayer(player.getGameProfile().getId());
         if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
         player.refreshDisplayName();
+        if (player instanceof ServerPlayerEntity) {
+            ((ServerPlayerEntity) player).refreshTabListName();
+        }
     }
 
     private void removePlayer(UUID uid) {
@@ -112,6 +115,9 @@ public class Team {
         removePlayer(player.getGameProfile().getId());
         if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
         player.refreshDisplayName();
+        if (player instanceof ServerPlayerEntity) {
+            ((ServerPlayerEntity) player).refreshTabListName();
+        }
     }
 
     /**

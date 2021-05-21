@@ -158,8 +158,10 @@ public class Bongo extends WorldSavedData {
         this.teamWon = false;
         this.hasTimeLimit = settings.maxTime >= 0;
         if (world != null) {
-            for (PlayerEntity player : world.getServer().getPlayerList().getPlayers())
+            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
                 player.refreshDisplayName();
+                player.refreshTabListName();
+            }
         }
         markDirty();
     }
@@ -234,6 +236,7 @@ public class Bongo extends WorldSavedData {
                     MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getServerWorld(), player));
                     updateMentions(player);
                     player.refreshDisplayName();
+                    player.refreshTabListName();
                 }
             }
             BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
