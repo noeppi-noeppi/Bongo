@@ -4,17 +4,19 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Either;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public class GameDef {
@@ -32,7 +34,7 @@ public class GameDef {
             bongo.stop();
         }
         Either<List<Task>, String> taskList = tasks.getBingoTasks();
-        if (taskList.right().isPresent() || !taskList.left().isPresent()) {
+        if (taskList.right().isPresent() || taskList.left().isEmpty()) {
             return taskList.right().isPresent() ? taskList.right().get() : "Unknown Error";
         }
         bongo.setSettings(settings, true);
@@ -40,10 +42,10 @@ public class GameDef {
         return null;
     }
 
-    public static <T> void loadData(IResourceManager rm, String path, Map<ResourceLocation, T> map, BiFunction<ResourceLocation, CompoundNBT, T> factory) throws IOException {
+    public static <T> void loadData(ResourceManager rm, String path, Map<ResourceLocation, T> map, BiFunction<ResourceLocation, CompoundTag, T> factory) throws IOException {
         map.clear();
 
-        Collection<ResourceLocation> ids = rm.getAllResourceLocations(path, file -> file.endsWith(".json"));
+        Collection<ResourceLocation> ids = rm.listResources(path, file -> file.endsWith(".json"));
 
         for (ResourceLocation id : ids) {
             String realPath;
@@ -57,12 +59,12 @@ public class GameDef {
 
             ResourceLocation realId = new ResourceLocation(id.getNamespace(), realPath);
 
-            IResource resource = rm.getResource(id);
+            Resource resource = rm.getResource(id);
 
             String string = IOUtils.toString(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-            CompoundNBT nbt;
+            CompoundTag nbt;
             try {
-                nbt = JsonToNBT.getTagFromJson(string);
+                nbt = TagParser.parseTag(string);
             } catch (CommandSyntaxException e) {
                 throw new IOException("Could not read JSON-NBT: " + e.getMessage(), e);
             }

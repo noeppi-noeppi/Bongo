@@ -1,45 +1,45 @@
 package io.github.noeppi_noeppi.mods.bongo.event;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.Event;
 
 public class BongoStartEvent extends Event {
 
     private final Bongo bongo;
-    private final ServerWorld world;
+    private final ServerLevel level;
 
-    private BongoStartEvent(Bongo bongo, ServerWorld world) {
+    private BongoStartEvent(Bongo bongo, ServerLevel level) {
         this.bongo = bongo;
-        this.world = world;
+        this.level = level;
     }
 
     public Bongo getBongo() {
         return bongo;
     }
 
-    public ServerWorld getWorld() {
-        return world;
+    public ServerLevel getLevel() {
+        return level;
     }
 
-    public static class World extends BongoStartEvent {
+    public static class Level extends BongoStartEvent {
 
-        public World(Bongo bongo, ServerWorld world) {
-            super(bongo, world);
+        public Level(Bongo bongo, ServerLevel level) {
+            super(bongo, level);
         }
     }
 
     public static class Player extends BongoStartEvent {
 
-        private final ServerPlayerEntity player;
+        private final ServerPlayer player;
 
-        public Player(Bongo bongo, ServerWorld world, ServerPlayerEntity player) {
-            super(bongo, world);
+        public Player(Bongo bongo, ServerLevel level, ServerPlayer player) {
+            super(bongo, level);
             this.player = player;
         }
 
-        public ServerPlayerEntity getPlayer() {
+        public ServerPlayer getPlayer() {
             return player;
         }
     }

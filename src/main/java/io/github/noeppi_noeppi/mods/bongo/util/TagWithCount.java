@@ -1,12 +1,12 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
-import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.ITag;
+import io.github.noeppi_noeppi.libx.util.LazyValue;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.SetTag;
 import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.util.Objects;
 
@@ -14,19 +14,15 @@ public final class TagWithCount {
     
     private final ResourceLocation id;
     // Must be lazy as during deserialisation the tag may not have been read yet.
-    private final LazyValue<ITag<Item>> tag;
+    private final LazyValue<Tag<Item>> tag;
     private final int count;
 
     public TagWithCount(ResourceLocation id, int count) {
         this.id = id;
         this.count = count;
         this.tag = new LazyValue<>(() -> {
-            ITag<Item> tag = TagCollectionManager.getManager().getItemTags().get(id);
-            if (tag == null) {
-                return Tag.getEmptyTag();
-            } else {
-                return tag;
-            }
+            Tag<Item> tag = ItemTags.getAllTags().getTag(id);
+            return tag == null ? SetTag.empty() : tag;
         });
     }
     
@@ -41,22 +37,22 @@ public final class TagWithCount {
         return id;
     }
 
-    public ITag<Item> getTag() {
-        return tag.getValue();
+    public Tag<Item> getTag() {
+        return tag.get();
     }
 
     public int getCount() {
         return count;
     }
     
-    public CompoundNBT serialize() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serialize() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putString("tag", id.toString());
         nbt.putInt("Count", count);
         return nbt;
     }
     
-    public static TagWithCount deserialize(CompoundNBT nbt) {
+    public static TagWithCount deserialize(CompoundTag nbt) {
         ResourceLocation id = Util.getLocationFor(nbt, "tag");
         int count = nbt.contains("Count") ? nbt.getInt("Count") : 1;
         if (count <= 0) {

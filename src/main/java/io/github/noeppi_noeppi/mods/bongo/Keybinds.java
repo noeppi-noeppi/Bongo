@@ -1,11 +1,11 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraft.client.KeyMapping;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 
 public class Keybinds {
 
-    public static final KeyBinding BIG_OVERLAY = new KeyBinding("bongo.big_overlay", 'Y', "key.categories.ui");
+    public static final KeyMapping BIG_OVERLAY = new KeyMapping("bongo.big_overlay", 'Y', "key.categories.ui");
 
     public static void init() {
         ClientRegistry.registerKeyBinding(BIG_OVERLAY);

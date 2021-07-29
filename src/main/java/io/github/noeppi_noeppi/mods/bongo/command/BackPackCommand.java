@@ -6,22 +6,22 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 
-public class BackPackCommand implements Command<CommandSource> {
+public class BackPackCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        PlayerEntity player = context.getSource().asPlayer();
-        Bongo bongo = Bongo.get(player.world);
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = context.getSource().getPlayerOrException();
+        Bongo bongo = Bongo.get(player.level);
         Team team = bongo.getTeam(player);
 
         if (team == null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.bp.noteam")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.bp.noteam")).create();
         } else if (!bongo.running()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.bp.norun")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.bp.norun")).create();
         }
 
         team.openBackPack(player);

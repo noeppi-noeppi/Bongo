@@ -4,14 +4,14 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporter;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,7 +23,7 @@ public class GameSettings {
 
     public static final ResourceLocation DEFAULT_ID = new ResourceLocation(BongoMod.getInstance().modid, "default");
     public static final ResourceLocation CUSTOM_ID = new ResourceLocation(BongoMod.getInstance().modid, "custom");
-    public static final GameSettings DEFAULT = new GameSettings(DEFAULT_ID, new CompoundNBT());
+    public static final GameSettings DEFAULT = new GameSettings(DEFAULT_ID, new CompoundTag());
     
     public static final Map<ResourceLocation, GameSettings> GAME_SETTINGS = new HashMap<>();
     static {
@@ -32,9 +32,8 @@ public class GameSettings {
 
     public final ResourceLocation id;
     // Internal use only. Only use in createCustom. Therefore marked deprecated
-    @Deprecated
-    private final CompoundNBT rawNbt;
-    private final CompoundNBT nbt;
+    private final CompoundTag rawNbt;
+    private final CompoundTag nbt;
     
     public final WinCondition winCondition;
     public final boolean invulnerable;
@@ -43,14 +42,14 @@ public class GameSettings {
     public final boolean lockTaskOnDeath;
     public final boolean consumeItems;
     public final int teleportsPerTeam;
-    private final List<Pair<EquipmentSlotType, ItemStack>> startingInventory;
+    private final List<Pair<EquipmentSlot, ItemStack>> startingInventory;
     private final List<ItemStack> backpackInventory;
     private final List<ItemStack> emergencyItems;
     private final PlayerTeleporter teleporter;
     public final int maxTime;
     public final boolean lockout;
 
-    public GameSettings(ResourceLocation id, CompoundNBT nbt) {
+    public GameSettings(ResourceLocation id, CompoundTag nbt) {
         this.id = id;
         
         if (nbt.contains("winCondition", Constants.NBT.TAG_STRING)) {
@@ -97,16 +96,16 @@ public class GameSettings {
 
         startingInventory = new ArrayList<>();
         if (nbt.contains("startingInventory", Constants.NBT.TAG_LIST)) {
-            Set<EquipmentSlotType> usedTypes = new HashSet<>();
+            Set<EquipmentSlot> usedTypes = new HashSet<>();
             int slotsUsedInMainInventory = 0;
-            ListNBT list = nbt.getList("startingInventory", Constants.NBT.TAG_COMPOUND);
+            ListTag list = nbt.getList("startingInventory", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                CompoundNBT compound = list.getCompound(i);
+                CompoundTag compound = list.getCompound(i);
                 if (!compound.contains("Count")) {
                     compound.putByte("Count", (byte) 1);
                 }
-                EquipmentSlotType slotType = compound.contains("Slot", Constants.NBT.TAG_STRING) ? EquipmentSlotType.fromString(compound.getString("Slot")) : EquipmentSlotType.MAINHAND;
-                if (slotType == EquipmentSlotType.MAINHAND) {
+                EquipmentSlot slotType = compound.contains("Slot", Constants.NBT.TAG_STRING) ? EquipmentSlot.byName(compound.getString("Slot")) : EquipmentSlot.MAINHAND;
+                if (slotType == EquipmentSlot.MAINHAND) {
                     if (slotsUsedInMainInventory >= 36) {
                         throw new IllegalStateException("Too many starting items in main inventory. Not more than 36 are allowed.'");
                     } else {
@@ -119,35 +118,35 @@ public class GameSettings {
                         usedTypes.add(slotType);
                     }
                 }
-                startingInventory.add(Pair.of(slotType, ItemStack.read(compound)));
+                startingInventory.add(Pair.of(slotType, ItemStack.of(compound)));
             }
         }
         
         backpackInventory = new ArrayList<>();
         if (nbt.contains("backpackInventory", Constants.NBT.TAG_LIST)) {
-            ListNBT list = nbt.getList("backpackInventory", Constants.NBT.TAG_COMPOUND);
+            ListTag list = nbt.getList("backpackInventory", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                CompoundNBT compound = list.getCompound(i);
+                CompoundTag compound = list.getCompound(i);
                 if (!compound.contains("Count")) {
                     compound.putByte("Count", (byte) 1);
                 }
                 if (backpackInventory.size() > 27) {
                     throw new IllegalStateException("Too many starting items in backpack. Not more than 27 are allowed.'");
                 } else {
-                    backpackInventory.add(ItemStack.read(compound));
+                    backpackInventory.add(ItemStack.of(compound));
                 }
             }
         }
         
         emergencyItems = new ArrayList<>();
         if (nbt.contains("emergencyItems", Constants.NBT.TAG_LIST)) {
-            ListNBT list = nbt.getList("emergencyItems", Constants.NBT.TAG_COMPOUND);
+            ListTag list = nbt.getList("emergencyItems", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
-                CompoundNBT compound = list.getCompound(i);
+                CompoundTag compound = list.getCompound(i);
                 if (!compound.contains("Count")) {
                     compound.putByte("Count", (byte) 1);
                 }
-                emergencyItems.add(ItemStack.read(compound));
+                emergencyItems.add(ItemStack.of(compound));
             }
         }
         
@@ -176,7 +175,7 @@ public class GameSettings {
             this.lockout = false;
         }
 
-        this.nbt = new CompoundNBT();
+        this.nbt = new CompoundTag();
         this.nbt.putString("winCondition", winCondition.id);
         this.nbt.putBoolean("invulnerable", invulnerable);
         this.nbt.putBoolean("pvp", pvp);
@@ -184,18 +183,18 @@ public class GameSettings {
         this.nbt.putBoolean("lockTaskOnDeath", lockTaskOnDeath);
         this.nbt.putBoolean("consumeItems", consumeItems);
         this.nbt.putInt("teleportsPerTeam", teleportsPerTeam);
-        ListNBT startingInventoryNBT = new ListNBT();
+        ListTag startingInventoryNBT = new ListTag();
         startingInventory.forEach(stack -> {
-            CompoundNBT compound = stack.getRight().write(new CompoundNBT());
+            CompoundTag compound = stack.getRight().save(new CompoundTag());
             compound.putString("Slot", stack.getLeft().getName());
             startingInventoryNBT.add(compound);
         });
         this.nbt.put("startingInventory", startingInventoryNBT);
-        ListNBT backpackInventoryNBT = new ListNBT();
-        backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.write(new CompoundNBT())));
+        ListTag backpackInventoryNBT = new ListTag();
+        backpackInventory.forEach(stack -> backpackInventoryNBT.add(stack.save(new CompoundTag())));
         this.nbt.put("backpackInventory", backpackInventoryNBT);
-        ListNBT emergencyItemsNBT = new ListNBT();
-        emergencyItems.forEach(stack -> emergencyItemsNBT.add(stack.write(new CompoundNBT())));
+        ListTag emergencyItemsNBT = new ListTag();
+        emergencyItems.forEach(stack -> emergencyItemsNBT.add(stack.save(new CompoundTag())));
         this.nbt.put("emergencyItems", emergencyItemsNBT);
         this.nbt.putString("teleporter", this.teleporter.getId());
         this.nbt.putInt("maxTime", this.maxTime);
@@ -209,18 +208,18 @@ public class GameSettings {
         }
     }
 
-    public CompoundNBT getTag() {
+    public CompoundTag getTag() {
         return nbt;
     }
     
-    public void fillStartingInventory(PlayerEntity player) {
-        PlayerInventory inventory = player.inventory;
-        inventory.clear();
-        for (Pair<EquipmentSlotType, ItemStack> entry : startingInventory) {
-            if (entry.getLeft() == EquipmentSlotType.MAINHAND) {
-                inventory.addItemStackToInventory(entry.getRight().copy());
+    public void fillStartingInventory(Player player) {
+        Inventory container = player.getInventory();
+        container.clearContent();
+        for (Pair<EquipmentSlot, ItemStack> entry : startingInventory) {
+            if (entry.getLeft() == EquipmentSlot.MAINHAND) {
+                container.add(entry.getRight().copy());
             } else {
-                player.setItemStackToSlot(entry.getLeft(), entry.getRight().copy());
+                player.setItemSlot(entry.getLeft(), entry.getRight().copy());
             }
         }
     }
@@ -235,22 +234,22 @@ public class GameSettings {
                 slot += 1;
             }
         }
-        team.markDirty(suppressBingoSync);
+        team.setChanged(suppressBingoSync);
     }
     
     public boolean hasEmergencyItems() {
         return !emergencyItems.isEmpty();
     }
     
-    public void giveEmergencyItems(PlayerEntity player) {
+    public void giveEmergencyItems(Player player) {
         for (ItemStack stack : emergencyItems) {
-            if (!player.inventory.addItemStackToInventory(stack.copy())) {
-                player.dropItem(stack.copy(), false);
+            if (!player.getInventory().add(stack.copy())) {
+                player.drop(stack.copy(), false);
             }
         }
     }
 
-    public static void loadGameSettings(IResourceManager rm) throws IOException {
+    public static void loadGameSettings(ResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_settings", GAME_SETTINGS, GameSettings::new);
         GAME_SETTINGS.put(DEFAULT.id, DEFAULT);
     }
@@ -265,7 +264,7 @@ public class GameSettings {
         } else if (settings.length == 1) {
             return settings[0];
         } else {
-            CompoundNBT merged = new CompoundNBT();
+            CompoundTag merged = new CompoundTag();
             for (GameSettings elem : settings) {
                 merged.merge(elem.rawNbt);
             }

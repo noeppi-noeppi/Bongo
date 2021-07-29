@@ -3,10 +3,10 @@ package io.github.noeppi_noeppi.mods.bongo.teleporters;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 import java.util.Random;
@@ -25,25 +25,24 @@ public class PlayerTeleporterStandard implements PlayerTeleporter {
     }
 
     @Override
-    public void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random) {
+    public void teleportTeam(Bongo bongo, ServerLevel gameLevel, Team team, List<ServerPlayer> players, BlockPos center, int radius, Random random) {
         BlockPos pos;
         int i = 0;
         do {
             int x = center.getX() + (random.nextInt(2 * radius) - radius);
             int z = center.getZ() + (random.nextInt(2 * radius) - radius);
-            BlockPos.Mutable mpos = new BlockPos.Mutable(x, gameWorld.getHeight(), z);
-            //noinspection deprecation
-            while (mpos.getY() > 5 && gameWorld.getBlockState(mpos).isAir(gameWorld, mpos)) {
+            BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos(x, gameLevel.getMaxBuildHeight(), z);
+            while (mpos.getY() > 5 && gameLevel.getBlockState(mpos).isAir()) {
                 mpos.move(Direction.DOWN);
             }
-            pos = mpos.toImmutable().up();
+            pos = mpos.immutable().above();
             i++;
-        } while (!Util.validSpawn(gameWorld, pos) && i < 10);
+        } while (!Util.validSpawn(gameLevel, pos) && i < 10);
         // After 10 tries we give up and use the last position
         BlockPos effectiveFinalPos = pos;
         players.forEach(player -> {
-            player.teleport(gameWorld, effectiveFinalPos.getX() + 0.5, effectiveFinalPos.getY(), effectiveFinalPos.getZ() + 0.5, player.getRotationYawHead(), 0);
-            player.setSpawnPoint(gameWorld.getDimensionKey(), effectiveFinalPos, 0, true, false);
+            player.teleportTo(gameLevel, effectiveFinalPos.getX() + 0.5, effectiveFinalPos.getY(), effectiveFinalPos.getZ() + 0.5, player.getYHeadRot(), 0);
+            player.setRespawnPosition(gameLevel.dimension(), effectiveFinalPos, 0, true, false);
         });
     }
 }

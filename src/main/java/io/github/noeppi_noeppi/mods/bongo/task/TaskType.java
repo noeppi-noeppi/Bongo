@@ -1,17 +1,17 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -30,25 +30,25 @@ public interface TaskType<T, C> {
     String getId();
 
     default String getTranslatedName() {
-        return I18n.format(getTranslationKey());
+        return I18n.get(getTranslationKey());
     }
 
     String getTranslationKey();
 
-    void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer);
+    void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer);
 
-    void renderSlotContent(Minecraft mc, T content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo);
+    void renderSlotContent(Minecraft mc, T content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo);
 
     @OnlyIn(Dist.CLIENT)
     String getTranslatedContentName(T content);
 
-    ITextComponent getContentName(T content, MinecraftServer server);
+    Component getContentName(T content, MinecraftServer server);
 
-    boolean shouldComplete(T element, PlayerEntity player, C compare);
+    boolean shouldComplete(T element, Player player, C compare);
 
-    CompoundNBT serializeNBT(T element);
+    CompoundTag serializeNBT(T element);
 
-    T deserializeNBT(CompoundNBT nbt);
+    T deserializeNBT(CompoundTag nbt);
     
     default void validate(T element, MinecraftServer server) {
         
@@ -58,7 +58,7 @@ public interface TaskType<T, C> {
         return element;
     }
 
-    default void syncToClient(T element, MinecraftServer server, @Nullable ServerPlayerEntity syncTarget) {
+    default void syncToClient(T element, MinecraftServer server, @Nullable ServerPlayer syncTarget) {
 
     }
 
@@ -74,7 +74,7 @@ public interface TaskType<T, C> {
         return ImmutableSet.of();
     }
 
-    default void consumeItem(T element, C found, PlayerEntity player) {
+    default void consumeItem(T element, C found, Player player) {
 
     }
 
@@ -83,5 +83,5 @@ public interface TaskType<T, C> {
         return null;
     }
 
-    Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player);
+    Stream<T> getAllElements(MinecraftServer server, @Nullable ServerPlayer player);
 }

@@ -1,10 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class StatAndValue {
@@ -17,8 +17,8 @@ public class StatAndValue {
         this.value = value;
     }
 
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putString("category", "" + stat.getType().getRegistryName());
         //noinspection unchecked
         Registry<Object> registry = (Registry<Object>) stat.getType().getRegistry();
@@ -27,15 +27,15 @@ public class StatAndValue {
         return nbt;
     }
 
-    public static StatAndValue deserializeNBT(CompoundNBT nbt) {
-        ResourceLocation categoryRL = ResourceLocation.tryCreate(nbt.getString("category"));
+    public static StatAndValue deserializeNBT(CompoundTag nbt) {
+        ResourceLocation categoryRL = ResourceLocation.tryParse(nbt.getString("category"));
         if (categoryRL == null) throw new IllegalStateException("Invalid stat category id: " + nbt.getString("category"));
         //noinspection unchecked
         StatType<Object> type = (StatType<Object>) ForgeRegistries.STAT_TYPES.getValue(categoryRL);
         if (type == null) throw new IllegalStateException("Unknown stat category: " + categoryRL);
-        ResourceLocation statRL = ResourceLocation.tryCreate(nbt.getString("stat"));
+        ResourceLocation statRL = ResourceLocation.tryParse(nbt.getString("stat"));
         if (statRL == null) throw new IllegalStateException("Invalid stat value id for " + categoryRL + ": " + nbt.getString("category"));
-        Object stat = type.getRegistry().getOrDefault(statRL);
+        Object stat = type.getRegistry().get(statRL);
         if (stat == null) throw new IllegalStateException("Unknown stat value for " + categoryRL + ": " + statRL);
         int value = nbt.getInt("value");
         return new StatAndValue(type.get(stat), value);

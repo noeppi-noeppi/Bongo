@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.world.phys.shapes.BooleanOp;
 
 import java.util.function.BiFunction;
 
@@ -14,9 +14,9 @@ public enum WinCondition {
     ROWS("bongo.rows", when(VALUES_ROWS)),
     COLUMNS("bongo.columns", when(VALUES_COLS)),
     DIAGONALS("bongo.diagonals", when(VALUES_DIAGONAL)),
-    ROWS_AND_COLUMNS("bongo.rows_and_columns", compose(IBooleanFunction.OR, ROWS, COLUMNS)),
-    DEFAULT("bongo.default", compose(IBooleanFunction.OR, ROWS, COLUMNS, DIAGONALS)),
-    ROW_AND_COLUMN("bongo.row_and_column", compose(IBooleanFunction.AND, ROWS, COLUMNS));
+    ROWS_AND_COLUMNS("bongo.rows_and_columns", compose(BooleanOp.OR, ROWS, COLUMNS)),
+    DEFAULT("bongo.default", compose(BooleanOp.OR, ROWS, COLUMNS, DIAGONALS)),
+    ROW_AND_COLUMN("bongo.row_and_column", compose(BooleanOp.AND, ROWS, COLUMNS));
 
     public final String id;
     private final BiFunction<Bongo, Team, Boolean> won;
@@ -61,12 +61,12 @@ public enum WinCondition {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static BiFunction<Bongo, Team, Boolean> compose(IBooleanFunction combine, WinCondition c1, WinCondition c2) {
+    private static BiFunction<Bongo, Team, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2) {
         return (bongo, team) -> combine.apply(c1.won(bongo, team), c2.won(bongo, team));
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static BiFunction<Bongo, Team, Boolean> compose(IBooleanFunction combine, WinCondition c1, WinCondition c2, WinCondition c3) {
+    private static BiFunction<Bongo, Team, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2, WinCondition c3) {
         return (bongo, team) -> combine.apply(combine.apply(c1.won(bongo, team), c2.won(bongo, team)), c3.won(bongo, team));
     }
 

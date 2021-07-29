@@ -1,13 +1,11 @@
 package io.github.noeppi_noeppi.mods.bongo.teleporters;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 import java.util.Random;
@@ -26,18 +24,17 @@ public class PlayerTeleporterNothing implements PlayerTeleporter {
     }
 
     @Override
-    public void teleportTeam(Bongo bongo, ServerWorld gameWorld, Team team, List<ServerPlayerEntity> players, BlockPos center, int radius, Random random) {
-        BlockPos.Mutable mpos = new BlockPos.Mutable(center.getX(), gameWorld.getHeight(), center.getZ());
-        //noinspection deprecation
-        while (mpos.getY() > 5 && gameWorld.getBlockState(mpos).isAir(gameWorld, mpos)) {
+    public void teleportTeam(Bongo bongo, ServerLevel gameLevel, Team team, List<ServerPlayer> players, BlockPos center, int radius, Random random) {
+        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos(center.getX(), gameLevel.getMaxBuildHeight(), center.getZ());
+        while (mpos.getY() > 5 && gameLevel.getBlockState(mpos).isAir()) {
             mpos.move(Direction.DOWN);
         }
-        BlockPos pos = mpos.toImmutable().up();
+        BlockPos pos = mpos.immutable().above();
         players.forEach(player -> {
-            if (player.world != gameWorld) {
-                player.teleport(gameWorld, center.getX() + 0.5, pos.getY(), center.getZ() + 0.5, player.getRotationYawHead(), 0);
+            if (player.level != gameLevel) {
+                player.teleportTo(gameLevel, center.getX() + 0.5, pos.getY(), center.getZ() + 0.5, player.getYHeadRot(), 0);
             }
-            player.setSpawnPoint(gameWorld.getDimensionKey(), player.getPosition(), 0, true, false);
+            player.setRespawnPosition(gameLevel.dimension(), player.blockPosition(), 0, true, false);
         });
     }
 }

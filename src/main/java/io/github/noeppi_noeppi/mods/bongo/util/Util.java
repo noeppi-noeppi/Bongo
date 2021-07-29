@@ -5,20 +5,21 @@ import io.github.noeppi_noeppi.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.play.server.SPlaySoundEffectPacket;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.*;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -41,40 +42,40 @@ public class Util {
             DyeColor.LIGHT_GRAY
     );
 
-    private static final Map<DyeColor, Color> COLOR_CACHE = new HashMap<>();
+    private static final Map<DyeColor, TextColor> COLOR_CACHE = new HashMap<>();
 
     public static Style getTextFormatting(@Nullable DyeColor color) {
         if (color == null) {
-            return Style.EMPTY.applyFormatting(TextFormatting.RESET);
+            return Style.EMPTY.applyFormat(ChatFormatting.RESET);
         } else {
             if (!COLOR_CACHE.containsKey(color)) {
-                int colorValue = color.getColorValue();
+                int colorValue = color.getTextColor();
                 float[] hsb = java.awt.Color.RGBtoHSB((colorValue >> 16) & 0xFF, (colorValue >> 8) & 0xFF, colorValue & 0xFF, null);
                 // Remove alpha bits as the value can not be serialized when using the alpha bits.
-                COLOR_CACHE.put(color, Color.fromInt(0x00FFFFFF & java.awt.Color.HSBtoRGB(hsb[0], Math.min(1, hsb[1] + 0.1f), Math.min(1, hsb[2] + 0.1f))));
+                COLOR_CACHE.put(color, TextColor.fromRgb(0x00FFFFFF & java.awt.Color.HSBtoRGB(hsb[0], Math.min(1, hsb[1] + 0.1f), Math.min(1, hsb[2] + 0.1f))));
             }
-            return Style.EMPTY.setColor(COLOR_CACHE.get(color));
+            return Style.EMPTY.withColor(COLOR_CACHE.get(color));
         }
     }
 
-    public static void broadcastTeam(World world, Team team, ITextComponent message) {
-        MinecraftServer server = world.getServer();
+    public static void broadcastTeam(Level level, Team team, Component message) {
+        MinecraftServer server = level.getServer();
         if (server != null) {
             server.getPlayerList().getPlayers().forEach(player -> {
                 if (team.hasPlayer(player))
-                    player.sendMessage(message, player.getUniqueID());
+                    player.sendMessage(message, player.getUUID());
             });
         }
     }
 
-    public static boolean matchesNBT(@Nullable CompoundNBT required, @Nullable CompoundNBT actual) {
+    public static boolean matchesNBT(@Nullable CompoundTag required, @Nullable CompoundTag actual) {
         if (required == null || required.isEmpty())
             return true;
 
         if (actual == null || actual.isEmpty())
             return false;
 
-        CompoundNBT copy = actual.copy();
+        CompoundTag copy = actual.copy();
         copy.merge(required);
         return copy.equals(actual);
     }
@@ -95,24 +96,24 @@ public class Util {
         }
     }
 
-    public static boolean validSpawn(World world, BlockPos pos) {
-        return world.getBlockState(pos).getBlock().canSpawnInBlock()
-                && world.getBlockState(pos.up()).getBlock().canSpawnInBlock()
-                && world.getBlockState(pos.down()).isSolidSide(world, pos, Direction.UP);
+    public static boolean validSpawn(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getBlock().isPossibleToRespawnInThis()
+                && level.getBlockState(pos.above()).getBlock().isPossibleToRespawnInThis()
+                && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP);
     }
 
-    public static ResourceLocation getLocationFor(CompoundNBT nbt, String id) {
+    public static ResourceLocation getLocationFor(CompoundTag nbt, String id) {
         if (!nbt.contains(id, Constants.NBT.TAG_STRING)) {
             throw new IllegalStateException("Resource property for " + id + " missing or not a string.");
         }
-        ResourceLocation rl = ResourceLocation.tryCreate(nbt.getString(id));
+        ResourceLocation rl = ResourceLocation.tryParse(nbt.getString(id));
         if (rl == null) {
             throw new IllegalStateException("Invalid " + id + " resource location: '" + nbt.getString(id) + "'");
         }
         return rl;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> T getFromRegistry(IForgeRegistry<T> registry, CompoundNBT nbt, String id) {
+    public static <T extends IForgeRegistryEntry<T>> T getFromRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id) {
         ResourceLocation rl = getLocationFor(nbt, id);
         T element = registry.getValue(rl);
         if (element == null) {
@@ -121,7 +122,7 @@ public class Util {
         return element;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> void putByForgeRegistry(IForgeRegistry<T> registry, CompoundNBT nbt, String id, T element) {
+    public static <T extends IForgeRegistryEntry<T>> void putByForgeRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id, T element) {
         ResourceLocation rl = registry.getKey(element);
         if (rl == null) {
             BongoMod.getInstance().logger.warn("Failed to serialise " + id + " location: Not found in forge registry: " + element);
@@ -130,32 +131,32 @@ public class Util {
         nbt.putString(id, rl.toString());
     }
 
-    public static void removeItems(PlayerEntity player, int amount, Predicate<ItemStack> test) {
+    public static void removeItems(Player player, int amount, Predicate<ItemStack> test) {
         int removeLeft = amount;
-        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             if (removeLeft <= 0) {
                 break;
             }
-            ItemStack playerSlot = player.inventory.getStackInSlot(slot);
+            ItemStack playerSlot = player.getInventory().getItem(slot);
             if (test.test(playerSlot)) {
                 int rem = Math.min(removeLeft, playerSlot.getCount());
                 playerSlot.shrink(rem);
-                player.inventory.setInventorySlotContents(slot, playerSlot.isEmpty() ? ItemStack.EMPTY : playerSlot);
+                player.getInventory().setItem(slot, playerSlot.isEmpty() ? ItemStack.EMPTY : playerSlot);
                 removeLeft -= rem;
             }
         }
     }
     
-    public static void handleTaskLocking(Bongo bongo, PlayerEntity player) {
+    public static void handleTaskLocking(Bongo bongo, Player player) {
         if (bongo.running() && bongo.getSettings().lockTaskOnDeath) {
             Team team = bongo.getTeam(player);
             if (team != null && team.lockRandomTask()) {
-                IFormattableTextComponent tc = new TranslationTextComponent("bongo.task_locked.death", player.getDisplayName());
-                if (player instanceof ServerPlayerEntity) {
-                    ((ServerPlayerEntity) player).getServerWorld().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
+                MutableComponent tc = new TranslatableComponent("bongo.task_locked.death", player.getDisplayName());
+                if (player instanceof ServerPlayer) {
+                    ((ServerPlayer) player).getLevel().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
                         if (team.hasPlayer(thePlayer)) {
-                            thePlayer.sendMessage(tc, thePlayer.getUniqueID());
-                            thePlayer.connection.sendPacket(new SPlaySoundEffectPacket(SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.MASTER, thePlayer.getPosX(), thePlayer.getPosY(), thePlayer.getPosZ(), 1f, 1));
+                            thePlayer.sendMessage(tc, thePlayer.getUUID());
+                            thePlayer.connection.send(new ClientboundSoundPacket(SoundEvents.ANVIL_LAND, SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1));
                         }
                     });
                 }

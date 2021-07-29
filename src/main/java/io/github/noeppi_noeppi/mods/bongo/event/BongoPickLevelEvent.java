@@ -2,22 +2,22 @@ package io.github.noeppi_noeppi.mods.bongo.event;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Posted on the forge bus to pick a world for the bingo game
  */
-public class BongoPickWorldEvent extends Event {
+public class BongoPickLevelEvent extends Event {
 
     private final Bongo bongo;
     private final MinecraftServer server;
-    private ServerWorld world;
+    private ServerLevel level;
 
-    public BongoPickWorldEvent(Bongo bongo, ServerWorld world) {
+    public BongoPickLevelEvent(Bongo bongo, ServerLevel level) {
         this.bongo = bongo;
-        this.server = world.getServer();
-        this.world = world;
+        this.server = level.getServer();
+        this.level = level;
     }
 
     public Bongo getBongo() {
@@ -28,11 +28,11 @@ public class BongoPickWorldEvent extends Event {
         return server;
     }
 
-    public ServerWorld getWorld() {
-        return world;
+    public ServerLevel getLevel() {
+        return level;
     }
 
-    public void setWorld(ServerWorld world) {
-        this.world = world;
+    public void setLevel(ServerLevel level) {
+        this.level = level;
     }
 }

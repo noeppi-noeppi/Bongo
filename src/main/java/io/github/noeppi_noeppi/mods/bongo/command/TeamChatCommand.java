@@ -6,31 +6,31 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.ModList;
 
-public class TeamChatCommand implements Command<CommandSource> {
+public class TeamChatCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         if (ModList.get().isLoaded("minemention")) {
-            context.getSource().sendFeedback(new TranslationTextComponent("bongo.teamchat.disabled"), false);
+            context.getSource().sendSuccess(new TranslatableComponent("bongo.teamchat.disabled"), false);
         }
-        PlayerEntity player = context.getSource().asPlayer();
-        Bongo bongo = Bongo.get(player.world);
+        Player player = context.getSource().getPlayerOrException();
+        Bongo bongo = Bongo.get(player.level);
         Team team = bongo.getTeam(player);
 
         if (team == null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tc.noteam")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tc.noteam")).create();
         } else if (!bongo.active() || bongo.won()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tc.norun")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tc.norun")).create();
         }
 
         boolean newState = bongo.toggleTeamChat(player);
 
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.tc." + newState), player.getUniqueID());
+        player.sendMessage(new TranslatableComponent("bongo.cmd.tc." + newState), player.getUUID());
 
         return 0;
     }

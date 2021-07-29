@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import top.theillusivec4.curios.api.CuriosApi;
 

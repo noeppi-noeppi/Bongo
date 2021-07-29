@@ -1,10 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public class ClientAdvancementInfo {
 
-    private static final Map<ResourceLocation, Triple<ItemStack, ITextComponent, Predicate<ItemStack>>> CACHE = new HashMap<>();
+    private static final Map<ResourceLocation, Triple<ItemStack, Component, Predicate<ItemStack>>> CACHE = new HashMap<>();
 
     public static ItemStack getDisplay(ResourceLocation id) {
         if (CACHE.containsKey(id)) {
@@ -23,11 +23,11 @@ public class ClientAdvancementInfo {
         }
     }
 
-    public static ITextComponent getTranslation(ResourceLocation id) {
+    public static Component getTranslation(ResourceLocation id) {
         if (CACHE.containsKey(id)) {
             return CACHE.get(id).getMiddle();
         } else {
-            return new TranslationTextComponent("bongo.task.advancement.invalid");
+            return new TranslatableComponent("bongo.task.advancement.invalid");
         }
     }
 
@@ -39,7 +39,7 @@ public class ClientAdvancementInfo {
         }
     }
 
-    public static void updateAdvancementInfo(ResourceLocation id, ItemStack display, ITextComponent translation, Predicate<ItemStack> tooltipItem) {
+    public static void updateAdvancementInfo(ResourceLocation id, ItemStack display, Component translation, Predicate<ItemStack> tooltipItem) {
         CACHE.put(id, Triple.of(display, translation, tooltipItem));
     }
 }

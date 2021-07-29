@@ -2,8 +2,8 @@ package io.github.noeppi_noeppi.mods.bongo.network;
 
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;
 
@@ -15,16 +15,16 @@ public class BongoUpdateSerializer implements PacketSerializer<BongoUpdateSerial
     }
 
     @Override
-    public void encode(BongoUpdateMessage msg, PacketBuffer buffer) {
-        buffer.writeCompoundTag(msg.bongo.write(new CompoundNBT()));
-        buffer.writeString(msg.bongoMessageType.name());
+    public void encode(BongoUpdateMessage msg, FriendlyByteBuf buffer) {
+        buffer.writeNbt(msg.bongo.save(new CompoundTag()));
+        buffer.writeUtf(msg.bongoMessageType.name());
     }
 
     @Override
-    public BongoUpdateMessage decode(PacketBuffer buffer) {
+    public BongoUpdateMessage decode(FriendlyByteBuf buffer) {
         Bongo bongo = new Bongo();
-        bongo.read(Objects.requireNonNull(buffer.readCompoundTag()));
-        return new BongoUpdateMessage(bongo, BongoMessageType.valueOf(buffer.readString(32767)));
+        bongo.load(Objects.requireNonNull(buffer.readNbt()));
+        return new BongoUpdateMessage(bongo, BongoMessageType.valueOf(buffer.readUtf(32767)));
     }
 
     public static class BongoUpdateMessage {

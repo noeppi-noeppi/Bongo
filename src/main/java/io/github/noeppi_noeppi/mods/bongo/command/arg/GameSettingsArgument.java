@@ -9,11 +9,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
-import net.minecraft.command.arguments.IArgumentSerializer;
-import net.minecraft.command.arguments.ResourceLocationArgument;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
             ResourceLocation rl = rla.parse(reader);
             GameSettings gs = games().get(rl);
             if (gs == null) {
-                throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.notfound")).create();
+                throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.create.notfound")).create();
             }
             list.add(gs);
         }
@@ -65,7 +65,7 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
         }
         for (ResourceLocation rl : games().keySet()) {
             if (rl.toString().toLowerCase().startsWith(current))
-                builder.suggest(start + rl.toString());
+                builder.suggest(start + rl);
         }
         return CompletableFuture.completedFuture(builder.build());
     }
@@ -78,39 +78,35 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
     }
 
     private Map<ResourceLocation, GameSettings> games() {
-        if (games == null) {
-            return GameSettings.GAME_SETTINGS;
-        } else {
-            return games;
-        }
+        return games == null ? GameSettings.GAME_SETTINGS : games;
     }
 
-    public static class Serializer implements IArgumentSerializer<GameSettingsArgument> {
+    public static class Serializer implements ArgumentSerializer<GameSettingsArgument> {
 
         @Override
-        public void write(GameSettingsArgument argument, PacketBuffer buffer) {
+        public void serializeToNetwork(GameSettingsArgument argument, FriendlyByteBuf buffer) {
             buffer.writeInt(argument.games().size());
             for (GameSettings gs : argument.games().values()) {
                 buffer.writeResourceLocation(gs.id);
-                buffer.writeCompoundTag(gs.getTag());
+                buffer.writeNbt(gs.getTag());
             }
         }
 
         @Nonnull
         @Override
-        public GameSettingsArgument read(@Nonnull PacketBuffer buffer) {
+        public GameSettingsArgument deserializeFromNetwork(@Nonnull FriendlyByteBuf buffer) {
             int amount = buffer.readInt();
             Map<ResourceLocation, GameSettings> defs = new HashMap<>();
             for (int i = 0;i < amount; i++) {
                 ResourceLocation id = buffer.readResourceLocation();
                 //noinspection ConstantConditions
-                defs.put(id, new GameSettings(id, buffer.readCompoundTag()));
+                defs.put(id, new GameSettings(id, buffer.readNbt()));
             }
             return new GameSettingsArgument(defs);
         }
 
         @Override
-        public void write(GameSettingsArgument argument, @Nonnull JsonObject json) {
+        public void serializeToJson(GameSettingsArgument argument, @Nonnull JsonObject json) {
             for (GameSettings gs : argument.games().values())
                 json.addProperty(gs.id.toString(), gs.id.toString());
         }

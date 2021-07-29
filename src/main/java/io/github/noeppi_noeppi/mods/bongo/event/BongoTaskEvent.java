@@ -2,20 +2,20 @@ package io.github.noeppi_noeppi.mods.bongo.event;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.Event;
 
 public class BongoTaskEvent extends Event {
     
     private final Bongo bongo;
-    private final ServerWorld world;
-    private final ServerPlayerEntity player;
+    private final ServerLevel level;
+    private final ServerPlayer player;
     private final Task task;
 
-    public BongoTaskEvent(Bongo bongo, ServerWorld world, ServerPlayerEntity player, Task task) {
+    public BongoTaskEvent(Bongo bongo, ServerLevel level, ServerPlayer player, Task task) {
         this.bongo = bongo;
-        this.world = world;
+        this.level = level;
         this.player = player;
         this.task = task;
     }
@@ -24,11 +24,11 @@ public class BongoTaskEvent extends Event {
         return bongo;
     }
 
-    public ServerWorld getWorld() {
-        return world;
+    public ServerLevel getLevel() {
+        return level;
     }
 
-    public ServerPlayerEntity getPlayer() {
+    public ServerPlayer getPlayer() {
         return player;
     }
 

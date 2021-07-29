@@ -10,20 +10,20 @@ import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
-public class CreateCommand implements Command<CommandSource> {
+public class CreateCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        PlayerEntity player = context.getSource().asPlayer();
-        World world = player.world;
-        Bongo bongo = Bongo.get(world);
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = context.getSource().getPlayerOrException();
+        Level level = player.level;
+        Bongo bongo = Bongo.get(level);
         if (bongo.running()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.create.running")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.create.running")).create();
         }
 
         GameTasks gt = context.getArgument("tasks", GameTasks.class);
@@ -33,11 +33,11 @@ public class CreateCommand implements Command<CommandSource> {
         bongo.reset();
         String err = gd.createBongo(bongo);
         if (err != null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent(err)).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent(err)).create();
         }
         bongo.activate();
 
-        ServerMessages.broadcast(world, new TranslationTextComponent("bongo.info").appendSibling(player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.create.done")));
+        ServerMessages.broadcast(level, new TranslatableComponent("bongo.info").append(player.getDisplayName()).append(new TranslatableComponent("bongo.cmd.create.done")));
 
         return 0;
     }

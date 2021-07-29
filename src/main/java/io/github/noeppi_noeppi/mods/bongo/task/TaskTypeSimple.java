@@ -1,10 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public interface TaskTypeSimple<T> extends TaskType<T, T> {
 
-    default void consumeItem(T element, PlayerEntity player) {
+    default void consumeItem(T element, Player player) {
         
     }
     
@@ -15,7 +15,7 @@ public interface TaskTypeSimple<T> extends TaskType<T, T> {
 
     @Deprecated
     @Override
-    default void consumeItem(T element, T found, PlayerEntity player) {
+    default void consumeItem(T element, T found, Player player) {
         consumeItem(element, player);
     }
 }

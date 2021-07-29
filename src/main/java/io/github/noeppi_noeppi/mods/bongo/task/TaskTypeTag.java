@@ -1,26 +1,26 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -53,23 +53,23 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
     }
 
     @Override
-    public void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        AbstractGui.blit(matrixStack, 0, 0, 0, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+        GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 256, 256);
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, TagWithCount content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, TagWithCount content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemStack stack = cycle(content);
-        RenderHelperItem.renderItemGui(matrixStack, buffer, stack == null ? new ItemStack(Items.BARRIER) : stack, 0, 0, 16, !bigBongo);
+        RenderHelperItem.renderItemGui(poseStack, buffer, stack == null ? new ItemStack(Items.BARRIER) : stack, 0, 0, 16, !bigBongo);
     }
 
     @Override
     public String getTranslatedContentName(TagWithCount content) {
         ItemStack stack = cycle(content);
         if (stack == null) {
-            return I18n.format("bongo.task.tag.empty");
+            return I18n.get("bongo.task.tag.empty");
         } else {
-            String text = stack.getDisplayName().getStringTruncated(16);
+            String text = stack.getHoverName().getString(16);
             if (content.getCount() > 1) {
                 text += (" x " + content.getCount());
             }
@@ -78,17 +78,17 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
     }
 
     @Override
-    public ITextComponent getContentName(TagWithCount content, MinecraftServer server) {
-        return new StringTextComponent(content.getId().toString());
+    public Component getContentName(TagWithCount content, MinecraftServer server) {
+        return new TextComponent(content.getId().toString());
     }
 
     @Override
-    public boolean shouldComplete(TagWithCount element, PlayerEntity player, TagWithCount compare) {
+    public boolean shouldComplete(TagWithCount element, Player player, TagWithCount compare) {
         return element.getId().equals(compare.getId()) && element.getCount() <= compare.getCount();
     }
 
     @Override
-    public void consumeItem(TagWithCount element, PlayerEntity player) {
+    public void consumeItem(TagWithCount element, Player player) {
         Util.removeItems(player, element.getCount(), stack -> element.getTag().contains(stack.getItem()));
     }
 
@@ -100,22 +100,22 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
     @Override
     public Set<ItemStack> bookmarkStacks(TagWithCount element) {
         //noinspection UnstableApiUsage
-        return element.getTag().getAllElements().stream().map(ItemStack::new).collect(ImmutableSet.toImmutableSet());
+        return element.getTag().getValues().stream().map(ItemStack::new).collect(ImmutableSet.toImmutableSet());
     }
 
     @Override
-    public CompoundNBT serializeNBT(TagWithCount element) {
+    public CompoundTag serializeNBT(TagWithCount element) {
         return element.serialize();
     }
 
     @Override
-    public TagWithCount deserializeNBT(CompoundNBT nbt) {
+    public TagWithCount deserializeNBT(CompoundTag nbt) {
         return TagWithCount.deserialize(nbt);
     }
 
     @Override
     public void validate(TagWithCount element, MinecraftServer server) {
-        if (!element.getId().equals(Misc.MISSIGNO) && element.getTag().getAllElements().isEmpty()) {
+        if (!element.getId().equals(Misc.MISSIGNO) && element.getTag().getValues().isEmpty()) {
             throw new IllegalStateException("Empty or unknown tag: " + element.getId());
         }
     }
@@ -133,14 +133,14 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
     }
 
     @Override
-    public Stream<TagWithCount> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+    public Stream<TagWithCount> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
-            return TagCollectionManager.getManager().getItemTags().getRegisteredTags().stream()
+            return ItemTags.getAllTags().getAvailableTags().stream()
                     .map(id -> new TagWithCount(id, 1));
         } else {
-            return player.inventory.mainInventory.stream()
+            return player.getInventory().items.stream()
                     .filter(stack -> !stack.isEmpty())
-                    .flatMap(stack -> TagCollectionManager.getManager().getItemTags().getOwningTags(stack.getItem()).stream()
+                    .flatMap(stack -> ItemTags.getAllTags().getMatchingTags(stack.getItem()).stream()
                             .map(rl -> new TagWithCount(rl, stack.getCount()))
                     );
         }
@@ -148,7 +148,7 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Nullable
     private static ItemStack cycle(TagWithCount element) {
-        List<Item> items = element.getTag().getAllElements();
+        List<Item> items = element.getTag().getValues();
         if (items.isEmpty()) {
             return null;
         } else {

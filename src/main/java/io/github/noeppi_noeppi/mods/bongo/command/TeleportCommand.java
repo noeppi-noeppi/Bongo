@@ -7,42 +7,42 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
 
-public class TeleportCommand implements Command<CommandSource> {
+public class TeleportCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        ServerPlayerEntity player = context.getSource().asPlayer();
-        Bongo bongo = Bongo.get(player.getEntityWorld());
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        Bongo bongo = Bongo.get(player.getCommandSenderWorld());
         Team team = bongo.getTeam(player);
 
         if (!bongo.running()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tp.noactive")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tp.noactive")).create();
         } else if (team == null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tp.noteam")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tp.noteam")).create();
         }
 
         EntitySelector sel = context.getArgument("target", EntitySelector.class);
-        ServerPlayerEntity target = sel.selectOnePlayer(context.getSource());
+        ServerPlayer target = sel.findSinglePlayer(context.getSource());
 
         if (target.getGameProfile().getId().equals(player.getGameProfile().getId())) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tp.self")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tp.self")).create();
         } else if (!team.hasPlayer(target)) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tp.wrongteam")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tp.wrongteam")).create();
         }
 
         if (team.consumeTeleport()) {
-            if (player.getServerWorld() != target.getServerWorld()) {
-                player.changeDimension(target.getServerWorld());
+            if (player.getLevel() != target.getLevel()) {
+                player.changeDimension(target.getLevel());
             }
-            player.setPositionAndUpdate(target.getPosX(), target.getPosY(), target.getPosZ());
-            Util.broadcastTeam(player.getServerWorld(), team, new TranslationTextComponent("bongo.cmd.tp.success", player.getDisplayName(), target.getDisplayName()));
+            player.teleportTo(target.getX(), target.getY(), target.getZ());
+            Util.broadcastTeam(player.getLevel(), team, new TranslatableComponent("bongo.cmd.tp.success", player.getDisplayName(), target.getDisplayName()));
         } else {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.tp.noleft")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.tp.noleft")).create();
         }
 
         return 0;

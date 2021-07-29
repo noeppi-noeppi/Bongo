@@ -1,14 +1,14 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
@@ -47,12 +47,12 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
     }
 
     @Override
-    public void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
+    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
 
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, TaskTypeEmpty content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, TaskTypeEmpty content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
 
     }
 
@@ -62,27 +62,27 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
     }
 
     @Override
-    public ITextComponent getContentName(TaskTypeEmpty content, MinecraftServer server) {
-        return new StringTextComponent("");
+    public Component getContentName(TaskTypeEmpty content, MinecraftServer server) {
+        return new TextComponent("");
     }
 
     @Override
-    public boolean shouldComplete(TaskTypeEmpty element, PlayerEntity player, Void compare) {
+    public boolean shouldComplete(TaskTypeEmpty element, Player player, Void compare) {
         return false;
     }
 
     @Override
-    public CompoundNBT serializeNBT(TaskTypeEmpty element) {
-        return new CompoundNBT();
+    public CompoundTag serializeNBT(TaskTypeEmpty element) {
+        return new CompoundTag();
     }
 
     @Override
-    public TaskTypeEmpty deserializeNBT(CompoundNBT nbt) {
+    public TaskTypeEmpty deserializeNBT(CompoundTag nbt) {
         return this;
     }
 
     @Override
-    public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+    public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
         return Stream.empty();
     }
 }

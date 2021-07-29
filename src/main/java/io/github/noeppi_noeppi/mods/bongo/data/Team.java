@@ -1,19 +1,17 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import io.github.noeppi_noeppi.mods.bongo.compat.MineMentionIntegration;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -43,8 +41,8 @@ public class Team {
         this.backpack = new ItemStackHandler(27);
     }
 
-    public IFormattableTextComponent getName() {
-        return new TranslationTextComponent("bongo.team." + color.getString()).mergeStyle(Util.getTextFormatting(color));
+    public MutableComponent getName() {
+        return new TranslatableComponent("bongo.team." + color.getSerializedName()).withStyle(Util.getTextFormatting(color));
     }
 
     public Style getFormatting() {
@@ -57,7 +55,7 @@ public class Team {
 
     public void complete(int slot) {
         completed |= (1 << (slot % 25));
-        bongo.markDirty();
+        bongo.setDirty();
     }
     
     public int completionAmount() {
@@ -74,7 +72,7 @@ public class Team {
 
     public void lock(int slot) {
         locked |= (1 << (slot % 25));
-        bongo.markDirty();
+        bongo.setDirty();
     }
 
     public List<UUID> getPlayers() {
@@ -85,7 +83,7 @@ public class Team {
         return players.contains(uid);
     }
 
-    public boolean hasPlayer(PlayerEntity player) {
+    public boolean hasPlayer(Player player) {
         return players.contains(player.getGameProfile().getId());
     }
 
@@ -94,29 +92,29 @@ public class Team {
             team.removePlayer(uid);
         }
         players.add(uid);
-        bongo.markDirty();
+        bongo.setDirty();
     }
 
-    public void addPlayer(PlayerEntity player) {
+    public void addPlayer(Player player) {
         addPlayer(player.getGameProfile().getId());
-        if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
+        if (player instanceof ServerPlayer) this.bongo.updateMentions((ServerPlayer) player);
         player.refreshDisplayName();
-        if (player instanceof ServerPlayerEntity) {
-            ((ServerPlayerEntity) player).refreshTabListName();
+        if (player instanceof ServerPlayer) {
+            ((ServerPlayer) player).refreshTabListName();
         }
     }
 
     private void removePlayer(UUID uid) {
         players.remove(uid);
-        bongo.markDirty();
+        bongo.setDirty();
     }
 
-    public void removePlayer(PlayerEntity player) {
+    public void removePlayer(Player player) {
         removePlayer(player.getGameProfile().getId());
-        if (player instanceof ServerPlayerEntity) this.bongo.updateMentions((ServerPlayerEntity) player);
+        if (player instanceof ServerPlayer) this.bongo.updateMentions((ServerPlayer) player);
         player.refreshDisplayName();
-        if (player instanceof ServerPlayerEntity) {
-            ((ServerPlayerEntity) player).refreshTabListName();
+        if (player instanceof ServerPlayer) {
+            ((ServerPlayer) player).refreshTabListName();
         }
     }
 
@@ -127,9 +125,9 @@ public class Team {
         return backpack;
     }
 
-    public void openBackPack(PlayerEntity player) {
-        if (!player.getEntityWorld().isRemote) {
-            player.openContainer(new BackpackContainerProvider(getName(), backpack, bongo::markDirty));
+    public void openBackPack(Player player) {
+        if (!player.getCommandSenderWorld().isClientSide) {
+            player.openMenu(new BackpackContainerProvider(getName(), backpack, bongo::setDirty));
         }
     }
 
@@ -139,7 +137,7 @@ public class Team {
 
     public void teleportsLeft(int teleportsLeft) {
         this.teleportsLeft = teleportsLeft;
-        bongo.markDirty();
+        bongo.setDirty();
     }
     
     public boolean redeemedEmergency() {
@@ -148,7 +146,7 @@ public class Team {
     
     public void redeemedEmergency(boolean redeemedEmergency) {
         this.redeemedEmergency = redeemedEmergency;
-        markDirty();
+        setChanged();
     }
 
     public boolean consumeTeleport() {
@@ -156,24 +154,24 @@ public class Team {
             return true;
         } else if (teleportsLeft > 0) {
             teleportsLeft -= 1;
-            markDirty();
+            setChanged();
             return true;
         } else {
             return false;
         }
     }
 
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putInt("completed", completed);
         nbt.putInt("locked", locked);
         nbt.putInt("teleportsLeft", teleportsLeft);
         nbt.putBoolean("redeemedEmergency", redeemedEmergency);
 
-        ListNBT playerList = new ListNBT();
+        ListTag playerList = new ListTag();
         for (UUID uuid : players) {
-            CompoundNBT uuidTag = new CompoundNBT();
-            uuidTag.putUniqueId("player", uuid);
+            CompoundTag uuidTag = new CompoundTag();
+            uuidTag.putUUID("player", uuid);
             playerList.add(uuidTag);
         }
         nbt.put("players", playerList);
@@ -181,24 +179,24 @@ public class Team {
         return nbt;
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         completed = nbt.getInt("completed");
         locked = nbt.getInt("locked");
         teleportsLeft = nbt.getInt("teleportsLeft");
         redeemedEmergency = nbt.getBoolean("redeemedEmergency");
 
         if (nbt.contains("players", Constants.NBT.TAG_LIST)) {
-            ListNBT playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
+            ListTag playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
             players.clear();
             for (int i = 0;i < playerList.size(); i++) {
-                players.add(playerList.getCompound(i).getUniqueId("player"));
+                players.add(playerList.getCompound(i).getUUID("player"));
             }
         }
 
         if (nbt.contains("backpack",Constants.NBT.TAG_COMPOUND)) {
             backpack.deserializeNBT(nbt.getCompound("backpack"));
         } else {
-            backpack.deserializeNBT(new CompoundNBT());
+            backpack.deserializeNBT(new CompoundTag());
         }
     }
 
@@ -210,7 +208,7 @@ public class Team {
         teleportsLeft = 0;
         redeemedEmergency = false;
         clearBackPack(true);
-        bongo.markDirty(suppressBingoSync);
+        bongo.setChanged(suppressBingoSync);
     }
 
     public void reset() {
@@ -219,12 +217,12 @@ public class Team {
 
     public void resetCompleted(boolean suppressBingoSync) {
         completed = 0;
-        bongo.markDirty(suppressBingoSync);
+        bongo.setChanged(suppressBingoSync);
     }
 
     public void resetLocked(boolean suppressBingoSync) {
         locked = 0;
-        bongo.markDirty(suppressBingoSync);
+        bongo.setChanged(suppressBingoSync);
     }
 
     public boolean lockRandomTask() {
@@ -252,7 +250,7 @@ public class Team {
         for (int slot = 0; slot < backpack.getSlots(); slot++) {
             backpack.setStackInSlot(slot, ItemStack.EMPTY);
         }
-        bongo.markDirty(suppressBingoSync);
+        bongo.setChanged(suppressBingoSync);
     }
 
     public void clearBackPack() {
@@ -261,7 +259,7 @@ public class Team {
 
     public void clearPlayers() {
         players.clear();
-        bongo.markDirty();
+        bongo.setDirty();
     }
 
     public void resetCompleted() {
@@ -272,11 +270,11 @@ public class Team {
         resetLocked(false);
     }
     
-    public void markDirty(boolean suppressBingoSync) {
-        bongo.markDirty(suppressBingoSync);
+    public void setChanged(boolean suppressBingoSync) {
+        bongo.setChanged(suppressBingoSync);
     }
     
-    public void markDirty() {
-        bongo.markDirty();
+    public void setChanged() {
+        bongo.setDirty();
     }
 }

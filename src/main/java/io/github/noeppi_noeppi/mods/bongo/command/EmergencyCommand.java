@@ -6,32 +6,32 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 
-public class EmergencyCommand implements Command<CommandSource> {
+public class EmergencyCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        PlayerEntity player = context.getSource().asPlayer();
-        Bongo bongo = Bongo.get(player.world);
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Player player = context.getSource().getPlayerOrException();
+        Bongo bongo = Bongo.get(player.level);
         Team team = bongo.getTeam(player);
         
         if (team == null) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.emergency.noteam")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.emergency.noteam")).create();
         } else if (!bongo.running()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.emergency.norun")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.emergency.norun")).create();
         } else if (!bongo.getSettings().hasEmergencyItems()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.emergency.disabled")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.emergency.disabled")).create();
         } else if (team.redeemedEmergency()) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.emergency.duplicate")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.emergency.duplicate")).create();
         } else if (!team.lockRandomTasks(3)) {
-            throw new SimpleCommandExceptionType(new TranslationTextComponent("bongo.cmd.emergency.lesstasks")).create();
+            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.emergency.lesstasks")).create();
         } else {
             bongo.getSettings().giveEmergencyItems(player);
             team.redeemedEmergency(true);
-            player.sendMessage(new TranslationTextComponent("bongo.cmd.emergency.redeemed"), player.getUniqueID());
+            player.sendMessage(new TranslatableComponent("bongo.cmd.emergency.redeemed"), player.getUUID());
         }
         
         return 0;

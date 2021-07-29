@@ -13,18 +13,17 @@ import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
@@ -35,18 +34,18 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class Bongo extends WorldSavedData {
+public class Bongo extends SavedData {
 
     public static final String ID = BongoMod.getInstance().modid;
 
     private static Bongo clientInstance;
     private static Minecraft mc = null;
 
-    public static Bongo get(World world) {
-        if (!world.isRemote) {
-            DimensionSavedDataManager storage = ((ServerWorld) world).getServer().getOverworld().getSavedData();
-            Bongo bongo = storage.getOrCreate(Bongo::new, ID);
-            bongo.world = ((ServerWorld) world).getServer().getOverworld();
+    public static Bongo get(net.minecraft.world.level.Level level) {
+        if (!level.isClientSide) {
+            DimensionDataStorage storage = ((ServerLevel) level).getServer().overworld().getDataStorage();
+            Bongo bongo = storage.computeIfAbsent(Bongo::new, Bongo::new, ID);
+            bongo.level = ((ServerLevel) level).getServer().overworld();
             return bongo;
         } else {
             return clientInstance == null ? new Bongo() : clientInstance;
@@ -83,7 +82,7 @@ public class Bongo extends WorldSavedData {
         }
     }
 
-    private ServerWorld world;
+    private ServerLevel level;
 
     private final Map<DyeColor, Team> teams;
     private final List<Task> items;
@@ -99,18 +98,10 @@ public class Bongo extends WorldSavedData {
     private long runningUntil = 0;
     private int taskAmountOutOfTime = -1;
     private DyeColor winningTeam;
-    
+
     public Bongo() {
-        this(ID);
-    }
-
-    public Bongo(String name) {
-        super(name);
-        world = null;
-
-        if (!ID.equals(name))
-            throw new IllegalStateException("A Bongo must be created with the id '" + ID + "' but got '" + name + "'.");
-
+        level = null;
+        
         ImmutableMap.Builder<DyeColor, Team> teamBuilder = ImmutableMap.builder();
         for (DyeColor dc : DyeColor.values()) {
             teamBuilder.put(dc, new Team(this, dc));
@@ -125,13 +116,19 @@ public class Bongo extends WorldSavedData {
         teamWon = false;
         winningTeam = null;
     }
+    
+    public Bongo(CompoundTag nbt) {
+        this();
+        this.load(nbt);
+    }
+    
 
     public Team getTeam(DyeColor color) {
         return teams.get(color);
     }
 
     @Nullable
-    public Team getTeam(PlayerEntity player) {
+    public Team getTeam(Player player) {
         return getTeam(player.getGameProfile().getId());
     }
 
@@ -145,7 +142,7 @@ public class Bongo extends WorldSavedData {
     }
 
     public Set<Team> getTeams() {
-        return Collections.unmodifiableSet(new HashSet<>(teams.values()));
+        return Set.copyOf(teams.values());
     }
 
     public boolean active() {
@@ -157,13 +154,13 @@ public class Bongo extends WorldSavedData {
         this.running = false;
         this.teamWon = false;
         this.hasTimeLimit = settings.maxTime >= 0;
-        if (world != null) {
-            for (ServerPlayerEntity player : world.getServer().getPlayerList().getPlayers()) {
+        if (level != null) {
+            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
                 player.refreshDisplayName();
                 player.refreshTabListName();
             }
         }
-        markDirty();
+        setDirty();
     }
 
     public boolean running() {
@@ -190,29 +187,29 @@ public class Bongo extends WorldSavedData {
             team.teleportsLeft(getSettings().teleportsPerTeam);
             uids.addAll(team.getPlayers());
         }
-        if (world != null) {
-            BongoPickWorldEvent event = new BongoPickWorldEvent(this, world);
+        if (level != null) {
+            BongoPickLevelEvent event = new BongoPickLevelEvent(this, level);
             MinecraftForge.EVENT_BUS.post(event);
-            ServerWorld gameWorld = event.getWorld();
-            MinecraftForge.EVENT_BUS.post(new BongoStartEvent.World(this, gameWorld));
-            world.getServer().getPlayerList().getPlayers().forEach(player -> {
+            ServerLevel gameLevel = event.getLevel();
+            MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Level(this, gameLevel));
+            level.getServer().getPlayerList().getPlayers().forEach(player -> {
                 if (uids.contains(player.getGameProfile().getId())) {
-                    MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Player(this, gameWorld, player));
+                    MinecraftForge.EVENT_BUS.post(new BongoStartEvent.Player(this, gameLevel, player));
                 }
             });
             Random random = new Random();
             for (Team team : getTeams()) {
                 //noinspection UnstableApiUsage
-                List<ServerPlayerEntity> players = world.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
+                List<ServerPlayer> players = level.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
                 if (!players.isEmpty()) {
-                    settings.getTeleporter().teleportTeam(this, gameWorld, team, players, BlockPos.ZERO, 10000, random);
-                    MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameWorld, team, settings.getTeleporter(), players));
+                    settings.getTeleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, 10000, random);
+                    MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameLevel, team, settings.getTeleporter(), players));
                 }
             }
         }
-        markDirty(true);
-        if (world != null) {
-            BongoMod.getNetwork().updateBongo(world, BongoMessageType.START);
+        setChanged(true);
+        if (level != null) {
+            BongoMod.getNetwork().updateBongo(level, BongoMessageType.START);
         }
     }
     
@@ -227,19 +224,19 @@ public class Bongo extends WorldSavedData {
         this.winningTeam = null;
         this.settings = GameSettings.DEFAULT;
         playersInTcMode.clear();
-        markDirty(true);
-        if (world != null) {
-            MinecraftForge.EVENT_BUS.post(new BongoStopEvent.World(this, this.world));
+        setChanged(true);
+        if (level != null) {
+            MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Level(this, this.level));
             for (UUID uid : uids) {
-                ServerPlayerEntity player = world.getServer().getPlayerList().getPlayerByUUID(uid);
+                ServerPlayer player = level.getServer().getPlayerList().getPlayer(uid);
                 if (player != null) {
-                    MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getServerWorld(), player));
+                    MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getLevel(), player));
                     updateMentions(player);
                     player.refreshDisplayName();
                     player.refreshTabListName();
                 }
             }
-            BongoMod.getNetwork().updateBongo(world, BongoMessageType.STOP);
+            BongoMod.getNetwork().updateBongo(level, BongoMessageType.STOP);
         }
     }
 
@@ -253,45 +250,44 @@ public class Bongo extends WorldSavedData {
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT nbt) {
-        nbt.putBoolean("active", active);
-        nbt.putBoolean("running", running);
-        nbt.putBoolean("teamWon", teamWon);
-        nbt.putLong("runningSince", runningSince);
-        nbt.putLong("ranUntil", ranUntil);
-        nbt.putBoolean("hasTimeLimit", hasTimeLimit);
-        nbt.putLong("runningUntil", runningUntil);
-        nbt.putInt("taskAmountOutOfTime", taskAmountOutOfTime);
+    public CompoundTag save(@Nonnull CompoundTag compound) {
+        compound.putBoolean("active", active);
+        compound.putBoolean("running", running);
+        compound.putBoolean("teamWon", teamWon);
+        compound.putLong("runningSince", runningSince);
+        compound.putLong("ranUntil", ranUntil);
+        compound.putBoolean("hasTimeLimit", hasTimeLimit);
+        compound.putLong("runningUntil", runningUntil);
+        compound.putInt("taskAmountOutOfTime", taskAmountOutOfTime);
 
         if (winningTeam != null)
-            nbt.putInt("winningTeam", winningTeam.ordinal());
+            compound.putInt("winningTeam", winningTeam.ordinal());
 
-        nbt.putString("settings_id", settings.id.toString());
-        nbt.put("settings", settings.getTag());
+        compound.putString("settings_id", settings.id.toString());
+        compound.put("settings", settings.getTag());
 
         for (DyeColor dc : DyeColor.values()) {
-            nbt.put(dc.getString(), getTeam(dc).serializeNBT());
+            compound.put(dc.getSerializedName(), getTeam(dc).serializeNBT());
         }
 
-        ListNBT itemList = new ListNBT();
+        ListTag itemList = new ListTag();
         for (Task item : items) {
             itemList.add(item.serializeNBT());
         }
-        nbt.put("items", itemList);
+        compound.put("items", itemList);
 
-        ListNBT tcPlayers = new ListNBT();
+        ListTag tcPlayers = new ListTag();
         for (UUID uid : playersInTcMode) {
-            CompoundNBT playerNbt = new CompoundNBT();
-            playerNbt.putUniqueId("player", uid);
+            CompoundTag playerNbt = new CompoundTag();
+            playerNbt.putUUID("player", uid);
             tcPlayers.add(playerNbt);
         }
-        nbt.put("teamchat", tcPlayers);
+        compound.put("teamchat", tcPlayers);
 
-        return nbt;
+        return compound;
     }
 
-    @Override
-    public void read(@Nonnull CompoundNBT nbt) {
+    public void load(@Nonnull CompoundTag nbt) {
         active = nbt.getBoolean("active");
         running = nbt.getBoolean("running");
         teamWon = nbt.getBoolean("teamWon");
@@ -313,13 +309,13 @@ public class Bongo extends WorldSavedData {
             settings = GameSettings.DEFAULT;
         }
         for (DyeColor dc : DyeColor.values()) {
-            if (nbt.contains(dc.getString(), Constants.NBT.TAG_COMPOUND)) {
-                getTeam(dc).deserializeNBT(nbt.getCompound(dc.getString()));
+            if (nbt.contains(dc.getSerializedName(), Constants.NBT.TAG_COMPOUND)) {
+                getTeam(dc).deserializeNBT(nbt.getCompound(dc.getSerializedName()));
             }
         }
 
         if (nbt.contains("items", Constants.NBT.TAG_LIST)) {
-            ListNBT itemList = nbt.getList("items", Constants.NBT.TAG_COMPOUND);
+            ListTag itemList = nbt.getList("items", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < items.size(); i++) {
                 if (i < itemList.size()) {
                     items.get(i).deserializeNBT(itemList.getCompound(i));
@@ -333,10 +329,10 @@ public class Bongo extends WorldSavedData {
 
         playersInTcMode.clear();
         if (nbt.contains("teamchat", Constants.NBT.TAG_LIST)) {
-            ListNBT tcPlayers = nbt.getList("teamchat", Constants.NBT.TAG_COMPOUND);
+            ListTag tcPlayers = nbt.getList("teamchat", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < tcPlayers.size(); i++) {
-                CompoundNBT playerNbt = tcPlayers.getCompound(i);
-                UUID uid = playerNbt.getUniqueId("player");
+                CompoundTag playerNbt = tcPlayers.getCompound(i);
+                UUID uid = playerNbt.getUUID("player");
                 playersInTcMode.add(uid);
             }
         }
@@ -355,7 +351,7 @@ public class Bongo extends WorldSavedData {
         clearItems(true);
         playersInTcMode.clear();
         settings = GameSettings.DEFAULT;
-        markDirty(); // only call markDirty once
+        setDirty(); // only call markDirty once
     }
 
     public GameSettings getSettings() {
@@ -363,12 +359,8 @@ public class Bongo extends WorldSavedData {
     }
 
     public void setSettings(GameSettings settings, boolean suppressBingoSync) {
-        if (settings == null) {
-            this.settings = GameSettings.DEFAULT;
-        } else {
-            this.settings = settings;
-        }
-        markDirty(suppressBingoSync);
+        this.settings = settings == null ? GameSettings.DEFAULT : settings;
+        setChanged(suppressBingoSync);
     }
 
     public void clearItems() {
@@ -379,7 +371,7 @@ public class Bongo extends WorldSavedData {
         for (int i = 0; i < items.size(); i++) {
             items.set(i, Task.empty());
         }
-        markDirty(suppressBingoSync);
+        setChanged(suppressBingoSync);
     }
 
     public Task task(int slot) {
@@ -395,11 +387,11 @@ public class Bongo extends WorldSavedData {
 
     // Checks whether this player can complete tasks. This should be checked before for example looping
     // through evey item in the players inventory.
-    public boolean canCompleteTasks(PlayerEntity player) {
+    public boolean canCompleteTasks(Player player) {
         return running() && getTeam(player) != null;
     }
     
-    public <C> void checkCompleted(TaskType<?, C> type, PlayerEntity player, C compare) {
+    public <C> void checkCompleted(TaskType<?, C> type, Player player, C compare) {
         if (!running)
             return;
         Team team = getTeam(player);
@@ -417,8 +409,8 @@ public class Bongo extends WorldSavedData {
                             }
                         }
                     }
-                    if (player instanceof ServerPlayerEntity) {
-                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayerEntity) player).getServerWorld(), (ServerPlayerEntity) player, task(i)));
+                    if (player instanceof ServerPlayer) {
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayer) player).getLevel(), (ServerPlayer) player, task(i)));
                     }
                 }
             }
@@ -448,14 +440,14 @@ public class Bongo extends WorldSavedData {
                             winning = team;
                         } else {
                             taskAmountOutOfTime = Math.min(25, max + 1);
-                            markDirty();
+                            setDirty();
                             return;
                         }
                     }
                 }
                 if (winning == null) {
                     taskAmountOutOfTime = Math.min(25, max + 1);
-                    markDirty();
+                    setDirty();
                     return;
                 } else {
                     setWin(winning);
@@ -475,12 +467,12 @@ public class Bongo extends WorldSavedData {
         running = false;
         teamWon = true;
         winningTeam = team.color;
-        if (world != null) {
-            MinecraftForge.EVENT_BUS.post(new BongoWinEvent(this, world, team));
+        if (level != null) {
+            MinecraftForge.EVENT_BUS.post(new BongoWinEvent(this, level, team));
         }
         ranUntil = System.currentTimeMillis();
         playersInTcMode.clear();
-        markDirty();
+        setDirty();
     }
 
     public long runningSince() {
@@ -491,30 +483,30 @@ public class Bongo extends WorldSavedData {
         return ranUntil;
     }
 
-    public void markDirty(boolean suppressBingoSync) {
-        super.markDirty();
-        if (world != null && !suppressBingoSync) {
-            BongoMod.getNetwork().updateBongo(world);
+    public void setChanged(boolean suppressBingoSync) {
+        super.setDirty();
+        if (level != null && !suppressBingoSync) {
+            BongoMod.getNetwork().updateBongo(level);
         }
     }
 
-    public boolean toggleTeamChat(PlayerEntity player) {
+    public boolean toggleTeamChat(Player player) {
         return toggleTeamChat(player.getGameProfile().getId());
     }
 
     public boolean toggleTeamChat(UUID uid) {
         if (playersInTcMode.contains(uid)) {
             playersInTcMode.remove(uid);
-            markDirty();
+            setDirty();
             return false;
         } else {
             playersInTcMode.add(uid);
-            markDirty();
+            setDirty();
             return true;
         }
     }
 
-    public boolean teamChat(PlayerEntity player) {
+    public boolean teamChat(Player player) {
         return teamChat(player.getGameProfile().getId());
     }
 
@@ -523,26 +515,26 @@ public class Bongo extends WorldSavedData {
     }
 
     @Override
-    public void markDirty() {
-        this.markDirty(false);
+    public void setDirty() {
+        this.setChanged(false);
     }
 
     public void setTasks(List<Task> tasks) {
         for (int i = 0; i < 25; i++) {
             items.set(i, tasks.get(i).copy());
-            if (world != null) {
-                tasks.get(i).syncToClient(world.getServer(), null);
+            if (level != null) {
+                tasks.get(i).syncToClient(level.getServer(), null);
             }
         }
         updateTooltipPredicate();
-        markDirty(true);
-        if (world != null) {
-            BongoMod.getNetwork().updateBongo(world, BongoMessageType.CREATE);
+        setChanged(true);
+        if (level != null) {
+            BongoMod.getNetwork().updateBongo(level, BongoMessageType.CREATE);
         }
     }
 
     private void updateTooltipPredicate() {
-        if (world == null) {
+        if (level == null) {
             // We cache the predicates to reduce lagg
             List<Predicate<ItemStack>> predicates = new ArrayList<>();
             for (int i = 0; i < 25; i++) {
@@ -569,15 +561,15 @@ public class Bongo extends WorldSavedData {
     }
     
     public void updateMentions(UUID player) {
-        if (this.world != null) {
-            ServerPlayerEntity entity = this.world.getServer().getPlayerList().getPlayerByUUID(player);
+        if (this.level != null) {
+            ServerPlayer entity = this.level.getServer().getPlayerList().getPlayer(player);
             if (entity != null) {
                 updateMentions(entity);
             }
         }
     }
     
-    public void updateMentions(ServerPlayerEntity player) {
+    public void updateMentions(ServerPlayer player) {
         if (ModList.get().isLoaded("minemention")) {
             MineMentionIntegration.availabilityChange(player);
         }

@@ -1,16 +1,16 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class Task implements INBTSerializable<CompoundNBT> {
+public class Task implements INBTSerializable<CompoundTag> {
 
     public static Task empty() {
         return new Task(TaskTypeEmpty.INSTANCE, TaskTypeEmpty.INSTANCE);
@@ -42,13 +42,13 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return type.getTranslatedName();
     }
 
-    public void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        type.renderSlot(mc, matrixStack, buffer);
+    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+        type.renderSlot(mc, poseStack, buffer);
     }
 
-    public void renderSlotContent(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         //noinspection unchecked
-        ((TaskType<Object, ?>) type).renderSlotContent(mc, element, matrixStack, buffer, bigBongo);
+        ((TaskType<Object, ?>) type).renderSlotContent(mc, element, poseStack, buffer, bigBongo);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -57,17 +57,17 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return ((TaskType<Object, ?>) type).getTranslatedContentName(element);
     }
 
-    public ITextComponent getContentName(MinecraftServer server) {
+    public Component getContentName(MinecraftServer server) {
         //noinspection unchecked
         return ((TaskType<Object, ?>) type).getContentName(element, server);
     }
 
-    public void syncToClient(MinecraftServer server, @Nullable ServerPlayerEntity syncTarget) {
+    public void syncToClient(MinecraftServer server, @Nullable ServerPlayer syncTarget) {
         //noinspection unchecked
         ((TaskType<Object, ?>) type).syncToClient(element, server, syncTarget);
     }
 
-    public boolean shouldComplete(PlayerEntity player, Object compare) {
+    public boolean shouldComplete(Player player, Object compare) {
         if (!type.getCompareClass().isAssignableFrom(compare.getClass())) {
             return false;
         }
@@ -75,7 +75,7 @@ public class Task implements INBTSerializable<CompoundNBT> {
         return ((TaskType<Object, Object>) type).shouldComplete(element, player, compare);
     }
 
-    public void consumeItem(PlayerEntity player, Object found) {
+    public void consumeItem(Player player, Object found) {
         if (type.getCompareClass().isAssignableFrom(found.getClass())) {
             //noinspection unchecked
             ((TaskType<Object, Object>) type).consumeItem(element, found, player);
@@ -107,14 +107,14 @@ public class Task implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
+    public CompoundTag serializeNBT() {
         @SuppressWarnings("unchecked")
-        CompoundNBT nbt = ((TaskType<Object, ?>) type).serializeNBT(element);
+        CompoundTag nbt = ((TaskType<Object, ?>) type).serializeNBT(element);
         nbt.putString("type", type.getId());
         return nbt;
     }
     
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         type = TaskTypes.getType(nbt.getString("type"));
         if (type == null) {
             BongoMod.getInstance().logger.error("Failed to read task: Unknown task type: {}", nbt.getString("type"));

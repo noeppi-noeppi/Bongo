@@ -1,25 +1,25 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import io.github.noeppi_noeppi.libx.inventory.VanillaWrapper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ChestContainer;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BackpackContainerProvider implements INamedContainerProvider {
+public class BackpackContainerProvider implements MenuProvider {
 
-    private final ITextComponent team;
+    private final Component team;
     private final ItemStackHandler handler;
     private final Runnable dirty;
 
-    public BackpackContainerProvider(ITextComponent team, ItemStackHandler handler, Runnable dirty) {
+    public BackpackContainerProvider(Component team, ItemStackHandler handler, Runnable dirty) {
         this.team = team;
         this.handler = handler;
         this.dirty = dirty;
@@ -27,13 +27,13 @@ public class BackpackContainerProvider implements INamedContainerProvider {
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("bongo.backpack").appendSibling(team);
+    public Component getDisplayName() {
+        return new TranslatableComponent("bongo.backpack").append(team);
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-        return ChestContainer.createGeneric9X3(id, playerInventory, new VanillaWrapper(handler, dirty));
+    public AbstractContainerMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+        return ChestMenu.threeRows(containerId, inventory, new VanillaWrapper(handler, dirty));
     }
 }

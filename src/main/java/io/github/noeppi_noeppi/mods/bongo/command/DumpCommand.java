@@ -12,13 +12,13 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypes;
-import net.minecraft.command.CommandSource;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.event.ClickEvent;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -28,20 +28,20 @@ import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
-public class DumpCommand implements Command<CommandSource> {
+public class DumpCommand implements Command<CommandSourceStack> {
 
     @Override
-    public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
+    public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         try {
             MinecraftServer server = context.getSource().getServer();
-            Path base = server.getDataDirectory().toPath().resolve("bongo-dump");
+            Path base = server.getServerDirectory().toPath().resolve("bongo-dump");
             if (!Files.exists(base)) Files.createDirectories(base);
             if (!Files.exists(base.resolve("bingo_tasks"))) Files.createDirectories(base.resolve("bingo_tasks"));
             if (!Files.exists(base.resolve("bingo_settings"))) Files.createDirectories(base.resolve("bingo_settings"));
             int types = 0;
             for (TaskType<?, ?> type : TaskTypes.getTypes()) {
-                ListNBT data = new ListNBT();
-                Stream<?> stream = type.getAllElements(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().asPlayer());
+                ListTag data = new ListTag();
+                Stream<?> stream = type.getAllElements(server, CommandUtil.getArgumentOrDefault(context, "everything", Boolean.class, true) ? null : context.getSource().getPlayerOrException());
                 Comparator<?> comparator = type.getSorting();
                 if (comparator != null) {
                     //noinspection unchecked
@@ -49,7 +49,7 @@ public class DumpCommand implements Command<CommandSource> {
                 }
                 stream.forEach(obj -> {
                     //noinspection unchecked
-                    CompoundNBT taskNbt = ((TaskType<Object, ?>) type).serializeNBT(obj);
+                    CompoundTag taskNbt = ((TaskType<Object, ?>) type).serializeNBT(obj);
                     taskNbt.putString("type", type.getId());
                     data.add(taskNbt);
                 });
@@ -68,9 +68,9 @@ public class DumpCommand implements Command<CommandSource> {
             w.write(BongoMod.PRETTY_GSON.toJson(json));
             w.close();
 
-            context.getSource().sendFeedback(new StringTextComponent("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize().toString())).mergeStyle(Style.EMPTY.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).setUnderlined(true)), true);
+            context.getSource().sendSuccess(new TextComponent("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize())).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).setUnderlined(true)), true);
         } catch (IOException e) {
-            throw new SimpleCommandExceptionType(new StringTextComponent("IOException: " + e.getMessage())).create();
+            throw new SimpleCommandExceptionType(new TextComponent("IOException: " + e.getMessage())).create();
         }
         return 0;
     }

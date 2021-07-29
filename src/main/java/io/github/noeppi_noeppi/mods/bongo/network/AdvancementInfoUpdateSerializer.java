@@ -3,12 +3,12 @@ package io.github.noeppi_noeppi.mods.bongo.network;
 import com.google.gson.JsonElement;
 import io.github.noeppi_noeppi.libx.network.PacketSerializer;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class AdvancementInfoUpdateSerializer implements PacketSerializer<AdvancementInfoUpdateSerializer.AdvancementInfoUpdateMessage> {
 
@@ -18,24 +18,24 @@ public class AdvancementInfoUpdateSerializer implements PacketSerializer<Advance
     }
 
     @Override
-    public void encode(AdvancementInfoUpdateMessage msg, PacketBuffer buffer) {
+    public void encode(AdvancementInfoUpdateMessage msg, FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(msg.id);
-        buffer.writeCompoundTag(msg.display.write(new CompoundNBT()));
-        buffer.writeTextComponent(msg.translation);
+        buffer.writeNbt(msg.display.save(new CompoundTag()));
+        buffer.writeComponent(msg.translation);
         buffer.writeBoolean(msg.tooltip != null);
         if (msg.tooltip != null)
-            buffer.writeString(BongoMod.GSON.toJson(msg.tooltip.serialize()), 0x40000);
+            buffer.writeUtf(BongoMod.GSON.toJson(msg.tooltip.serializeToJson()), 0x40000);
     }
 
     @Override
-    public AdvancementInfoUpdateMessage decode(PacketBuffer buffer) {
+    public AdvancementInfoUpdateMessage decode(FriendlyByteBuf buffer) {
         ResourceLocation id = buffer.readResourceLocation();
         @SuppressWarnings("ConstantConditions")
-        ItemStack display = ItemStack.read(buffer.readCompoundTag());
-        ITextComponent translation = buffer.readTextComponent();
+        ItemStack display = ItemStack.of(buffer.readNbt());
+        Component translation = buffer.readComponent();
         ItemPredicate tooltip = null;
         if (buffer.readBoolean()) {
-            tooltip = ItemPredicate.deserialize(BongoMod.GSON.fromJson(buffer.readString(0x40000), JsonElement.class));
+            tooltip = ItemPredicate.fromJson(BongoMod.GSON.fromJson(buffer.readUtf(0x40000), JsonElement.class));
         }
         return new AdvancementInfoUpdateMessage(id, display, translation, tooltip);
     }
@@ -44,10 +44,10 @@ public class AdvancementInfoUpdateSerializer implements PacketSerializer<Advance
 
         public final ResourceLocation id;
         public final ItemStack display;
-        public final ITextComponent translation;
+        public final Component translation;
         public final ItemPredicate tooltip;
 
-        public AdvancementInfoUpdateMessage(ResourceLocation id, ItemStack display, ITextComponent translation, ItemPredicate tooltip) {
+        public AdvancementInfoUpdateMessage(ResourceLocation id, ItemStack display, Component translation, ItemPredicate tooltip) {
             this.id = id;
             this.display = display;
             this.translation = translation;

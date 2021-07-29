@@ -2,24 +2,27 @@ package io.github.noeppi_noeppi.mods.bongo.data;
 
 import com.mojang.datafixers.util.Either;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class GameTasks { 
     
     public static final Map<ResourceLocation, GameTasks> GAME_TASKS = new HashMap<>();
     
     public final ResourceLocation id;
-    private final CompoundNBT nbt;
+    private final CompoundTag nbt;
     
     private final GameTaskGroup rootGroup;
     
-    public GameTasks(ResourceLocation id, CompoundNBT nbt) {
+    public GameTasks(ResourceLocation id, CompoundTag nbt) {
         this.id = id;
         this.rootGroup = GameTaskGroup.parseRootTasks(nbt);
         this.nbt = nbt.copy();
@@ -32,7 +35,7 @@ public class GameTasks {
         return rootGroup.choseTasks(new Random(), 25);
     }
     
-    public CompoundNBT getTag() {
+    public CompoundTag getTag() {
         return nbt;
     }
     
@@ -40,7 +43,7 @@ public class GameTasks {
         rootGroup.validateTasks(server);
     }
     
-    public static void loadGameTasks(IResourceManager rm) throws IOException {
+    public static void loadGameTasks(ResourceManager rm) throws IOException {
         GameDef.loadData(rm, "bingo_tasks", GAME_TASKS, GameTasks::new);
     }
     

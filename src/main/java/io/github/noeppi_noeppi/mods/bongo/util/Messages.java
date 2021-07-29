@@ -2,20 +2,20 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import io.github.noeppi_noeppi.libx.util.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class Messages {
 
-    public static void onJoin(World world, PlayerEntity player, Team team) {
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.joined").appendSibling(team.getName()), player.getUniqueID());
-        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.team.joinedother").appendSibling(team.getName())));
+    public static void onJoin(Level level, Player player, Team team) {
+        player.sendMessage(new TranslatableComponent("bongo.cmd.team.joined").append(team.getName()), player.getUUID());
+        ServerMessages.broadcastExcept(level, player, ((MutableComponent) player.getDisplayName()).append(new TranslatableComponent("bongo.cmd.team.joinedother").append(team.getName())));
     }
 
-    public static void onLeave(World world, PlayerEntity player, Team team) {
-        player.sendMessage(new TranslationTextComponent("bongo.cmd.team.left").appendSibling(team.getName()), player.getUniqueID());
-        ServerMessages.broadcastExcept(world, player, ((IFormattableTextComponent) player.getDisplayName()).appendSibling(new TranslationTextComponent("bongo.cmd.team.leftother").appendSibling(team.getName())));
+    public static void onLeave(Level level, Player player, Team team) {
+        player.sendMessage(new TranslatableComponent("bongo.cmd.team.left").append(team.getName()), player.getUUID());
+        ServerMessages.broadcastExcept(level, player, ((MutableComponent) player.getDisplayName()).append(new TranslatableComponent("bongo.cmd.team.leftother").append(team.getName())));
     }
 }

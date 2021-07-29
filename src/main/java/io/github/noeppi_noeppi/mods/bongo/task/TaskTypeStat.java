@@ -1,30 +1,31 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.ServerStatisticsManager;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.CheckForNull;
@@ -59,16 +60,16 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
     }
 
     @Override
-    public void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        AbstractGui.blit(matrixStack, 0, 0, 36, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+        GuiComponent.blit(poseStack, 0, 0, 36, 0, 18, 18, 256, 256);
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, StatAndValue content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, StatAndValue content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         Object value = content.stat.getValue();
-        if (value instanceof IItemProvider) {
-            ItemStack renderStack = new ItemStack((IItemProvider) value, content.value);
-            RenderHelperItem.renderItemGui(matrixStack, buffer, renderStack, 0, 0, 16, false);
+        if (value instanceof ItemLike) {
+            ItemStack renderStack = new ItemStack((ItemLike) value, content.value);
+            RenderHelperItem.renderItemGui(poseStack, buffer, renderStack, 0, 0, 16, false);
             int x = -1;
             if (content.stat.getType() == Stats.ITEM_CRAFTED) {
                 x = 19;
@@ -84,90 +85,91 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
                 x = 109;
             }
             if (x >= 0) {
-                matrixStack.push();
-                matrixStack.translate(9, -1, 100);
-                matrixStack.scale(0.5f, 0.5f, 1);
-                Minecraft.getInstance().getTextureManager().bindTexture(RenderOverlay.ICONS_TEXTURE);
-                AbstractGui.blit(matrixStack, 0, 0, 0, 32, 0, 16, 16, 256, 256);
-                matrixStack.translate(0, 0, 10);
-                Minecraft.getInstance().getTextureManager().bindTexture(STAT_ICONS_TEXTURE);
-                AbstractGui.blit(matrixStack, 0, 0, 0, x, 19, 16, 16, 128, 128);
-                matrixStack.pop();
+                poseStack.pushPose();
+                poseStack.translate(9, -1, 100);
+                poseStack.scale(0.5f, 0.5f, 1);
+                RenderSystem.setShaderTexture(0, RenderOverlay.ICONS_TEXTURE);
+                GuiComponent.blit(poseStack, 0, 0, 0, 32, 0, 16, 16, 256, 256);
+                poseStack.translate(0, 0, 10);
+                RenderSystem.setShaderTexture(0, STAT_ICONS_TEXTURE);
+                GuiComponent.blit(poseStack, 0, 0, 0, x, 19, 16, 16, 128, 128);
+                poseStack.popPose();
             }
         } else if (value instanceof EntityType<?>) {
-            TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, matrixStack, buffer, bigBongo);
+            TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, poseStack, buffer, bigBongo);
         } else {
             boolean foundCustomTex = false;
             if (Stats.CUSTOM.equals(content.stat.getType()) && content.stat.getValue() instanceof ResourceLocation) {
                 ResourceLocation textureLocation = new ResourceLocation(((ResourceLocation) content.stat.getValue()).getNamespace(), "textures/icon/stat/" + ((ResourceLocation) content.stat.getValue()).getPath() + ".png");
-                mc.getTextureManager().bindTexture(textureLocation);
-                Texture texture = mc.getTextureManager().getTexture(textureLocation);
-                if (texture != null && texture.getGlTextureId() != MissingTextureSprite.getDynamicTexture().getGlTextureId()) {
+                RenderSystem.setShaderTexture(0, textureLocation);
+                AbstractTexture texture = mc.getTextureManager().getTexture(textureLocation);
+                //noinspection ConstantConditions
+                if (texture != null && texture.getId() != MissingTextureAtlasSprite.getTexture().getId()) {
                     foundCustomTex = true;
-                    matrixStack.push();
-                    matrixStack.scale(0.5f, 0.5f, 0.5f);
-                    AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 32, 32, 32, 32);
-                    matrixStack.pop();
+                    poseStack.pushPose();
+                    poseStack.scale(0.5f, 0.5f, 0.5f);
+                    GuiComponent.blit(poseStack, 0, 0, 0, 0, 0, 32, 32, 32, 32);
+                    poseStack.popPose();
                 }
             }
             if (!foundCustomTex) {
-                matrixStack.push();
-                matrixStack.scale(0.5f, 0.5f, 0.5f);
-                mc.getTextureManager().bindTexture(RenderOverlay.ICONS_TEXTURE);
-                AbstractGui.blit(matrixStack, 0, 0, 0, 0, 0, 32, 32, 256, 256);
-                matrixStack.pop();
+                poseStack.pushPose();
+                poseStack.scale(0.5f, 0.5f, 0.5f);
+                RenderSystem.setShaderTexture(0, RenderOverlay.ICONS_TEXTURE);
+                GuiComponent.blit(poseStack, 0, 0, 0, 0, 0, 32, 32, 256, 256);
+                poseStack.popPose();
             }
         }
         if (!bigBongo) {
-            matrixStack.push();
-            matrixStack.translate(0, 0, 200);
-            matrixStack.scale(2/3f, 2/3f, 1);
-            FontRenderer fr = Minecraft.getInstance().fontRenderer;
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 200);
+            poseStack.scale(2/3f, 2/3f, 1);
+            Font fr = Minecraft.getInstance().font;
             String text = content.stat.format(content.value);
-            fr.renderString(text, (float) (25 - fr.getStringWidth(text)), 17, 0xffffff, true, matrixStack.getLast().getMatrix(), buffer, false, 0, 15728880);
-            matrixStack.pop();
+            fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, false, 0, 15728880);
+            poseStack.popPose();
         }
     }
 
     @Override
     public String getTranslatedContentName(StatAndValue content) {
-        String text = getContentName(content, null).getStringTruncated(16);
+        String text = getContentName(content, null).getString(16);
         return text + ": " + content.stat.format(content.value);
     }
 
     @Override
-    public ITextComponent getContentName(StatAndValue content, @CheckForNull MinecraftServer server) {
-        ITextComponent tc = new StringTextComponent("");
+    public Component getContentName(StatAndValue content, @CheckForNull MinecraftServer server) {
+        Component tc = new TextComponent("");
         Object value = content.stat.getValue();
-        if (value instanceof IItemProvider) {
-            tc = new ItemStack((IItemProvider) value).getDisplayName();
+        if (value instanceof ItemLike) {
+            tc = new ItemStack((ItemLike) value).getHoverName();
         } else if (value instanceof EntityType<?>) {
-            tc = ((EntityType<?>) value).getName();
+            tc = ((EntityType<?>) value).getDescription();
         } else if (value instanceof ResourceLocation) {
-            return new StringTextComponent(((ResourceLocation) value).getPath().replace('_', ' '));
+            return new TextComponent(((ResourceLocation) value).getPath().replace('_', ' '));
         }
         //noinspection ConstantConditions
-        return new TranslationTextComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).appendSibling(new StringTextComponent(" ")).appendSibling(tc);
+        return new TranslatableComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).append(new TextComponent(" ")).append(tc);
     }
 
     @Override
-    public boolean shouldComplete(StatAndValue element, PlayerEntity player, StatAndValue compare) {
+    public boolean shouldComplete(StatAndValue element, Player player, StatAndValue compare) {
         return element.stat.getType().equals(compare.stat.getType()) && element.stat.getValue().equals(compare.stat.getValue()) && compare.value >= element.value;
     }
 
     @Override
-    public CompoundNBT serializeNBT(StatAndValue element) {
+    public CompoundTag serializeNBT(StatAndValue element) {
         return element.serializeNBT();
     }
 
     @Override
-    public StatAndValue deserializeNBT(CompoundNBT nbt) {
+    public StatAndValue deserializeNBT(CompoundTag nbt) {
         return StatAndValue.deserializeNBT(nbt);
     }
 
     @Override
     public Predicate<ItemStack> bongoTooltipStack(StatAndValue element) {
-        Item item = element.stat.getValue() instanceof IItemProvider ? ((IItemProvider) element.stat.getValue()).asItem() : null;
+        Item item = element.stat.getValue() instanceof ItemLike ? ((ItemLike) element.stat.getValue()).asItem() : null;
         return stack -> item != null && stack.getItem() == item;
     }
 
@@ -180,10 +182,10 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
     }
 
     @Override
-    public Stream<StatAndValue> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+    public Stream<StatAndValue> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player != null) {
-            ServerStatisticsManager mgr = server.getPlayerList().getPlayerStats(player);
-            return mgr.statsData.object2IntEntrySet().stream().filter(entry -> entry.getIntValue() > 0).map(entry -> new StatAndValue(entry.getKey(), entry.getIntValue()));
+            ServerStatsCounter mgr = server.getPlayerList().getPlayerStats(player);
+            return mgr.stats.object2IntEntrySet().stream().filter(entry -> entry.getIntValue() > 0).map(entry -> new StatAndValue(entry.getKey(), entry.getIntValue()));
         } else {
             return Stream.empty();
         }

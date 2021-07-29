@@ -2,12 +2,11 @@ package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -19,13 +18,13 @@ public class JeiIntegration {
 
     public static void reloadJeiTooltips() {
         try {
-            if (Minecraft.getInstance().getResourceManager() instanceof SimpleReloadableResourceManager) {
-                SimpleReloadableResourceManager resourceManager = (SimpleReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+            if (Minecraft.getInstance().getResourceManager() instanceof SimpleReloadableResourceManager resourceManager) {
                 Class<?> c = Class.forName("mezz.jei.startup.ClientLifecycleHandler$JeiReloadListener");
-                for (IFutureReloadListener listener : resourceManager.reloadListeners) {
-                    if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
-                        ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
-                    }
+                for (PreparableReloadListener listener : resourceManager.listeners) {
+                    // TODO fix with new JEI
+//                    if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
+//                        ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
+//                    }
                 }
             }
         } catch (ClassNotFoundException | NoClassDefFoundError e) {

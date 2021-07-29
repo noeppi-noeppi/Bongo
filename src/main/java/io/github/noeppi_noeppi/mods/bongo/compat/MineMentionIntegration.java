@@ -5,10 +5,10 @@ import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Predicate;
 
@@ -18,29 +18,29 @@ public class MineMentionIntegration {
         SpecialMentions.registerMention(new ResourceLocation(BongoMod.getInstance().modid, "team"), "team", new TeamMention());
     }
     
-    public static void availabilityChange(ServerPlayerEntity player) {
+    public static void availabilityChange(ServerPlayer player) {
         SpecialMentions.notifyAvailabilityChange(player);
     }
     
     public static class TeamMention implements SpecialMention {
 
         @Override
-        public IFormattableTextComponent description() {
-            return new TranslationTextComponent("bongo.mention");
+        public Component description() {
+            return new TranslatableComponent("bongo.mention");
         }
 
         @Override
-        public Predicate<ServerPlayerEntity> selectPlayers(ServerPlayerEntity sender) {
+        public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
             return player -> {
-                Bongo bongo = Bongo.get(sender.getServerWorld());
+                Bongo bongo = Bongo.get(sender.getLevel());
                 Team team = bongo.getTeam(sender);
                 return team != null && team.hasPlayer(player);
             };
         }
 
         @Override
-        public boolean available(ServerPlayerEntity sender) {
-            Bongo bongo = Bongo.get(sender.getServerWorld());
+        public boolean available(ServerPlayer sender) {
+            Bongo bongo = Bongo.get(sender.getLevel());
             return bongo.active() && bongo.getTeam(sender) != null;
         }
     }

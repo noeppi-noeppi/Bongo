@@ -15,8 +15,11 @@ import io.github.noeppi_noeppi.mods.bongo.network.BongoNetwork;
 import io.github.noeppi_noeppi.mods.bongo.render.CrownRenderer;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
-import io.github.noeppi_noeppi.mods.bongo.teleporters.*;
-import net.minecraft.command.arguments.ArgumentTypes;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
+import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
+import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -33,13 +36,13 @@ public class BongoMod extends ModX {
     private static BongoMod instance;
     private static BongoNetwork network;
 
-    public static final Gson GSON = net.minecraft.util.Util.make(() -> {
+    public static final Gson GSON = net.minecraft.Util.make(() -> {
         GsonBuilder gsonbuilder = new GsonBuilder();
         gsonbuilder.disableHtmlEscaping();
         gsonbuilder.setLenient();
         return gsonbuilder.create();
     });
-    public static final Gson PRETTY_GSON = net.minecraft.util.Util.make(() -> {
+    public static final Gson PRETTY_GSON = net.minecraft.Util.make(() -> {
         GsonBuilder gsonbuilder = new GsonBuilder();
         gsonbuilder.disableHtmlEscaping();
         gsonbuilder.setLenient();

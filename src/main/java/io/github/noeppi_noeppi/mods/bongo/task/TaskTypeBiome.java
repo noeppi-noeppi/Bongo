@@ -1,21 +1,22 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -48,49 +49,50 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
     }
 
     @Override
-    public void renderSlot(Minecraft mc, MatrixStack matrixStack, IRenderTypeBuffer buffer) {
-        AbstractGui.blit(matrixStack, 0, 0, 18, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+        GuiComponent.blit(poseStack, 0, 0, 18, 0, 18, 18, 256, 256);
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, Biome content, MatrixStack matrixStack, IRenderTypeBuffer buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, Biome content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ResourceLocation biomeTexture;
         if (content.getRegistryName() != null) {
             biomeTexture = new ResourceLocation(content.getRegistryName().getNamespace(), "textures/icon/biome/" + content.getRegistryName().getPath() + ".png");
         } else {
             biomeTexture = FALLBACK_TEXTURE;
         }
-        mc.getTextureManager().bindTexture(biomeTexture);
-        Texture texture = mc.getTextureManager().getTexture(biomeTexture);
-        if (texture == null || texture.getGlTextureId() == MissingTextureSprite.getDynamicTexture().getGlTextureId())
-            mc.getTextureManager().bindTexture(FALLBACK_TEXTURE);
-        AbstractGui.blit(matrixStack, 0, 0, 0, 0, 16, 16, 16, 16);
+        RenderSystem.setShaderTexture(0, biomeTexture);
+        AbstractTexture texture = mc.getTextureManager().getTexture(biomeTexture);
+        //noinspection ConstantConditions
+        if (texture == null || texture.getId() == MissingTextureAtlasSprite.getTexture().getId())
+            RenderSystem.setShaderTexture(0, FALLBACK_TEXTURE);
+        GuiComponent.blit(poseStack, 0, 0, 0, 0, 16, 16, 16, 16);
     }
 
     @Override
     public String getTranslatedContentName(Biome content) {
-        return new TranslationTextComponent(net.minecraft.util.Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content))).getStringTruncated(18);
+        return new TranslatableComponent(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content))).getString(18);
     }
 
     @Override
-    public ITextComponent getContentName(Biome content, MinecraftServer server) {
-        return new TranslationTextComponent(net.minecraft.util.Util.makeTranslationKey("biome", ForgeRegistries.BIOMES.getKey(content)));
+    public Component getContentName(Biome content, MinecraftServer server) {
+        return new TranslatableComponent(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content)));
     }
 
     @Override
-    public boolean shouldComplete(Biome element, PlayerEntity player, Biome compare) {
+    public boolean shouldComplete(Biome element, Player player, Biome compare) {
         return element == compare;
     }
 
     @Override
-    public CompoundNBT serializeNBT(Biome element) {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT(Biome element) {
+        CompoundTag nbt = new CompoundTag();
         Util.putByForgeRegistry(ForgeRegistries.BIOMES, nbt, "biome", element);
         return nbt;
     }
 
     @Override
-    public Biome deserializeNBT(CompoundNBT nbt) {
+    public Biome deserializeNBT(CompoundTag nbt) {
         return Util.getFromRegistry(ForgeRegistries.BIOMES, nbt, "biome");
     }
 
@@ -101,11 +103,11 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
     }
 
     @Override
-    public Stream<Biome> getAllElements(MinecraftServer server, @Nullable ServerPlayerEntity player) {
+    public Stream<Biome> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
             return ForgeRegistries.BIOMES.getValues().stream();
         } else {
-            return Stream.of(ForgeRegistries.BIOMES.getValue(player.getEntityWorld().getDynamicRegistries().getRegistry(Registry.BIOME_KEY).getKey(player.getEntityWorld().getBiome(player.getPosition()))));
+            return Stream.of(ForgeRegistries.BIOMES.getValue(player.getCommandSenderWorld().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(player.getCommandSenderWorld().getBiome(player.blockPosition()))));
         }
     }
 }
