@@ -86,6 +86,6 @@ public class BongoNetwork extends NetworkX {
         }
 
         //noinspection ConstantConditions
-        return new AdvancementInfoUpdateSerializer.AdvancementInfoUpdateMessage(advancement.getId(), advancement.getDisplay().icon, advancement.getDisplay().getTitle(), tooltip);
+        return new AdvancementInfoUpdateSerializer.AdvancementInfoUpdateMessage(advancement.getId(), advancement.getDisplay().getIcon(), advancement.getDisplay().getTitle(), tooltip);
     }
 }
