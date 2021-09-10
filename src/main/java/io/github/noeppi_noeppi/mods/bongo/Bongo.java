@@ -351,7 +351,7 @@ public class Bongo extends SavedData {
         clearItems(true);
         playersInTcMode.clear();
         settings = GameSettings.DEFAULT;
-        setDirty(); // only call markDirty once
+        setDirty();
     }
 
     public GameSettings getSettings() {

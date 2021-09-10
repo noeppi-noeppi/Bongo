@@ -16,14 +16,14 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[36.1.20,)"
+    versionRange="[1.17.1-37.0.13,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,)"
+    versionRange="[1.17.1,)"
     ordering="NONE"
     side="BOTH"
 

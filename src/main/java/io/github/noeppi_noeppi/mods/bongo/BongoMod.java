@@ -19,7 +19,13 @@ import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -27,6 +33,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import javax.annotation.Nonnull;
 
@@ -57,6 +64,8 @@ public class BongoMod extends ModX {
         network = new BongoNetwork(this);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
+        
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::reloadClientResources);
         
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new DefaultEffects());
@@ -116,6 +125,21 @@ public class BongoMod extends ModX {
     protected void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
         MinecraftForge.EVENT_BUS.register(new RenderOverlay());
-        CrownRenderer.register();
+    }
+    
+    private void reloadClientResources(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new SimplePreparableReloadListener<Void>() {
+
+            @Nonnull
+            @Override
+            protected Void prepare(@Nonnull ResourceManager rm, @Nonnull ProfilerFiller filler) {
+                return null;
+            }
+
+            @Override
+            protected void apply(@Nonnull Void value, @Nonnull ResourceManager rm, @Nonnull ProfilerFiller filler) {
+                CrownRenderer.register();
+            }
+        });
     }
 }

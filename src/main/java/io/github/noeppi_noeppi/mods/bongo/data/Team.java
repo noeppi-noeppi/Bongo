@@ -146,7 +146,7 @@ public class Team {
     
     public void redeemedEmergency(boolean redeemedEmergency) {
         this.redeemedEmergency = redeemedEmergency;
-        setChanged();
+        setDirty();
     }
 
     public boolean consumeTeleport() {
@@ -154,7 +154,7 @@ public class Team {
             return true;
         } else if (teleportsLeft > 0) {
             teleportsLeft -= 1;
-            setChanged();
+            setDirty();
             return true;
         } else {
             return false;
@@ -274,7 +274,7 @@ public class Team {
         bongo.setChanged(suppressBingoSync);
     }
     
-    public void setChanged() {
+    public void setDirty() {
         bongo.setDirty();
     }
 }
