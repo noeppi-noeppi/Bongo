@@ -12,12 +12,12 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.0.3")
+    annotationProcessor fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.0.17")
     
-    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.0.3")
+    implementation fg.deobf("io.github.noeppi_noeppi.mods:LibX:1.17.1-2.0.17")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.17.1-5.0.0.0:api")
 //    runtimeOnly fg.deobf("mezz.jei:jei-1.16.4:7.6.1.74")
 //    runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.16.4-0.1.1")
-//    compileOnly fg.deobf("de.melanx.skyblockbuilder:skyblockbuilder-1.16.4:1.4.2")
+    compileOnly fg.deobf("de.melanx:SkyblockBuilder:1.17.1-2.0.15")
     implementation fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.17.1-1.0.1")
 }
