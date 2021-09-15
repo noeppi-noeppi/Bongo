@@ -79,13 +79,13 @@ public class TaskTypePotion implements TaskTypeSimple<MobEffect> {
     @Override
     public CompoundTag serializeNBT(MobEffect element) {
         CompoundTag nbt = new CompoundTag();
-        Util.putByForgeRegistry(ForgeRegistries.POTIONS, nbt, "potion", element);
+        Util.putByForgeRegistry(ForgeRegistries.MOB_EFFECTS, nbt, "potion", element);
         return nbt;
     }
 
     @Override
     public MobEffect deserializeNBT(CompoundTag nbt) {
-        return Util.getFromRegistry(ForgeRegistries.POTIONS, nbt, "potion");
+        return Util.getFromRegistry(ForgeRegistries.MOB_EFFECTS, nbt, "potion");
     }
 
     @Nullable
@@ -97,7 +97,7 @@ public class TaskTypePotion implements TaskTypeSimple<MobEffect> {
     @Override
     public Stream<MobEffect> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
-            return ForgeRegistries.POTIONS.getValues().stream().filter(effect -> !effect.isInstantenous());
+            return ForgeRegistries.MOB_EFFECTS.getValues().stream().filter(effect -> !effect.isInstantenous());
         } else {
             return player.getActiveEffects().stream().map(MobEffectInstance::getEffect);
         }

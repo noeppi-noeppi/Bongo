@@ -3,8 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.compat;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
@@ -18,14 +17,13 @@ public class JeiIntegration {
 
     public static void reloadJeiTooltips() {
         try {
-            if (Minecraft.getInstance().getResourceManager() instanceof SimpleReloadableResourceManager resourceManager) {
-                Class<?> c = Class.forName("mezz.jei.startup.ClientLifecycleHandler$JeiReloadListener");
-                for (PreparableReloadListener listener : resourceManager.listeners) {
-                    // TODO fix with new JEI
-//                    if (listener instanceof ISelectiveResourceReloadListener && c.isInstance(listener)) {
-//                        ((ISelectiveResourceReloadListener) listener).onResourceManagerReload(resourceManager);
-//                    }
-                }
+            Class<?> internalClass = Class.forName("mezz.jei.Internal");
+            Method getReloadListener = internalClass.getDeclaredMethod("getReloadListener");
+            getReloadListener.setAccessible(true);
+            Object reloadListener = getReloadListener.invoke(null);
+            //noinspection deprecation
+            if (reloadListener instanceof ResourceManagerReloadListener listener) {
+                listener.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
             }
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             //
@@ -76,10 +74,12 @@ public class JeiIntegration {
     }
 
     private static void addBookmark(Object bookmarkList, Object bookmark) throws ReflectiveOperationException {
-        Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
-        Method addMethod = bookmarkListClass.getDeclaredMethod("add", Object.class);
-        addMethod.setAccessible(true);
-        addMethod.invoke(bookmarkList, bookmark);
+        if (bookmark != null) {
+            Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
+            Method addMethod = bookmarkListClass.getDeclaredMethod("add", Object.class);
+            addMethod.setAccessible(true);
+            addMethod.invoke(bookmarkList, bookmark);
+        }
     }
 
     // forces an update. add and clear will do this automatically.

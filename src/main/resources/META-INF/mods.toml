@@ -30,20 +30,20 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.16.3-1.0.60,)"
+    versionRange="[1.17.1-2.0.17,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="skyblockbuilder"
     mandatory=false
-    versionRange="[1.4.2,)"
+    versionRange="[1.17.1-2.0.15,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minemention"
     mandatory=false
-    versionRange="[0.1.5,)"
+    versionRange="[1.17.1-1.0.1,)"
     ordering="NONE"
     side="BOTH"
