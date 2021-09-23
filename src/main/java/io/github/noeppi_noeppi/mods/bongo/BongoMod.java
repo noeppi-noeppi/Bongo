@@ -38,7 +38,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import javax.annotation.Nonnull;
 
 @Mod("bongo")
-public class BongoMod extends ModX {
+public final class BongoMod extends ModX {
 
     private static BongoMod instance;
     private static BongoNetwork network;
