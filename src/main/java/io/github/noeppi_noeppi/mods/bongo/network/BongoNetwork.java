@@ -21,8 +21,8 @@ public class BongoNetwork extends NetworkX {
     }
 
     @Override
-    protected String getProtocolVersion() {
-        return "3";
+    protected Protocol getProtocol() {
+        return Protocol.of("3");
     }
 
     @Override
@@ -33,37 +33,37 @@ public class BongoNetwork extends NetworkX {
 
     public void updateBongo(Level level) {
         if (!level.isClientSide) {
-            instance.send(PacketDistributor.ALL.noArg(), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(level)));
+            channel.send(PacketDistributor.ALL.noArg(), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(level)));
         }
     }
 
     public void updateBongo(Player player) {
         if (!player.getCommandSenderWorld().isClientSide) {
-            instance.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(player.getCommandSenderWorld())));
+            channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(player.getCommandSenderWorld())));
         }
     }
 
     public void updateBongo(Level level, BongoMessageType messageType) {
         if (!level.isClientSide) {
-            instance.send(PacketDistributor.ALL.noArg(), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(level), messageType));
+            channel.send(PacketDistributor.ALL.noArg(), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(level), messageType));
         }
     }
 
     public void updateBongo(Player player, BongoMessageType messageType) {
         if (!player.getCommandSenderWorld().isClientSide) {
-            instance.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(player.getCommandSenderWorld()), messageType));
+            channel.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new BongoUpdateSerializer.BongoUpdateMessage(Bongo.get(player.getCommandSenderWorld()), messageType));
         }
     }
 
     public void syncAdvancement(Advancement advancement) {
         if (advancement.getDisplay() != null) {
-            instance.send(PacketDistributor.ALL.noArg(), getAdvancementMessage(advancement));
+            channel.send(PacketDistributor.ALL.noArg(), getAdvancementMessage(advancement));
         }
     }
 
     public void syncAdvancementTo(Advancement advancement, ServerPlayer playerEntity) {
         if (advancement.getDisplay() != null) {
-            instance.send(PacketDistributor.PLAYER.with(() -> playerEntity), getAdvancementMessage(advancement));
+            channel.send(PacketDistributor.PLAYER.with(() -> playerEntity), getAdvancementMessage(advancement));
         }
     }
 
