@@ -20,8 +20,8 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -76,6 +76,7 @@ public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
             poseStack.mulPose(Vector3f.XP.rotationDegrees(2));
             entity.tickCount = ClientTickHandler.ticksInGame;
             render.render(entity, 0, 0, poseStack, buffer, LightTexture.pack(15, 15));
+            if (buffer instanceof MultiBufferSource.BufferSource source) source.endBatch();
         }
     }
 
@@ -96,7 +97,7 @@ public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
 
     @Override
     public Predicate<ItemStack> bongoTooltipStack(EntityType<?> element) {
-        Item item = SpawnEggItem.byId(element);
+        Item item = ForgeSpawnEggItem.fromEntityType(element);
         if (item == null) {
             return stack -> false;
         } else {

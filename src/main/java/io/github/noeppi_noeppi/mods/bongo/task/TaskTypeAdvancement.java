@@ -2,9 +2,9 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ClientAdvancementInfo;
+import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
@@ -58,7 +58,7 @@ public class TaskTypeAdvancement implements TaskTypeSimple<ResourceLocation> {
     @Override
     public void renderSlotContent(Minecraft mc, ResourceLocation content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemStack icon = ClientAdvancementInfo.getDisplay(content);
-        RenderHelperItem.renderItemGui(poseStack, buffer, icon, 0, 0, 16, false);
+        ItemRenderUtil.renderItem(poseStack, buffer, icon, false);
     }
 
     @Override

@@ -3,8 +3,8 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
-import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.libx.util.Misc;
+import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
@@ -60,7 +60,7 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
     @Override
     public void renderSlotContent(Minecraft mc, TagWithCount content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemStack stack = cycle(content);
-        RenderHelperItem.renderItemGui(poseStack, buffer, stack == null ? new ItemStack(Items.BARRIER) : stack, 0, 0, 16, !bigBongo);
+        ItemRenderUtil.renderItem(poseStack, buffer, stack == null ? new ItemStack(Items.BARRIER) : stack, !bigBongo);
     }
 
     @Override

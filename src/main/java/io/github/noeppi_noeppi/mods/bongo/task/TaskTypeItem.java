@@ -2,7 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
+import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -53,7 +53,7 @@ public class TaskTypeItem implements TaskTypeSimple<ItemStack> {
 
     @Override
     public void renderSlotContent(Minecraft mc, ItemStack content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        RenderHelperItem.renderItemGui(poseStack, buffer, content, 0, 0, 16, !bigBongo);
+        ItemRenderUtil.renderItem(poseStack, buffer, content, !bigBongo);
     }
 
     @Override

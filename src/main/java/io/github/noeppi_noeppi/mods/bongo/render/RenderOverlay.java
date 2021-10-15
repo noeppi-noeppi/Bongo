@@ -55,7 +55,7 @@ public class RenderOverlay {
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post event) {
         PoseStack poseStack = event.getMatrixStack();
-        MultiBufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null && mc.screen == null && (!mc.options.renderDebug || Keybinds.BIG_OVERLAY.isDown()) && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             Bongo bongo = Bongo.get(mc.level);
@@ -219,6 +219,7 @@ public class RenderOverlay {
                 }
 
                 poseStack.popPose();
+                buffer.endBatch();
             }
         }
     }

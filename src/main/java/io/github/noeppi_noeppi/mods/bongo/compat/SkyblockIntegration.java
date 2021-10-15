@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
+import de.melanx.skyblockbuilder.api.SkyblockBuilderAPI;
 import de.melanx.skyblockbuilder.data.SkyblockSavedData;
-import de.melanx.skyblockbuilder.util.CompatHelper;
 import de.melanx.skyblockbuilder.util.WorldUtil;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
@@ -29,7 +29,7 @@ public class SkyblockIntegration {
     }
 
     public static void setup() {
-        CompatHelper.disableAllTeamManagement(BongoMod.getInstance().modid);
+        SkyblockBuilderAPI.disableAllTeamManagement(BongoMod.getInstance().modid);
     }
     
     public static boolean appliesFor(ServerLevel level) {

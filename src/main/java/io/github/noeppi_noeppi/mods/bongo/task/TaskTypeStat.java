@@ -2,8 +2,8 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.noeppi_noeppi.libx.render.RenderHelperItem;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
+import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
@@ -69,7 +69,7 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
         Object value = content.stat.getValue();
         if (value instanceof ItemLike) {
             ItemStack renderStack = new ItemStack((ItemLike) value, content.value);
-            RenderHelperItem.renderItemGui(poseStack, buffer, renderStack, 0, 0, 16, false);
+            ItemRenderUtil.renderItem(poseStack, buffer, renderStack, false);
             int x = -1;
             if (content.stat.getType() == Stats.ITEM_CRAFTED) {
                 x = 19;
