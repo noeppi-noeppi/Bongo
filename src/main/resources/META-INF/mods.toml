@@ -8,6 +8,7 @@ modId="bongo"
 version="${file.jarVersion}"
 displayName="Bongo"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/bongo"
+updateJSONURL="https://assets.melanx.de/updates/bongo.json"
 authors="noeppi_noeppi, Contributors: MelanX, LordGrimmauld"
 description='''
 It's a bingo mod.
