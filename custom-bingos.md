@@ -32,6 +32,7 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
     }
   ],
   "teleporter": "bongo.no_tp",
+  "teleportRadius": 500,
   "maxTime": -1
 }
 ```
@@ -128,6 +129,10 @@ bongo.standard   Teleports the player randomly through the world.
 bongo.no_tp      No teleportation.
 bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a separate skyblock Island.
 ```
+
+### teleportRadius
+
+`teleportRadius` is the distance from spawn where the players will be teleported when a respective teleporter is chosen in the settings. Default is `10000`.
 
 ### maxTime
 

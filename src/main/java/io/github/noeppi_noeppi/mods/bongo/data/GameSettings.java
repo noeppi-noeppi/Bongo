@@ -42,6 +42,7 @@ public class GameSettings {
     public final boolean lockTaskOnDeath;
     public final boolean consumeItems;
     public final int teleportsPerTeam;
+    public final int teleportRadius;
     private final List<Pair<EquipmentSlot, ItemStack>> startingInventory;
     private final List<ItemStack> backpackInventory;
     private final List<ItemStack> emergencyItems;
@@ -92,6 +93,12 @@ public class GameSettings {
             teleportsPerTeam = nbt.getInt("teleportsPerTeam");
         } else {
             teleportsPerTeam = 0;
+        }
+
+        if (nbt.contains("teleportRadius")) {
+            teleportRadius = nbt.getInt("teleportRadius");
+        } else {
+            teleportRadius = 10000;
         }
 
         startingInventory = new ArrayList<>();
@@ -183,6 +190,7 @@ public class GameSettings {
         this.nbt.putBoolean("lockTaskOnDeath", lockTaskOnDeath);
         this.nbt.putBoolean("consumeItems", consumeItems);
         this.nbt.putInt("teleportsPerTeam", teleportsPerTeam);
+        this.nbt.putInt("teleportRadius", teleportRadius);
         ListTag startingInventoryNBT = new ListTag();
         startingInventory.forEach(stack -> {
             CompoundTag compound = stack.getRight().save(new CompoundTag());

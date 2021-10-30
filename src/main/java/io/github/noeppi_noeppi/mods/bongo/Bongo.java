@@ -202,7 +202,7 @@ public class Bongo extends SavedData {
                 //noinspection UnstableApiUsage
                 List<ServerPlayer> players = level.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
                 if (!players.isEmpty()) {
-                    settings.getTeleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, 10000, random);
+                    settings.getTeleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, settings.teleportRadius, random);
                     MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameLevel, team, settings.getTeleporter(), players));
                 }
             }
