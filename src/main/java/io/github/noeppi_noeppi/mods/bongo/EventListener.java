@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import com.cartoonishvillain.eeriehauntings.events.GhostExorcisedEvent;
 import io.github.noeppi_noeppi.libx.event.DataPacksReloadedEvent;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
@@ -10,6 +11,8 @@ import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
+import io.github.noeppi_noeppi.mods.torment.cap.TormentData;
+import melonslise.spook.common.init.SpookCapabilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -154,7 +157,20 @@ public class EventListener {
                 bongo.getElementsOf(TaskTypeStat.INSTANCE)
                         .map(value -> new StatAndValue(value.stat, mgr.getValue(value.stat)))
                         .forEach(value -> bongo.checkCompleted(TaskTypeStat.INSTANCE, event.player, value));
+
+                TormentData torment = TormentData.get(event.player);
+                bongo.checkCompleted(TaskTypeTorment.INSTANCE, event.player, torment.getTormentLevel());
+                
+                event.player.getCapability(SpookCapabilities.SANITY).ifPresent(sanity -> bongo.checkCompleted(TaskTypeMist.INSTANCE, event.player, sanity.get()));
             }
+        }
+    }
+    
+    @SubscribeEvent
+    public void exorciseGhost(GhostExorcisedEvent event) {
+        Bongo bongo = Bongo.get(event.getPlayer().level);
+        if (bongo.canCompleteTasks(event.getPlayer())) {
+                bongo.checkCompleted(TaskTypeExorcise.INSTANCE, event.getPlayer(), !event.isExpell());
         }
     }
 

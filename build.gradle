@@ -3,6 +3,8 @@ buildscript {
 }
 
 apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/v2/mod.gradle'
+apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.cursedep'
+apply plugin: 'io.github.noeppi_noeppi.tools.modgradle.coremods'
 
 repositories {
     maven { url = "https://dvs1.progwml6.com/files/maven/" }
@@ -20,4 +22,21 @@ dependencies {
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.17.1-2.0.2")
     compileOnly fg.deobf("de.melanx:SkyblockBuilder:1.17.1-2.0.22")
     implementation fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.17.1-1.0.6")
+    
+    coremods 'io.github.noeppi_noeppi.misc:CoreModTypes:5.0.1-2'
+
+    implementation curse.mod(533254, 3480699) // Death Generator
+    implementation curse.mod(534052, 3507702) // Eerie Hauntings
+    implementation curse.mod(533925, 3508540) // Boohoo!
+    implementation curse.mod(534540, 3505758) // Observed
+    implementation curse.mod(535093, 3507817) // Trick XOR Treat
+    implementation curse.mod(534968, 3496367) // Spooky Scary Jockeys
+    implementation curse.mod(535538, 3507814) // Bad to the Bone
+    implementation curse.mod(535636, 3508390) // Trick or Treat
+    implementation curse.mod(532846, 3491284) // Torment
+    implementation curse.mod(537539, 3507499) // BumpkinBatch
+    implementation curse.mod(538316, 3505882) // Death Knell
+    implementation curse.mod(539461, 3508076) // Ender Arm
+    implementation curse.mod(539278, 3505849) // Scary Twig Snap
+    implementation curse.mod(541980, 3509202) // Lost In The Mist
 }

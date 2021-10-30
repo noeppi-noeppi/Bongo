@@ -1,0 +1,124 @@
+{
+  "tasks": [
+    {
+      "type": "bongo.item",
+      "id": "badbone:glasses",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "dicemcdeathgen:pumpkin_of_suffering",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "eeriehauntings:calcite_chalk",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "enderarm:ender_arm",
+      "Count": 1,
+      "tag": {
+        "handData": {},
+        "Damage": 0
+      }
+    },
+    {
+      "type": "bongo.item",
+      "id": "observed:observereye",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "trickortreat:bonebreaker",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "trickxortreat:creeper_chocolate",
+      "Count": 1
+    },
+    {
+      "type": "spooky.exorcise",
+      "CorrectTool": true
+    },
+    {
+      "type": "spooky.mist",
+      "Sanity": 60
+    },
+    {
+      "type": "spooky.mist",
+      "Sanity": 80
+    },
+    {
+      "type": "spooky.torment",
+      "Level": 4
+    },
+    {
+      "type": "spooky.torment",
+      "Level": 8
+    },
+    {
+      "type": "bongo.biome",
+      "biome": "bumpkinbatch:pumpkin_patch"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "boohoo:ghost"
+    },
+    {
+      "type": "bongo.entity",
+      "entity": "jockeys:skeleton_bat"
+    },
+    {
+      "type": "bongo.potion",
+      "potion": "badbone:chrono"
+    },
+    {
+      "type": "bongo.item",
+      "id": "bumpkinbatch:gummy_boars",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "dicemcdeathgen:pumpkin_of_pain",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "eeriehauntings:emf_counter",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "minecraft:pufferfish",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "minecraft:pumpkin_seeds",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "trickortreat:sour_patch_zombies",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "bumpkinbatch:creeper_stick",
+      "Count": 1
+    },
+    {
+      "type": "bongo.item",
+      "id": "minecraft:soul_torch",
+      "Count": 8
+    },
+    {
+      "type": "bongo.item",
+      "id": "minecraft:tripwire_hook",
+      "Count": 1
+    }
+  ]
+}

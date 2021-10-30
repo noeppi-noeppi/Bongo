@@ -87,5 +87,12 @@
   "bongo.wc.bongo.rows": "One row",
   "bongo.wc.bongo.rows_and_columns": "A row or a column",
   "bongo.win": " won",
-  "bongo.winplayers": " won. Players:"
+  "bongo.winplayers": " won. Players:",
+  "bongo.spooky.exorcise": "Exorcise Ghost",
+  "bongo.spooky.exorcise.expell": "May expell",
+  "bongo.spooky.exorcise.needstool": "Needs correct tool",
+  "bongo.spooky.mist": "Lost in the Mist",
+  "bongo.spooky.mist.reach": "Go below %s",
+  "bongo.spooky.torment": "Torment",
+  "bongo.spooky.torment.reach": "Reach %s"
 }

@@ -1,0 +1,43 @@
+{
+  "startingInventory": [
+    {
+      "id": "minecraft:carved_pumpkin",
+      "Count": 1,
+      "Slot": "head"
+    },
+    {
+      "id": "minecraft:stone_sword",
+      "Count": 1,
+      "tag": {
+        "Damage": 0,
+        "Enchantments": [
+          {
+            "lvl": 3,
+            "id": "trickxortreat:treat"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spook:old_notes",
+      "Count": 16
+    }
+  ],
+  "maxTime": 40271,
+  "friendlyFire": false,
+  "consumeItems": false,
+  "pvp": false,
+  "emergencyItems": [
+    {
+      "id": "spook:old_book",
+      "Count": 8
+    }
+  ],
+  "invulnerable": true,
+  "teleporter": "bongo.no_tp",
+  "lockout": false,
+  "winCondition": "bongo.all",
+  "lockTaskOnDeath": false,
+  "teleportsPerTeam": 1,
+  "backpackInventory": []
+}
