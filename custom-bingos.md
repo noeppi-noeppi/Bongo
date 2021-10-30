@@ -132,7 +132,7 @@ bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a
 
 ### teleportRadius
 
-`teleportRadius` is the distance from spawn where the players will be teleported when a respective teleporter is chosen in the settings. Default is `10000`.
+`teleportRadius` is the distance from spawn where the players will be teleported. Please note that this is not supported by all [teleporters](#Teleporter) Default is `10000`.
 
 ### maxTime
 
