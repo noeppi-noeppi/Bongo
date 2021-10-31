@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -45,5 +46,10 @@ public class BongoCommands {
         ).then(
                 literal("emergency").executes(new EmergencyCommand())
         ));
+        
+        event.getDispatcher().register(literal("sanity")
+                        .then(argument("players", EntityArgument.players())
+                                .then(argument("sanity", FloatArgumentType.floatArg(0, 100))
+                                        .executes(new SanityCommand()))));
     }
 }

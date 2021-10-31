@@ -1,9 +1,13 @@
 package io.github.noeppi_noeppi.mods.bongo.effect;
 
+import de.melanx.boohoo.capability.GhostCapability;
+import de.melanx.boohoo.capability.IGhostStatus;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoWinEvent;
+import io.github.noeppi_noeppi.mods.torment.cap.TormentData;
+import melonslise.spook.common.init.SpookCapabilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -35,6 +39,19 @@ public class DefaultEffects {
         mgr.stats.keySet().forEach(stat -> mgr.stats.put(stat, 0));
         mgr.markAllDirty();
         mgr.sendStats(event.getPlayer());
+        TormentData.get(event.getPlayer()).reset();
+        event.getPlayer().getCapability(com.cartoonishvillain.eeriehauntings.capabilities.playercapability.PlayerCapability.INSTANCE).ifPresent(cap -> {
+            if (cap instanceof com.cartoonishvillain.eeriehauntings.capabilities.playercapability.PlayerCapabilityManager m) {
+                m.deserializeNBT(new com.cartoonishvillain.eeriehauntings.capabilities.playercapability.PlayerCapabilityManager().serializeNBT());
+            }
+        });
+        event.getPlayer().getCapability(com.cartoonishvillain.observed.capabilities.PlayerCapability.INSTANCE).ifPresent(cap -> {
+            if (cap instanceof com.cartoonishvillain.observed.capabilities.PlayerCapabilityManager m) {
+                m.deserializeNBT(new com.cartoonishvillain.observed.capabilities.PlayerCapabilityManager().serializeNBT());
+            }
+        });
+        event.getPlayer().getCapability(GhostCapability.INSTANCE).ifPresent(IGhostStatus::invalidate);
+        event.getPlayer().getCapability(SpookCapabilities.SANITY).ifPresent(cap -> cap.set(100));
     }
 
     @SubscribeEvent
