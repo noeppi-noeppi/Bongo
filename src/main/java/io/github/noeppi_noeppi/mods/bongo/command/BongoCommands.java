@@ -48,6 +48,7 @@ public class BongoCommands {
         ));
         
         event.getDispatcher().register(literal("sanity")
+                        .requires(cs -> cs.hasPermission(2))
                         .then(argument("players", EntityArgument.players())
                                 .then(argument("sanity", FloatArgumentType.floatArg(0, 100))
                                         .executes(new SanityCommand()))));
