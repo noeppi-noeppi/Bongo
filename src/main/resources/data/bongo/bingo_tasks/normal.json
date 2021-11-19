@@ -22,6 +22,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:amethyst_cluster"
+    },
+    {
+      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:ancient_debris"
     },
@@ -64,6 +69,11 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:arrow"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:azalea"
     },
     {
       "type": "bongo.item",
@@ -119,6 +129,11 @@
       "type": "bongo.item",
       "weight": 5,
       "id": "minecraft:bell"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:big_dripleaf"
     },
     {
       "type": "bongo.item",
@@ -882,6 +897,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:flowering_azalea"
+    },
+    {
+      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:furnace"
     },
@@ -939,11 +959,6 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:gold_nugget"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 25,
-      "id": "minecraft:gold_ore"
     },
     {
       "type": "bongo.item",
@@ -1787,6 +1802,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:powder_snow_bucket"
+    },
+    {
+      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:powered_rail"
     },
@@ -1929,6 +1949,11 @@
       "type": "bongo.item",
       "weight": 22,
       "id": "minecraft:rail"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 25,
+      "id": "minecraft:raw_gold"
     },
     {
       "type": "bongo.item",
@@ -2253,12 +2278,22 @@
     {
       "type": "bongo.item",
       "weight": 15,
+      "item": "minecraft:spore_blossom"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
       "id": "minecraft:spruce_boat"
     },
     {
       "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:spruce_slab"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:spyglass"
     },
     {
       "type": "bongo.item",

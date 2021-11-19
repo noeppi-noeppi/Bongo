@@ -87,6 +87,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 20,
+      "id": "minecraft:amethyst_shard"
+    },
+    {
+      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:andesite"
     },
@@ -619,6 +624,11 @@
       "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:coal_ore"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 25,
+      "id": "minecraft:cobbled_deepslate"
     },
     {
       "type": "bongo.item",
@@ -1198,6 +1208,16 @@
     {
       "type": "bongo.item",
       "weight": 20,
+      "id": "minecraft:glow_berries"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "id": "minecraft:glow_ink_sac"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 20,
       "id": "minecraft:gold_block"
     },
     {
@@ -1209,11 +1229,6 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:gold_nugget"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 25,
-      "id": "minecraft:gold_ore"
     },
     {
       "type": "bongo.item",
@@ -1553,11 +1568,6 @@
     {
       "type": "bongo.item",
       "weight": 25,
-      "id": "minecraft:iron_ore"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 25,
       "id": "minecraft:iron_pickaxe"
     },
     {
@@ -1844,6 +1854,11 @@
       "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:light_weighted_pressure_plate"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 30,
+      "id": "minecraft:lightning_rod"
     },
     {
       "type": "bongo.item",
@@ -2442,6 +2457,16 @@
     },
     {
       "type": "bongo.item",
+      "weight": 25,
+      "id": "minecraft:raw_gold"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 25,
+      "id": "minecraft:raw_iron"
+    },
+    {
+      "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:red_banner"
     },
@@ -2779,6 +2804,11 @@
       "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:spruce_wood"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 20,
+      "id": "minecraft:spyglass"
     },
     {
       "type": "bongo.item",
@@ -3227,6 +3257,11 @@
     },
     {
       "type": "bongo.entity",
+      "weight": 15,
+      "entity": "minecraft:goat"
+    },
+    {
+      "type": "bongo.entity",
       "weight": 20,
       "entity": "minecraft:horse"
     },
@@ -3459,6 +3494,11 @@
       "type": "bongo.advancement",
       "weight": 30,
       "advancement": "minecraft:adventure/kill_a_mob"
+    },
+    {
+      "type": "bongo.advancement",
+      "weight": 20,
+      "advancement": "minecraft:husbandry/axolotl_in_a_bucket"
     },
     {
       "type": "bongo.advancement",

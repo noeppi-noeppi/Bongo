@@ -27,6 +27,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:amethyst_cluster"
+    },
+    {
+      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:ancient_debris"
     },
@@ -49,6 +54,11 @@
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:armor_stand"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:azalea"
     },
     {
       "type": "bongo.item",
@@ -109,6 +119,11 @@
       "type": "bongo.item",
       "weight": 14,
       "id": "minecraft:bell"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:big_dripleaf"
     },
     {
       "type": "bongo.item",
@@ -839,6 +854,11 @@
       "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:flower_pot"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:flowering_azalea"
     },
     {
       "type": "bongo.item",
@@ -1747,6 +1767,11 @@
     },
     {
       "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:powder_snow_bucket"
+    },
+    {
+      "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:powered_rail"
     },
@@ -2149,6 +2174,11 @@
       "type": "bongo.item",
       "weight": 15,
       "id": "minecraft:spruce_pressure_plate"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:spyglass"
     },
     {
       "type": "bongo.item",
@@ -2579,6 +2609,11 @@
       "type": "bongo.entity",
       "weight": 15,
       "entity": "minecraft:snow_golem"
+    },
+    {
+      "type": "bongo.item",
+      "weight": 15,
+      "item": "minecraft:spore_blossom"
     },
     {
       "type": "bongo.entity",
