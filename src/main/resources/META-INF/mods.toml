@@ -9,7 +9,7 @@ version="${file.jarVersion}"
 displayName="Bongo"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/bongo"
 updateJSONURL="https://assets.melanx.de/updates/bongo.json"
-authors="noeppi_noeppi, Contributors: MelanX, LordGrimmauld"
+authors="noeppi_noeppi"
 description='''
 It's a bingo mod.
 '''
@@ -17,34 +17,34 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[37.0.95,)"
+    versionRange="[39.0.6,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17.1,)"
+    versionRange="[1.18.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.17.1-2.1.9,)"
+    versionRange="[1.18.1-3.1.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="skyblockbuilder"
     mandatory=false
-    versionRange="[1.17.1-2.0.22,)"
+    versionRange="[1.18.1-3.0.3,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minemention"
     mandatory=false
-    versionRange="[1.17.1-1.0.6,)"
+    versionRange="[1.18-1.1.0,)"
     ordering="NONE"
     side="BOTH"

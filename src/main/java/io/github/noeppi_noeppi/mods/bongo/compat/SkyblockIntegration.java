@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.bongo.compat;
 import de.melanx.skyblockbuilder.api.SkyblockBuilderAPI;
 import de.melanx.skyblockbuilder.data.SkyblockSavedData;
 import de.melanx.skyblockbuilder.util.WorldUtil;
-
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -53,7 +52,7 @@ public class SkyblockIntegration {
 
             Arrays.stream(DyeColor.values()).forEach(color -> {
                 de.melanx.skyblockbuilder.data.Team island = data.getTeam("bongo_" + color.getName());
-                if (island != null && data.deleteTeam(island)) {
+                if (island != null && data.deleteTeam(island.getId())) {
                     for (ServerPlayer player : event.getLevel().getServer().getPlayerList().getPlayers()) {
                         if (island.hasPlayer(player)) WorldUtil.teleportToIsland(player, spawn.get());
                     }

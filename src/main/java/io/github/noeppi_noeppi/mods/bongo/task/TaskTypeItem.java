@@ -108,7 +108,7 @@ public class TaskTypeItem implements TaskTypeSimple<ItemStack> {
         }
         ItemStack stack = ItemStack.of(nbt);
         if (stack.isEmpty()) {
-            throw new IllegalStateException("Empty/Invalid item stack: " + (nbt.getString("id").isEmpty() ? "null" : nbt.getString("id")));
+            throw new IllegalStateException("Empty/Invalid item stack: " + (nbt.getString("id").isEmpty() ? nbt : nbt.getString("id")));
         }
         return stack;
     }

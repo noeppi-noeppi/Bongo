@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +23,7 @@ import java.util.function.Predicate;
 public class Task implements INBTSerializable<CompoundTag> {
 
     public static Task empty() {
-        return new Task(TaskTypeEmpty.INSTANCE, TaskTypeEmpty.INSTANCE);
+        return new Task(TaskTypeEmpty.INSTANCE, Unit.INSTANCE);
     }
 
     private TaskType<?, ?> type;
@@ -119,14 +120,14 @@ public class Task implements INBTSerializable<CompoundTag> {
         if (type == null) {
             BongoMod.getInstance().logger.error("Failed to read task: Unknown task type: {}", nbt.getString("type"));
             type = TaskTypeEmpty.INSTANCE;
-            element = TaskTypeEmpty.INSTANCE;
+            element = Unit.INSTANCE;
         } else {
             try {
                 element = type.deserializeNBT(nbt);
             } catch (Exception e) {
                 String typeId = type.getId();
                 type = TaskTypeEmpty.INSTANCE;
-                element = TaskTypeEmpty.INSTANCE;
+                element = Unit.INSTANCE;
                 BongoMod.getInstance().logger.error("Failed to read task of type {}: {}", typeId, e.getMessage());
             }
             validateElementType();

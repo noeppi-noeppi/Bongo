@@ -8,12 +8,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
+public class TaskTypeEmpty implements TaskType<Unit, Void> {
 
     public static final TaskTypeEmpty INSTANCE = new TaskTypeEmpty();
 
@@ -22,8 +23,8 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
     }
 
     @Override
-    public Class<TaskTypeEmpty> getTaskClass() {
-        return TaskTypeEmpty.class;
+    public Class<Unit> getTaskClass() {
+        return Unit.class;
     }
 
     @Override
@@ -52,37 +53,37 @@ public class TaskTypeEmpty implements TaskType<TaskTypeEmpty, Void> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, TaskTypeEmpty content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, Unit content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
 
     }
 
     @Override
-    public String getTranslatedContentName(TaskTypeEmpty content) {
+    public String getTranslatedContentName(Unit content) {
         return "";
     }
 
     @Override
-    public Component getContentName(TaskTypeEmpty content, MinecraftServer server) {
+    public Component getContentName(Unit content, MinecraftServer server) {
         return new TextComponent("");
     }
 
     @Override
-    public boolean shouldComplete(TaskTypeEmpty element, Player player, Void compare) {
+    public boolean shouldComplete(Unit element, Player player, Void compare) {
         return false;
     }
 
     @Override
-    public CompoundTag serializeNBT(TaskTypeEmpty element) {
+    public CompoundTag serializeNBT(Unit element) {
         return new CompoundTag();
     }
 
     @Override
-    public TaskTypeEmpty deserializeNBT(CompoundTag nbt) {
-        return this;
+    public Unit deserializeNBT(CompoundTag nbt) {
+        return Unit.INSTANCE;
     }
 
     @Override
-    public Stream<TaskTypeEmpty> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
-        return Stream.empty();
+    public Stream<Unit> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
+        return Stream.of(Unit.INSTANCE);
     }
 }

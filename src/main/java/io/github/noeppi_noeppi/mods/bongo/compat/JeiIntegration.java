@@ -21,7 +21,6 @@ public class JeiIntegration {
             Method getReloadListener = internalClass.getDeclaredMethod("getReloadListener");
             getReloadListener.setAccessible(true);
             Object reloadListener = getReloadListener.invoke(null);
-            //noinspection deprecation
             if (reloadListener instanceof ResourceManagerReloadListener listener) {
                 listener.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
             }
@@ -51,13 +50,17 @@ public class JeiIntegration {
 
     private static Object getBookmarkList() throws ReflectiveOperationException {
         Class<?> internalClass = Class.forName("mezz.jei.Internal");
-        Field inputHandlerField = internalClass.getDeclaredField("inputHandler");
-        inputHandlerField.setAccessible(true);
-        Object inputHandler = inputHandlerField.get(null);
-        Class<?> inputHandlerClass = Class.forName("mezz.jei.input.InputHandler");
-        Field bookmarkListField = inputHandlerClass.getDeclaredField("bookmarkList");
+        Field jeiRuntimeField = internalClass.getDeclaredField("runtime");
+        jeiRuntimeField.setAccessible(true);
+        Object jeiRuntime = jeiRuntimeField.get(null);
+        Class<?> jeiRuntimeClass = Class.forName("mezz.jei.runtime.JeiRuntime");
+        Field bookmarkOverlayField = jeiRuntimeClass.getDeclaredField("bookmarkOverlay");
+        bookmarkOverlayField.setAccessible(true);
+        Object bookmarkOverlay = bookmarkOverlayField.get(jeiRuntime);
+        Class<?> bookmarkOverlayClass = Class.forName("mezz.jei.gui.overlay.bookmarks.BookmarkOverlay");
+        Field bookmarkListField = bookmarkOverlayClass.getDeclaredField("bookmarkList");
         bookmarkListField.setAccessible(true);
-        return bookmarkListField.get(inputHandler);
+        return bookmarkListField.get(bookmarkOverlay);
     }
 
     private static void clearBookmarks(Object bookmarkList) throws ReflectiveOperationException {

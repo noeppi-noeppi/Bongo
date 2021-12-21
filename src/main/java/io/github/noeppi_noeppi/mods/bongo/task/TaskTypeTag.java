@@ -99,7 +99,6 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Override
     public Set<ItemStack> bookmarkStacks(TagWithCount element) {
-        //noinspection UnstableApiUsage
         return element.getTag().getValues().stream().map(ItemStack::new).collect(ImmutableSet.toImmutableSet());
     }
 

@@ -4,6 +4,7 @@ import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -11,7 +12,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -185,15 +185,15 @@ public class Team {
         teleportsLeft = nbt.getInt("teleportsLeft");
         redeemedEmergency = nbt.getBoolean("redeemedEmergency");
 
-        if (nbt.contains("players", Constants.NBT.TAG_LIST)) {
-            ListTag playerList = nbt.getList("players", Constants.NBT.TAG_COMPOUND);
+        if (nbt.contains("players", Tag.TAG_LIST)) {
+            ListTag playerList = nbt.getList("players", Tag.TAG_COMPOUND);
             players.clear();
             for (int i = 0;i < playerList.size(); i++) {
                 players.add(playerList.getCompound(i).getUUID("player"));
             }
         }
 
-        if (nbt.contains("backpack",Constants.NBT.TAG_COMPOUND)) {
+        if (nbt.contains("backpack", Tag.TAG_COMPOUND)) {
             backpack.deserializeNBT(nbt.getCompound("backpack"));
         } else {
             backpack.deserializeNBT(new CompoundTag());

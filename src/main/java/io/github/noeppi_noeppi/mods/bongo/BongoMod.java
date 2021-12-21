@@ -19,9 +19,7 @@ import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.synchronization.ArgumentTypes;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -58,8 +56,6 @@ public final class BongoMod extends ModX {
     });
 
     public BongoMod() {
-        super("bongo", null);
-
         instance = this;
         network = new BongoNetwork(this);
 

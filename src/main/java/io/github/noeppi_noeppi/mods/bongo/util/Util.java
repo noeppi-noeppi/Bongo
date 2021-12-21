@@ -9,6 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -103,7 +103,7 @@ public class Util {
     }
 
     public static ResourceLocation getLocationFor(CompoundTag nbt, String id) {
-        if (!nbt.contains(id, Constants.NBT.TAG_STRING)) {
+        if (!nbt.contains(id, Tag.TAG_STRING)) {
             throw new IllegalStateException("Resource property for " + id + " missing or not a string.");
         }
         ResourceLocation rl = ResourceLocation.tryParse(nbt.getString(id));

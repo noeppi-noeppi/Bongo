@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.fmlclient.registry.ClientRegistry;
+import net.minecraftforge.client.ClientRegistry;
 
 public class Keybinds {
 

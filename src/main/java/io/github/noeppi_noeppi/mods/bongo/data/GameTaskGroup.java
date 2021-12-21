@@ -5,8 +5,8 @@ import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.util.Constants;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -27,17 +27,17 @@ public class GameTaskGroup {
             int[] weights;
             if (!compound.contains("weight")) {
                 weights = new int[]{ 1 };
-            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_LIST)) {
-                ListTag weightsNBT = compound.getList("weight", Constants.NBT.TAG_INT);
+            } else if (allowsForSpecialWeights && compound.contains("weight", Tag.TAG_LIST)) {
+                ListTag weightsNBT = compound.getList("weight", Tag.TAG_INT);
                 weights = new int[weightsNBT.size()];
                 for (int j = 0; j < weightsNBT.size(); j++) {
                     weights[j] = weightsNBT.getInt(j);
                 }
-            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_INT_ARRAY)) {
+            } else if (allowsForSpecialWeights && compound.contains("weight", Tag.TAG_INT_ARRAY)) {
                 weights = compound.getIntArray("weight");
-            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_LONG_ARRAY)) {
+            } else if (allowsForSpecialWeights && compound.contains("weight", Tag.TAG_LONG_ARRAY)) {
                 weights = Arrays.stream(compound.getLongArray("weight")).mapToInt(l -> (int) l).toArray();
-            } else if (allowsForSpecialWeights && compound.contains("weight", Constants.NBT.TAG_BYTE_ARRAY)) {
+            } else if (allowsForSpecialWeights && compound.contains("weight", Tag.TAG_BYTE_ARRAY)) {
                 byte[] weightsNBT = compound.getByteArray("weight");
                 weights = new int[weightsNBT.length];
                 for (int j = 0; j < weightsNBT.length; j++) {
@@ -126,7 +126,7 @@ public class GameTaskGroup {
     
     public static Either<Task, GameTaskGroup> parseTask(CompoundTag nbt) {
         if (PSEUDO_TYPE.equals(nbt.getString("type"))) {
-            ListTag tasks = nbt.getList("tasks", Constants.NBT.TAG_COMPOUND);
+            ListTag tasks = nbt.getList("tasks", Tag.TAG_COMPOUND);
             if (tasks.size() == 1) {
                 return parseTask(tasks.getCompound(0));
             } else {
@@ -140,7 +140,7 @@ public class GameTaskGroup {
     }
     
     public static GameTaskGroup parseRootTasks(CompoundTag nbt) {
-        ListTag tasks = nbt.getList("tasks", Constants.NBT.TAG_COMPOUND);
+        ListTag tasks = nbt.getList("tasks", Tag.TAG_COMPOUND);
         return new GameTaskGroup(tasks);
     }
 }

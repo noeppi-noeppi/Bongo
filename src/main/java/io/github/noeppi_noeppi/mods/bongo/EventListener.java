@@ -1,6 +1,5 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
-import io.github.noeppi_noeppi.libx.event.DataPacksReloadedEvent;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -41,10 +41,10 @@ import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fmlserverevents.FMLServerStartedEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -159,7 +159,7 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public void serverStart(FMLServerStartedEvent event) {
+    public void serverStart(ServerStartedEvent event) {
         GameTasks.validateAllTasks(event.getServer());
     }
     
@@ -185,8 +185,10 @@ public class EventListener {
     }
     
     @SubscribeEvent
-    public void resourcesReloaded(DataPacksReloadedEvent event) {
-        GameTasks.validateAllTasks(event.getServer());
+    public void resourcesReloaded(OnDatapackSyncEvent event) {
+        if (event.getPlayer() == null) {
+            GameTasks.validateAllTasks(event.getPlayerList().getServer());
+        }
     }
 
     @SubscribeEvent

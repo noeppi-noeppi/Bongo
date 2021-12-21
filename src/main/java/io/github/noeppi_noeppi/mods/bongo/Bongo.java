@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nonnull;
@@ -199,7 +199,6 @@ public class Bongo extends SavedData {
             });
             Random random = new Random();
             for (Team team : getTeams()) {
-                //noinspection UnstableApiUsage
                 List<ServerPlayer> players = level.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
                 if (!players.isEmpty()) {
                     settings.getTeleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, settings.teleportRadius, random);
@@ -303,19 +302,19 @@ public class Bongo extends SavedData {
             winningTeam = null;
         }
 
-        if (nbt.contains("settings_id", Constants.NBT.TAG_STRING) && nbt.contains("settings", Constants.NBT.TAG_COMPOUND)) {
+        if (nbt.contains("settings_id", Tag.TAG_STRING) && nbt.contains("settings", Tag.TAG_COMPOUND)) {
             settings = new GameSettings(new ResourceLocation(nbt.getString("settings_id")), nbt.getCompound("settings"));
         } else {
             settings = GameSettings.DEFAULT;
         }
         for (DyeColor dc : DyeColor.values()) {
-            if (nbt.contains(dc.getSerializedName(), Constants.NBT.TAG_COMPOUND)) {
+            if (nbt.contains(dc.getSerializedName(), Tag.TAG_COMPOUND)) {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getSerializedName()));
             }
         }
 
-        if (nbt.contains("items", Constants.NBT.TAG_LIST)) {
-            ListTag itemList = nbt.getList("items", Constants.NBT.TAG_COMPOUND);
+        if (nbt.contains("items", Tag.TAG_LIST)) {
+            ListTag itemList = nbt.getList("items", Tag.TAG_COMPOUND);
             for (int i = 0; i < items.size(); i++) {
                 if (i < itemList.size()) {
                     items.get(i).deserializeNBT(itemList.getCompound(i));
@@ -328,8 +327,8 @@ public class Bongo extends SavedData {
         }
 
         playersInTcMode.clear();
-        if (nbt.contains("teamchat", Constants.NBT.TAG_LIST)) {
-            ListTag tcPlayers = nbt.getList("teamchat", Constants.NBT.TAG_COMPOUND);
+        if (nbt.contains("teamchat", Tag.TAG_LIST)) {
+            ListTag tcPlayers = nbt.getList("teamchat", Tag.TAG_COMPOUND);
             for (int i = 0; i < tcPlayers.size(); i++) {
                 CompoundTag playerNbt = tcPlayers.getCompound(i);
                 UUID uid = playerNbt.getUUID("player");

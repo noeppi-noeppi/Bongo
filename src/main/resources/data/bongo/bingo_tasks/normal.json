@@ -23,7 +23,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:amethyst_cluster"
+      "id": "minecraft:amethyst_cluster"
     },
     {
       "type": "bongo.item",
@@ -73,7 +73,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:azalea"
+      "id": "minecraft:azalea"
     },
     {
       "type": "bongo.item",
@@ -133,7 +133,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:big_dripleaf"
+      "id": "minecraft:big_dripleaf"
     },
     {
       "type": "bongo.item",
@@ -898,7 +898,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:flowering_azalea"
+      "id": "minecraft:flowering_azalea"
     },
     {
       "type": "bongo.item",
@@ -1803,7 +1803,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:powder_snow_bucket"
+      "id": "minecraft:powder_snow_bucket"
     },
     {
       "type": "bongo.item",
@@ -2278,7 +2278,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:spore_blossom"
+      "id": "minecraft:spore_blossom"
     },
     {
       "type": "bongo.item",
@@ -2293,7 +2293,7 @@
     {
       "type": "bongo.item",
       "weight": 15,
-      "item": "minecraft:spyglass"
+      "id": "minecraft:spyglass"
     },
     {
       "type": "bongo.item",
@@ -3108,7 +3108,7 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:mountains"
+      "biome": "minecraft:windswept_hills"
     },
     {
       "type": "bongo.biome",
@@ -3138,32 +3138,12 @@
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:snowy_tundra"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:snowy_mountains"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
       "biome": "minecraft:beach"
     },
     {
       "type": "bongo.biome",
       "weight": 15,
-      "biome": "minecraft:desert_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:wooded_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:taiga_hills"
+      "biome": "minecraft:windswept_forest"
     },
     {
       "type": "bongo.biome",
@@ -3172,18 +3152,8 @@
     },
     {
       "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:jungle_hills"
-    },
-    {
-      "type": "bongo.biome",
       "weight": 23,
       "biome": "minecraft:birch_forest"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 24,
-      "biome": "minecraft:birch_forest_hills"
     },
     {
       "type": "bongo.biome",
@@ -3194,16 +3164,6 @@
       "type": "bongo.biome",
       "weight": 24,
       "biome": "minecraft:snowy_taiga"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 24,
-      "biome": "minecraft:snowy_taiga_hills"
-    },
-    {
-      "type": "bongo.biome",
-      "weight": 15,
-      "biome": "minecraft:wooded_mountains"
     },
     {
       "type": "bongo.biome",
