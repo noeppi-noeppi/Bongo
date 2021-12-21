@@ -3182,11 +3182,6 @@
     },
     {
       "type": "bongo.biome",
-      "weight": 14,
-      "biome": "minecraft:badlands_plateau"
-    },
-    {
-      "type": "bongo.biome",
       "weight": 13,
       "biome": "minecraft:cold_ocean"
     },
