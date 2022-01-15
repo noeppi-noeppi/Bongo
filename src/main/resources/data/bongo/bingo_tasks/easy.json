@@ -622,11 +622,6 @@
     },
     {
       "type": "bongo.item",
-      "weight": 15,
-      "id": "minecraft:coal_ore"
-    },
-    {
-      "type": "bongo.item",
       "weight": 25,
       "id": "minecraft:cobbled_deepslate"
     },
@@ -1028,11 +1023,6 @@
     {
       "type": "bongo.item",
       "weight": 20,
-      "id": "minecraft:diamond_ore"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 20,
       "id": "minecraft:diamond_pickaxe"
     },
     {
@@ -1104,11 +1094,6 @@
       "type": "bongo.item",
       "weight": 8,
       "id": "minecraft:emerald_block"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 7,
-      "id": "minecraft:emerald_ore"
     },
     {
       "type": "bongo.item",
@@ -2569,11 +2554,6 @@
       "type": "bongo.item",
       "weight": 20,
       "id": "minecraft:redstone_lamp"
-    },
-    {
-      "type": "bongo.item",
-      "weight": 12,
-      "id": "minecraft:redstone_ore"
     },
     {
       "type": "bongo.item",
