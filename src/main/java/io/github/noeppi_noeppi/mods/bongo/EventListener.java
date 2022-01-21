@@ -242,7 +242,7 @@ public class EventListener {
                 return;
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.active() && bongo.isTooltipStack(stack)) {
-                event.getToolTip().add(new TranslatableComponent("bongo.tooltip.required").withStyle(ChatFormatting.GOLD));
+                event.getToolTip().add(Util.REQUIRED_ITEM);
             }
         }
     }
