@@ -2,7 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import mcp.mobius.waila.api.*;
 import mcp.mobius.waila.api.config.IPluginConfig;
