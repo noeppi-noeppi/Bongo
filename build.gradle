@@ -8,7 +8,7 @@ repositories {
     maven { url = "https://dvs1.progwml6.com/files/maven/" }
     maven { url = "https://maven.melanx.de/" }
     maven { url = "https://maven.theillusivec4.top/" }
-    maven { url = "https://cfa2.cursemaven.com" }
+    maven { url = "https://www.cursemaven.com" }
 }
 
 dependencies {

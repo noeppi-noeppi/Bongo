@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 
 public class Util {
 
+    public static final Component REQUIRED_ITEM = new TranslatableComponent("bongo.tooltip.required").withStyle(ChatFormatting.GOLD);
     public static final Comparator<ResourceLocation> COMPARE_RESOURCE = Comparator.comparing(ResourceLocation::getNamespace).thenComparing(ResourceLocation::getPath);
 
     public static final List<DyeColor> PREFERRED_COLOR_ORDER = ImmutableList.of(

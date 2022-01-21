@@ -3,6 +3,7 @@ package io.github.noeppi_noeppi.mods.bongo.compat;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import mcp.mobius.waila.api.*;
 import mcp.mobius.waila.api.config.IPluginConfig;
 import net.minecraft.client.Minecraft;
@@ -11,9 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 @WailaPlugin
-public class JadeIntegration implements IWailaPlugin, IComponentProvider {
+public class WailaIntegration implements IWailaPlugin, IComponentProvider {
 
-    private static final JadeIntegration INSTANCE = new JadeIntegration();
+    private static final WailaIntegration INSTANCE = new WailaIntegration();
     private static final ResourceLocation BONGO = BongoMod.getInstance().resource("bingo_items");
 
     @Override
@@ -33,7 +34,7 @@ public class JadeIntegration implements IWailaPlugin, IComponentProvider {
 
             Block block = accessor.getBlock();
             if (bongo.isTooltipStack(new ItemStack(block))) {
-                tooltip.add(ItemRenderUtil.REQUIRED_ITEM);
+                tooltip.add(Util.REQUIRED_ITEM);
             }
         }
     }

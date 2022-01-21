@@ -243,7 +243,7 @@ public class EventListener {
                 return;
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.active() && bongo.isTooltipStack(stack)) {
-                event.getToolTip().add(ItemRenderUtil.REQUIRED_ITEM);
+                event.getToolTip().add(Util.REQUIRED_ITEM);
             }
         }
     }

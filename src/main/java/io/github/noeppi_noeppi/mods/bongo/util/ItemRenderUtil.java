@@ -11,8 +11,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemRenderUtil {
-
-    public static final Component REQUIRED_ITEM = new TranslatableComponent("bongo.tooltip.required").withStyle(ChatFormatting.GOLD);
     
     public static void renderItem(PoseStack poseStack, MultiBufferSource buffer, ItemStack stack, boolean includeAmount) {
         RenderHelper.resetColor();
