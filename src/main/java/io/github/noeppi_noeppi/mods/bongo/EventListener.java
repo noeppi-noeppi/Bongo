@@ -6,6 +6,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
+import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -242,7 +243,7 @@ public class EventListener {
                 return;
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.active() && bongo.isTooltipStack(stack)) {
-                event.getToolTip().add(new TranslatableComponent("bongo.tooltip.required").withStyle(ChatFormatting.GOLD));
+                event.getToolTip().add(ItemRenderUtil.REQUIRED_ITEM);
             }
         }
     }

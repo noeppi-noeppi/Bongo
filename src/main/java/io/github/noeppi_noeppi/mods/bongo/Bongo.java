@@ -534,7 +534,7 @@ public class Bongo extends SavedData {
 
     private void updateTooltipPredicate() {
         if (level == null) {
-            // We cache the predicates to reduce lagg
+            // We cache the predicates to reduce lag
             List<Predicate<ItemStack>> predicates = new ArrayList<>();
             for (int i = 0; i < 25; i++) {
                 predicates.add(task(i).bongoTooltipStack());
