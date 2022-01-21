@@ -48,3 +48,10 @@ It's a bingo mod.
     versionRange="[1.18-1.1.0,)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.bongo]]
+    modId="jei"
+    mandatory=false
+    versionRange="[9.2.3.77,)"
+    ordering="NONE"
+    side="BOTH"

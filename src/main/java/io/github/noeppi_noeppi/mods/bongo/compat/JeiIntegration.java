@@ -69,10 +69,6 @@ public class JeiIntegration {
         objectListField.setAccessible(true);
         List<?> objectList = (List<?>) objectListField.get(bookmarkList);
         objectList.clear();
-        Field ingredientListField = bookmarkListClass.getDeclaredField("ingredientListElements");
-        ingredientListField.setAccessible(true);
-        List<?> ingredientList = (List<?>) ingredientListField.get(bookmarkList);
-        ingredientList.clear();
         forceBookmarkUpdate(bookmarkList);
     }
 
@@ -97,7 +93,7 @@ public class JeiIntegration {
         Field ingredientManagerField = bookmarkListClass.getDeclaredField("ingredientManager");
         ingredientManagerField.setAccessible(true);
         Object ingredientManager = ingredientManagerField.get(bookmarkList);
-        Field ingredientListField = bookmarkListClass.getDeclaredField("ingredientListElements");
+        Field ingredientListField = bookmarkListClass.getDeclaredField("list");
         ingredientListField.setAccessible(true);
         Object ingredientList = ingredientListField.get(bookmarkList);
         Class<?> bookmarkConfigClass = Class.forName("mezz.jei.config.BookmarkConfig");
