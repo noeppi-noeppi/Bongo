@@ -57,6 +57,7 @@
   "bongo.task.stat.name": "Statistik",
   "bongo.task.tag.empty": "Fehler: Leeres Tag",
   "bongo.task_locked.death": "%s ist gestorben. Eine Aufgabe wurde gesperrt.",
+  "bongo.tasks": "Aufgabe(n)",
   "bongo.team.black": "Team Schwarz",
   "bongo.team.blue": "Team Blau",
   "bongo.team.brown": "Team Braun",
