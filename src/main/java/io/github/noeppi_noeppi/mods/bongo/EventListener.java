@@ -23,6 +23,7 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,10 +35,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -193,14 +191,28 @@ public class EventListener {
 
     @SubscribeEvent
     public void damage(LivingHurtEvent event) {
-        if (!event.getEntityLiving().getCommandSenderWorld().isClientSide && event.getEntityLiving() instanceof Player player && !event.getSource().isBypassInvul()) {
+        handleEvent(event);
+    }
+
+    @SubscribeEvent
+    public void attack(LivingAttackEvent event) {
+        handleEvent(event);
+    }
+
+    private void handleEvent(LivingEvent event) {
+        DamageSource source = fromEvent(event);
+        if (event.getEntityLiving() instanceof Player p && p.isDamageSourceBlocked(source)) {
+            return; // Don't cancel blockedDamage for "Not today thank you"-Advancement (deflect_arrow)
+        }
+
+        if (!event.getEntityLiving().getCommandSenderWorld().isClientSide && event.getEntityLiving() instanceof Player player && !source.isBypassInvul()) {
             Bongo bongo = Bongo.get(player.getCommandSenderWorld());
             Team team = bongo.getTeam(player);
             if (bongo.running() && team != null) {
-                if (event.getSource().getEntity() instanceof Player source) {
+                if (source.getEntity() instanceof Player damageSourcePlayer) {
                     if (!bongo.getSettings().pvp) {
                         event.setCanceled(true);
-                    } else if (team.hasPlayer(source)) {
+                    } else if (team.hasPlayer(damageSourcePlayer)) {
                         if (!bongo.getSettings().friendlyFire) {
                             event.setCanceled(true);
                         }
@@ -212,25 +224,14 @@ public class EventListener {
         }
     }
 
-    @SubscribeEvent
-    public void attack(LivingAttackEvent event) {
-        if (!event.getEntityLiving().getCommandSenderWorld().isClientSide && event.getEntityLiving() instanceof Player player && !event.getSource().isBypassInvul()) {
-            Bongo bongo = Bongo.get(player.getCommandSenderWorld());
-            Team team = bongo.getTeam(player);
-            if (bongo.running() && team != null) {
-                if (event.getSource().getEntity() instanceof Player source) {
-                    if (!bongo.getSettings().pvp) {
-                        event.setCanceled(true);
-                    } else if (team.hasPlayer(source)) {
-                        if (!bongo.getSettings().friendlyFire) {
-                            event.setCanceled(true);
-                        }
-                    }
-                } else if (bongo.getSettings().invulnerable) {
-                    event.setCanceled(true);
-                }
-            }
+    private static DamageSource fromEvent(LivingEvent event) {
+        if (event instanceof LivingHurtEvent hurtEvent) {
+            return hurtEvent.getSource();
         }
+        if (event instanceof LivingAttackEvent attackEvent) {
+            return attackEvent.getSource();
+        }
+        throw new UnsupportedOperationException("no way to find DamageSource from event: " + event.getClass());
     }
 
     @SubscribeEvent
