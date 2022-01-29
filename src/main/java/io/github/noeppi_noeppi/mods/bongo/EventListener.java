@@ -211,16 +211,24 @@ public class EventListener {
             if (bongo.running() && team != null) {
                 if (source.getEntity() instanceof Player damageSourcePlayer) {
                     if (!bongo.getSettings().pvp) {
-                        event.setCanceled(true);
+                        cancelDamage(event, player, source, setDamageToZero);
                     } else if (team.hasPlayer(damageSourcePlayer)) {
                         if (!bongo.getSettings().friendlyFire) {
-                            event.setCanceled(true);
+                            cancelDamage(event, player, source, setDamageToZero);
                         }
                     }
                 } else if (bongo.getSettings().invulnerable) {
-                    event.setCanceled(true);
+                    cancelDamage(event, player, source, setDamageToZero);
                 }
             }
+        }
+    }
+
+    private static void cancelDamage(LivingEvent event, Player player, DamageSource source, Runnable setDamageToZero) {
+        if (player.isDamageSourceBlocked(source)) {
+            setDamageToZero.run();
+        } else {
+            event.setCanceled(true);
         }
     }
 
