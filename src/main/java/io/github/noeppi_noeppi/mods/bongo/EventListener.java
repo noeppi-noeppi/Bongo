@@ -191,17 +191,17 @@ public class EventListener {
 
     @SubscribeEvent
     public void damage(LivingHurtEvent event) {
-        handleEvent(event);
+        handleCommonDamageEvent(event, event.getSource(), () -> event.setAmount(0));
     }
 
     @SubscribeEvent
     public void attack(LivingAttackEvent event) {
-        handleEvent(event);
+        handleCommonDamageEvent(event, event.getSource(), () -> {}); //can't modify damage
     }
 
-    private void handleEvent(LivingEvent event) {
-        DamageSource source = fromEvent(event);
+    private void handleCommonDamageEvent(LivingEvent event, DamageSource source, Runnable setDamageToZero) {
         if (event.getEntityLiving() instanceof Player p && p.isDamageSourceBlocked(source)) {
+            setDamageToZero.run();
             return; // Don't cancel blockedDamage for "Not today thank you"-Advancement (deflect_arrow)
         }
 
@@ -222,16 +222,6 @@ public class EventListener {
                 }
             }
         }
-    }
-
-    private static DamageSource fromEvent(LivingEvent event) {
-        if (event instanceof LivingHurtEvent hurtEvent) {
-            return hurtEvent.getSource();
-        }
-        if (event instanceof LivingAttackEvent attackEvent) {
-            return attackEvent.getSource();
-        }
-        throw new UnsupportedOperationException("no way to find DamageSource from event: " + event.getClass());
     }
 
     @SubscribeEvent
