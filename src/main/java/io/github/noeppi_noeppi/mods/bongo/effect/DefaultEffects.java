@@ -72,30 +72,32 @@ public class DefaultEffects {
         });
 
         MutableComponent leaderboard = new TextComponent("");
-
-        // retrieve a sorted list of all teams in order of completed tasks amount descending
-        List<Team> teams = event.getBongo().getTeams().stream()
-                .filter(team -> !team.getPlayers().isEmpty())
-                .sorted(Comparator.comparingInt(Team::completionAmount))
-                .sorted(Collections.reverseOrder())
-                .toList();
-        int place = 0; // the current placement
-        int toSkip = 0; // the amount of places to skip (because of equal amount of completed tasks)
-        int prevTeam = -1; // the amount of tasks the previous team had
-        for (Team team : teams) {
-            int completionAmount = team.completionAmount();
-            if (prevTeam == completionAmount) {
-                toSkip++;
-            } else {
-                place += 1 + toSkip;
-                toSkip = 0;
+        boolean showLeaderboard = event.getBongo().getSettings().leaderboard;
+        if (showLeaderboard) {
+            // retrieve a sorted list of all teams in order of completed tasks amount descending
+            List<Team> teams = event.getBongo().getTeams().stream()
+                    .filter(team -> !team.getPlayers().isEmpty())
+                    .sorted(Comparator.comparingInt(Team::completionAmount))
+                    .sorted(Collections.reverseOrder())
+                    .toList();
+            int place = 0; // the current placement
+            int toSkip = 0; // the amount of places to skip (because of equal amount of completed tasks)
+            int prevTeam = -1; // the amount of tasks the previous team had
+            for (Team team : teams) {
+                int completionAmount = team.completionAmount();
+                if (prevTeam == completionAmount) {
+                    toSkip++;
+                } else {
+                    place += 1 + toSkip;
+                    toSkip = 0;
+                }
+                leaderboard.append(place + ". ");
+                leaderboard.append(team.getName());
+                leaderboard.append(" - " + completionAmount + " ");
+                leaderboard.append(TASKS);
+                leaderboard.append("\n");
+                prevTeam = completionAmount;
             }
-            leaderboard.append(place + ". ");
-            leaderboard.append(team.getName());
-            leaderboard.append(" - " + completionAmount + " ");
-            leaderboard.append(TASKS);
-            leaderboard.append("\n");
-            prevTeam = completionAmount;
         }
 
         event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
@@ -103,7 +105,9 @@ public class DefaultEffects {
             player.connection.send(new ClientboundSetTitleTextPacket(tc));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 10));
             player.connection.send(new ClientboundSoundPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1));
-            player.sendMessage(leaderboard, player.getUUID());
+            if (showLeaderboard) {
+                player.sendMessage(leaderboard, player.getUUID());
+            }
         });
     }
 }

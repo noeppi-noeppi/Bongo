@@ -33,7 +33,9 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
   ],
   "teleporter": "bongo.no_tp",
   "teleportRadius": 500,
-  "maxTime": -1
+  "maxTime": -1,
+  "lockout": false,
+  "leaderboard": false
 }
 ```
 
@@ -141,6 +143,10 @@ bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a
 ### lockout
 
 Setting `lockout` to true will lock a task for all other teams as soon as one teams completes a task. Default is `false`.
+
+### leaderboard
+
+Setting `leaderboard` to true will show a list of teams which team had which amount of tasks completed. Useful for [`winAll`](#win-condition) condition. Default is `false`.
 
 ## Tasks
 
