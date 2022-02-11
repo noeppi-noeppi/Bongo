@@ -183,7 +183,11 @@ public class GameSettings {
             this.lockout = false;
         }
 
-        this.leaderboard = nbt.getBoolean("leaderboard");
+        if (nbt.contains("leaderboard")) {
+            this.leaderboard = nbt.getBoolean("leaderboard");
+        } else {
+            this.leaderboard = false;
+        }
 
         this.nbt = new CompoundTag();
         this.nbt.putString("winCondition", winCondition.id);

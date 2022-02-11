@@ -16,13 +16,10 @@ import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class DefaultEffects {
-
-    private static final Component TASKS = new TranslatableComponent("bongo.tasks");
 
     @SubscribeEvent
     public void gameStart(BongoStartEvent.Level event) {
@@ -71,41 +68,42 @@ public class DefaultEffects {
             }
         });
 
-        MutableComponent leaderboard = new TextComponent("");
-        boolean showLeaderboard = event.getBongo().getSettings().leaderboard;
-        if (showLeaderboard) {
+        MutableComponent leaderboard;
+        if (!event.getBongo().getSettings().leaderboard) {
+            leaderboard = null;
+        } else {
+            leaderboard = new TextComponent("");
             // retrieve a sorted list of all teams in order of completed tasks amount descending
             List<Team> teams = event.getBongo().getTeams().stream()
                     .filter(team -> !team.getPlayers().isEmpty())
-                    .sorted(Comparator.comparingInt(Team::completionAmount))
-                    .sorted(Collections.reverseOrder())
+                    .sorted(Comparator.comparingInt(Team::completionAmount).reversed())
                     .toList();
             int place = 0; // the current placement
             int toSkip = 0; // the amount of places to skip (because of equal amount of completed tasks)
             int prevTeam = -1; // the amount of tasks the previous team had
             for (Team team : teams) {
-                int completionAmount = team.completionAmount();
-                if (prevTeam == completionAmount) {
-                    toSkip++;
-                } else {
-                    place += 1 + toSkip;
+                int completed = team.completionAmount();
+                toSkip += 1;
+                if (prevTeam != completed) {
+                    place += toSkip;
                     toSkip = 0;
                 }
-                leaderboard.append(place + ". ");
-                leaderboard.append(team.getName());
-                leaderboard.append(" - " + completionAmount + " ");
-                leaderboard.append(TASKS);
+                leaderboard.append(new TextComponent(" "));
+                leaderboard.append(new TranslatableComponent(
+                        completed == 1 ? "bongo.completed_tasks.one" : "bongo.completed_tasks.multiple",
+                        Integer.toString(place), team.getName(), Integer.toString(completed)
+                ));
                 leaderboard.append("\n");
-                prevTeam = completionAmount;
+                prevTeam = completed;
             }
         }
-
+        
         event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
             player.sendMessage(tcc, player.getUUID());
             player.connection.send(new ClientboundSetTitleTextPacket(tc));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 10));
             player.connection.send(new ClientboundSoundPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1));
-            if (showLeaderboard) {
+            if (leaderboard != null) {
                 player.sendMessage(leaderboard, player.getUUID());
             }
         });
