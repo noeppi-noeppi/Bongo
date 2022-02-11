@@ -12,15 +12,13 @@ import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 public class CreateCommand implements Command<CommandSourceStack> {
 
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        Player player = context.getSource().getPlayerOrException();
-        Level level = player.level;
+        ServerLevel level = context.getSource().getLevel();
         Bongo bongo = Bongo.get(level);
         if (bongo.running()) {
             throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.create.running")).create();
@@ -37,7 +35,7 @@ public class CreateCommand implements Command<CommandSourceStack> {
         }
         bongo.activate();
 
-        ServerMessages.broadcast(level, new TranslatableComponent("bongo.info").append(player.getDisplayName()).append(new TranslatableComponent("bongo.cmd.create.done")));
+        ServerMessages.broadcast(level, new TranslatableComponent("bongo.info").append(context.getSource().getDisplayName()).append(new TranslatableComponent("bongo.cmd.create.done")));
 
         return 0;
     }

@@ -24,6 +24,10 @@ public class DefaultEffects {
     @SubscribeEvent
     public void gameStart(BongoStartEvent.Level event) {
         event.getLevel().setDayTime(600);
+        event.getLevel().serverLevelData.setRaining(false);
+        event.getLevel().serverLevelData.setThundering(false);
+        event.getLevel().serverLevelData.setWanderingTraderSpawnDelay(24000);
+        event.getLevel().serverLevelData.setWanderingTraderSpawnDelay(25);
     }
 
     @SubscribeEvent
