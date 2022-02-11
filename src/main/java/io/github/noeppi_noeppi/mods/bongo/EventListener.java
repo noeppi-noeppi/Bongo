@@ -196,15 +196,10 @@ public class EventListener {
 
     @SubscribeEvent
     public void attack(LivingAttackEvent event) {
-        handleCommonDamageEvent(event, event.getSource(), () -> {}); //can't modify damage
+        handleCommonDamageEvent(event, event.getSource(), () -> {}); // Can't modify damage
     }
 
     private void handleCommonDamageEvent(LivingEvent event, DamageSource source, Runnable setDamageToZero) {
-        if (event.getEntityLiving() instanceof Player p && p.isDamageSourceBlocked(source)) {
-            setDamageToZero.run();
-            return; // Don't cancel blockedDamage for "Not today thank you"-Advancement (deflect_arrow)
-        }
-
         if (!event.getEntityLiving().getCommandSenderWorld().isClientSide && event.getEntityLiving() instanceof Player player && !source.isBypassInvul()) {
             Bongo bongo = Bongo.get(player.getCommandSenderWorld());
             Team team = bongo.getTeam(player);
