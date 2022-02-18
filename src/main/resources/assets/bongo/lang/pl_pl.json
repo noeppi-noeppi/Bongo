@@ -57,6 +57,8 @@
   "bongo.task.stat.name": "Statystyka",
   "bongo.task.tag.empty": "Błąd: pusty tag",
   "bongo.task_locked.death": "Gracz %s zmarł. Zadanie zostało zablokowane.",
+  "bongo.completed_tasks.one": "%s. %s - wykonano zadań: %s",
+  "bongo.completed_tasks.multiple": "%s. %s - wykonano zadań: %s",
   "bongo.team.black": "Drużyna czarna",
   "bongo.team.blue": "Drużyna niebieska",
   "bongo.team.brown": "Drużyna brązowa",
