@@ -15,8 +15,9 @@ public class WailaIntegration implements IWailaPlugin, IComponentProvider {
 
     private static final WailaIntegration INSTANCE = new WailaIntegration();
     private static final ResourceLocation BONGO = BongoMod.getInstance().resource("bingo_items");
-
+    
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public void register(IRegistrar registrar) {
         registrar.registerComponentProvider(INSTANCE, TooltipPosition.TAIL, Block.class);
         registrar.addConfig(BONGO, true);

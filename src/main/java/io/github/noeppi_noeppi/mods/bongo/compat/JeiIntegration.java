@@ -1,9 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.compat;
 
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
@@ -11,25 +9,10 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class JeiIntegration {
-
-    public static void reloadJeiTooltips() {
-        try {
-            Class<?> internalClass = Class.forName("mezz.jei.Internal");
-            Method getReloadListener = internalClass.getDeclaredMethod("getReloadListener");
-            getReloadListener.setAccessible(true);
-            Object reloadListener = getReloadListener.invoke(null);
-            if (reloadListener instanceof ResourceManagerReloadListener listener) {
-                listener.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
-            }
-        } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            //
-        } catch (Throwable t) {
-            BongoMod.getInstance().logger.warn("Could not reload JEI item list: ", t);
-        }
-    }
 
     public static void setBookmarks(Set<ItemStack> stacks, Set<ResourceLocation> advancements) {
         try {
@@ -41,6 +24,7 @@ public class JeiIntegration {
             for (ResourceLocation advancement : advancements) {
                 addBookmark(bookmarkList, getAdvancementIngredient(advancement));
             }
+            forceBookmarkUpdate(bookmarkList);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             //
         } catch (Throwable t) {
@@ -75,32 +59,57 @@ public class JeiIntegration {
     private static void addBookmark(Object bookmarkList, Object bookmark) throws ReflectiveOperationException {
         if (bookmark != null) {
             Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
-            Method addMethod = bookmarkListClass.getDeclaredMethod("add", Object.class);
-            addMethod.setAccessible(true);
-            addMethod.invoke(bookmarkList, bookmark);
+            Class<?> registeredIngredientsClass = Class.forName("mezz.jei.ingredients.RegisteredIngredients");
+            Field registeredIngredientsField = bookmarkListClass.getDeclaredField("registeredIngredients");
+            registeredIngredientsField.setAccessible(true);
+            Object registeredIngredients = registeredIngredientsField.get(bookmarkList);
+            Class<?> iTypedIngredientClass = Class.forName("mezz.jei.api.ingredients.ITypedIngredient");
+            Class<?> typedIngredientClass = Class.forName("mezz.jei.ingredients.TypedIngredient");
+            Method createMethod = typedIngredientClass.getDeclaredMethod("create", registeredIngredientsClass, Object.class);
+            createMethod.setAccessible(true);
+            //noinspection JavaReflectionInvocation,unchecked
+            Optional<Object> typedIngredient = (Optional<Object>) createMethod.invoke(null, registeredIngredients, bookmark);
+            if (typedIngredient.isPresent()) {
+                Method addMethod = bookmarkListClass.getDeclaredMethod("add", iTypedIngredientClass);
+                addMethod.setAccessible(true);
+                try {
+                    //noinspection JavaReflectionInvocation
+                    addMethod.invoke(bookmarkList, typedIngredient.get());
+                } catch (Exception e) {
+                    // Something seems to throw an exception here occasionally.
+                    // Ignore it, so the other elements can be added as well.
+                }
+            } else {
+                BongoMod.getInstance().logger.warn("Failed to create JEI ingredient of bookmark object: " + bookmark);
+            }
         }
     }
 
-    // forces an update. add and clear will do this automatically.
+    // forces an update. clear will do this automatically.
     private static void forceBookmarkUpdate(Object bookmarkList) throws ReflectiveOperationException {
         Class<?> bookmarkListClass = Class.forName("mezz.jei.bookmarks.BookmarkList");
         Method notifyListenersOfChangeMethod = bookmarkListClass.getDeclaredMethod("notifyListenersOfChange");
         notifyListenersOfChangeMethod.setAccessible(true);
-        notifyListenersOfChangeMethod.invoke(bookmarkList);
+        try {
+            notifyListenersOfChangeMethod.invoke(bookmarkList);
+        } catch (Exception e) {
+            // Something seems to throw an exception here occasionally.
+            // Ignore it, so the other update work is done.
+        }
         Field bookmarkConfigField = bookmarkListClass.getDeclaredField("bookmarkConfig");
         bookmarkConfigField.setAccessible(true);
         Object bookmarkConfig = bookmarkConfigField.get(bookmarkList);
-        Field ingredientManagerField = bookmarkListClass.getDeclaredField("ingredientManager");
-        ingredientManagerField.setAccessible(true);
-        Object ingredientManager = ingredientManagerField.get(bookmarkList);
+        Field registeredIngredientsField = bookmarkListClass.getDeclaredField("registeredIngredients");
+        registeredIngredientsField.setAccessible(true);
+        Object registeredIngredients = registeredIngredientsField.get(bookmarkList);
         Field ingredientListField = bookmarkListClass.getDeclaredField("list");
         ingredientListField.setAccessible(true);
         Object ingredientList = ingredientListField.get(bookmarkList);
         Class<?> bookmarkConfigClass = Class.forName("mezz.jei.config.BookmarkConfig");
-        Method saveBookmarksMethod = bookmarkConfigClass.getDeclaredMethod("saveBookmarks", Class.forName("mezz.jei.api.runtime.IIngredientManager"), List.class);
+        Method saveBookmarksMethod = bookmarkConfigClass.getDeclaredMethod("saveBookmarks", Class.forName("mezz.jei.ingredients.RegisteredIngredients"), List.class);
         saveBookmarksMethod.setAccessible(true);
         //noinspection JavaReflectionInvocation
-        saveBookmarksMethod.invoke(bookmarkConfig, ingredientManager, ingredientList);
+        saveBookmarksMethod.invoke(bookmarkConfig, registeredIngredients, ingredientList);
     }
     
     @Nullable

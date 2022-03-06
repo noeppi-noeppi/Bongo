@@ -64,7 +64,6 @@ public class Bongo extends SavedData {
             }
             if (ClientConfig.addItemTooltips.get()) {
                 bongo.updateTooltipPredicate();
-                JeiIntegration.reloadJeiTooltips();
             }
             if (ClientConfig.modifyJeiBookamrks.get()) {
                 if (bongo.running()) {

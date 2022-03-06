@@ -1,28 +1,52 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
 import io.github.noeppi_noeppi.libx.util.LazyValue;
+import io.github.noeppi_noeppi.libx.util.TagAccess;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.SetTag;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public final class TagWithCount {
     
     private final ResourceLocation id;
-    // Must be lazy as during deserialisation the tag may not have been read yet.
-    private final LazyValue<Tag<Item>> tag;
+    private final TagKey<Item> tag;
+    private final LazyValue<Predicate<Item>> contains;
+    private final LazyValue<List<Item>> itemList;
     private final int count;
 
     public TagWithCount(ResourceLocation id, int count) {
         this.id = id;
         this.count = count;
-        this.tag = new LazyValue<>(() -> {
-            Tag<Item> tag = ItemTags.getAllTags().getTag(id);
-            return tag == null ? SetTag.empty() : tag;
+        this.tag = TagKey.create(Registry.ITEM_REGISTRY, id);
+        this.contains = new LazyValue<>(() -> {
+            try {
+                // Can't use TagAccess for performance reasons
+                @SuppressWarnings("unchecked")
+                Registry<Item> registry = (Registry<Item>) Registry.REGISTRY.get(Registry.ITEM_REGISTRY.location());
+                if (registry == null) throw new IllegalStateException("Item registry not found");
+                HolderSet.Named<Item> tag = TagAccess.ROOT.get(this.tag);
+                return item -> registry.getHolder(registry.getId(item)).map(tag::contains).orElse(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return item -> false;
+            }
+        });
+        this.itemList = new LazyValue<>(() -> {
+            try {
+                HolderSet.Named<Item> tag = TagAccess.ROOT.get(this.tag);
+                return tag.stream().map(Holder::value).toList();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return List.of();
+            }
         });
     }
     
@@ -31,14 +55,25 @@ public final class TagWithCount {
         this.id = parent.id;
         this.count = count;
         this.tag = parent.tag;
+        // Keep the lazy value for performance reasons
+        this.contains = parent.contains;
+        this.itemList = parent.itemList;
     }
 
     public ResourceLocation getId() {
         return id;
     }
 
-    public Tag<Item> getTag() {
-        return tag.get();
+    public TagKey<Item> getTag() {
+        return tag;
+    }
+
+    public List<Item> getItems() {
+        return itemList.get();
+    }
+    
+    public boolean contains(Item item) {
+        return contains.get().test(item);
     }
 
     public int getCount() {

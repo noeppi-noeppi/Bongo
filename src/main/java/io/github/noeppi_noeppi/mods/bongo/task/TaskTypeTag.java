@@ -2,8 +2,10 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.libx.util.Misc;
+import io.github.noeppi_noeppi.libx.util.TagAccess;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -11,12 +13,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +29,7 @@ import net.minecraft.world.item.Items;
 import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -89,17 +94,17 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Override
     public void consumeItem(TagWithCount element, Player player) {
-        Util.removeItems(player, element.getCount(), stack -> element.getTag().contains(stack.getItem()));
+        Util.removeItems(player, element.getCount(), stack -> element.contains(stack.getItem()));
     }
 
     @Override
     public Predicate<ItemStack> bongoTooltipStack(TagWithCount element) {
-        return stack -> element.getTag().contains(stack.getItem());
+        return stack -> element.contains(stack.getItem());
     }
 
     @Override
     public Set<ItemStack> bookmarkStacks(TagWithCount element) {
-        return element.getTag().getValues().stream().map(ItemStack::new).collect(ImmutableSet.toImmutableSet());
+        return element.getItems().stream().map(ItemStack::new).collect(ImmutableSet.toImmutableSet());
     }
 
     @Override
@@ -114,8 +119,11 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Override
     public void validate(TagWithCount element, MinecraftServer server) {
-        if (!element.getId().equals(Misc.MISSIGNO) && element.getTag().getValues().isEmpty()) {
-            throw new IllegalStateException("Empty or unknown tag: " + element.getId());
+        if (!element.getId().equals(Misc.MISSIGNO)) {
+            Optional<HolderSet.Named<Item>> tag = TagAccess.ROOT.tryGet(element.getTag());
+            if (tag.isEmpty() || tag.get().stream().toList().isEmpty()) {
+                throw new IllegalStateException("Empty or unknown tag: " + element.getId());
+            }
         }
     }
 
@@ -133,21 +141,26 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Override
     public Stream<TagWithCount> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
+        @SuppressWarnings("unchecked")
+        Registry<Item> registry = (Registry<Item>) Registry.REGISTRY.get(Registry.ITEM_REGISTRY.location());
+        if (registry == null) {
+            new IllegalStateException("Item registry not found").printStackTrace();
+            return Stream.empty();
+        }
         if (player == null) {
-            return ItemTags.getAllTags().getAvailableTags().stream()
-                    .map(id -> new TagWithCount(id, 1));
+            return registry.getTags().map(Pair::getFirst).map(key -> new TagWithCount(key.location(), 1));
         } else {
             return player.getInventory().items.stream()
                     .filter(stack -> !stack.isEmpty())
-                    .flatMap(stack -> ItemTags.getAllTags().getMatchingTags(stack.getItem()).stream()
-                            .map(rl -> new TagWithCount(rl, stack.getCount()))
+                    .flatMap(stack -> registry.getResourceKey(stack.getItem()).flatMap(registry::getHolder).stream()
+                            .flatMap(Holder::tags).map(key -> new TagWithCount(key.location(), stack.getCount()))
                     );
         }
     }
 
     @Nullable
     private static ItemStack cycle(TagWithCount element) {
-        List<Item> items = element.getTag().getValues();
+        List<Item> items = element.getItems();
         if (items.isEmpty()) {
             return null;
         } else {
