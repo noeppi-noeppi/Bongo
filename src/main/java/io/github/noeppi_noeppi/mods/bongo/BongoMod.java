@@ -8,7 +8,6 @@ import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
 import io.github.noeppi_noeppi.mods.bongo.compat.CuriosIntegration;
 import io.github.noeppi_noeppi.mods.bongo.compat.MineMentionIntegration;
-import io.github.noeppi_noeppi.mods.bongo.compat.SkyblockIntegration;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.datagen.DataGenerators;
 import io.github.noeppi_noeppi.mods.bongo.easter.EasterEvents;
@@ -86,10 +85,6 @@ public class BongoMod extends ModXRegistration {
         if (ModList.get().isLoaded("curios")) {
             MinecraftForge.EVENT_BUS.register(new CuriosIntegration());
         }
-
-        if (ModList.get().isLoaded("skyblockbuilder")) {
-            MinecraftForge.EVENT_BUS.register(new SkyblockIntegration.Events());
-        }
     }
 
     @Nonnull
@@ -117,10 +112,6 @@ public class BongoMod extends ModXRegistration {
         PlayerTeleporters.registerTeleporter(PlayerTeleporterDefault.INSTANCE);
         PlayerTeleporters.registerTeleporter(PlayerTeleporterStandard.INSTANCE);
         PlayerTeleporters.registerTeleporter(PlayerTeleporterNothing.INSTANCE);
-
-        if (ModList.get().isLoaded("skyblockbuilder")) {
-            PlayerTeleporters.registerTeleporter(SkyblockIntegration.Teleporter.INSTANCE);
-        }
         
         if (ModList.get().isLoaded("minemention")) {
             MineMentionIntegration.setup();

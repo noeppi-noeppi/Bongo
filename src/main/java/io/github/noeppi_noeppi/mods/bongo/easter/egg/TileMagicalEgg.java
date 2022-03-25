@@ -15,7 +15,7 @@ public class TileMagicalEgg extends TileEntityBase implements ITickableTileEntit
     public void tick() {
         if (world != null && world.isRemote) {
             for (int i = 0; i < 10; i++) {
-                world.addParticle(ParticleInit.ARCANE_RANDOM.get(), getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, 0.025, 0.03, 0.025);
+                world.addParticle(ParticleInit.ARCANE_RANDOM.get(), getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, (Math.random() - 0.5) * 0.06, Math.random() * 0.035, (Math.random() - 0.5) * 0.06);
             }
         }
     }

@@ -7,25 +7,25 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "items",
+                  "target": "BlockEntityTag.items",
+                  "op": "replace"
+                }
+              ]
+            }
+          ],
           "name": "bongo:basket"
         }
       ],
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
-        }
-      ],
-      "functions": [
-        {
-          "function": "minecraft:copy_nbt",
-          "source": "block_entity",
-          "ops": [
-            {
-              "source": "items",
-              "target": "BlockEntityTag.items",
-              "op": "replace"
-            }
-          ]
         }
       ]
     }

@@ -13,7 +13,7 @@ public class ItemTagProvider extends ItemTagProviderBase {
 	}
 
 	@Override
-	protected void registerTags() {
-
+	protected void setup() {
+		
 	}
 }

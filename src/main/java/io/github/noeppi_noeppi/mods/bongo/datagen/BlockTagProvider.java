@@ -12,7 +12,7 @@ public class BlockTagProvider extends BlockTagProviderBase {
 	}
 
 	@Override
-	protected void registerTags() {
+	protected void setup() {
 		
 	}
 }

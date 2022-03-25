@@ -5,7 +5,8 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.simibubi.create.AllBlockPartials;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.contraptions.base.DirectionalAxisKineticBlock;
-import com.simibubi.create.foundation.utility.SuperByteBuffer;
+import com.simibubi.create.foundation.render.PartialBufferer;
+import com.simibubi.create.foundation.render.SuperByteBuffer;
 import io.github.noeppi_noeppi.libx.mod.registration.TileEntityBase;
 import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.mods.bongo.easter.RenderEgg;
@@ -29,8 +30,8 @@ public class RenderMechanicalEgg extends RenderEgg<TileEntityBase> {
     protected void doRender(@Nonnull TileEntityBase tile, float partialTicks, @Nonnull MatrixStack matrixStack, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
         super.doRender(tile, partialTicks, matrixStack, buffer, light, overlay);
         BlockState deployerState = AllBlocks.DEPLOYER.getDefaultState().with(BlockStateProperties.FACING, Direction.UP).with(DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE, true);
-        SuperByteBuffer pole = AllBlockPartials.DEPLOYER_POLE.renderOn(deployerState);
-        SuperByteBuffer hand = AllBlockPartials.DEPLOYER_HAND_POINTING.renderOn(deployerState);
+        SuperByteBuffer pole = PartialBufferer.get(AllBlockPartials.DEPLOYER_POLE, deployerState);
+        SuperByteBuffer hand = PartialBufferer.get(AllBlockPartials.DEPLOYER_HAND_POINTING, deployerState);
         matrixStack.push();
         matrixStack.translate(0, 0.4, 0.5);
         matrixStack.rotate(Vector3f.XP.rotationDegrees(-50));
@@ -43,7 +44,7 @@ public class RenderMechanicalEgg extends RenderEgg<TileEntityBase> {
         hand.renderInto(matrixStack, vertex);
         matrixStack.pop();
         BlockState cogWheelState = AllBlocks.COGWHEEL.getDefaultState().with(BlockStateProperties.AXIS, Direction.Axis.Y);
-        SuperByteBuffer cogwheel = AllBlockPartials.SHAFTLESS_COGWHEEL.renderOn(cogWheelState);
+        SuperByteBuffer cogwheel = PartialBufferer.get(AllBlockPartials.SHAFTLESS_COGWHEEL, cogWheelState);
         matrixStack.push();
         matrixStack.translate(0.2, 0.35, -0.2);
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(90));
@@ -56,7 +57,7 @@ public class RenderMechanicalEgg extends RenderEgg<TileEntityBase> {
         vertex = buffer.getBuffer(RenderType.getSolid());
         cogwheel.renderInto(matrixStack, vertex);
         matrixStack.pop();
-        cogwheel = AllBlockPartials.SHAFTLESS_COGWHEEL.renderOn(cogWheelState);
+        cogwheel = PartialBufferer.get(AllBlockPartials.SHAFTLESS_COGWHEEL, cogWheelState);
         matrixStack.push();
         matrixStack.translate(1.5, 0.2, 0.25);
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(90));

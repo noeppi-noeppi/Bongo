@@ -13,6 +13,6 @@ public class BlockLootProvider extends BlockLootProviderBase {
 
 	@Override
 	protected void setup() {
-		copyNBT(ModBlocks.basket, "items");
+		drops(ModBlocks.basket, copyNBT("items"));
 	}
 }

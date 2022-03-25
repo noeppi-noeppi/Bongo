@@ -207,7 +207,7 @@ public class GameSettings {
         int slot = 0;
         for (ItemStack stack : backpackInventory) {
             if (slot < inventory.getSlots()) {
-                inventory.setStackInSlot(slot, stack);
+                inventory.setStackInSlot(slot, stack.copy());
                 slot += 1;
             }
         }
