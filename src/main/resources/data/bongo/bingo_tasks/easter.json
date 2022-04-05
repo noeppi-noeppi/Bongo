@@ -45,16 +45,20 @@
       "type": "bongo.easter"
     },
     {
-      "type": "bongo.always"
+      "id": "bongo:dreaming_egg",
+      "type": "bongo.easter"
     },
     {
-      "type": "bongo.always"
+      "id": "bongo:iconic_egg",
+      "type": "bongo.easter"
     },
     {
-      "type": "bongo.always"
+      "id": "bongo:agony_egg",
+      "type": "bongo.easter"
     },
     {
-      "type": "bongo.always"
+      "id": "bongo:evil_egg",
+      "type": "bongo.easter"
     },
     {
       "type": "bongo.always"

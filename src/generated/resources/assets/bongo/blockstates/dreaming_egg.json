@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "bongo:block/dreaming_egg"
+    },
+    "facing=south": {
+      "model": "bongo:block/dreaming_egg",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bongo:block/dreaming_egg",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "bongo:block/dreaming_egg",
+      "y": 90
+    }
+  }
+}

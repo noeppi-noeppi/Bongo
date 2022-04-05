@@ -6,7 +6,6 @@ import io.github.noeppi_noeppi.mods.bongo.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.RabbitEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -35,6 +34,10 @@ public class EggHandler {
             .put(new ResourceLocation("mekanism", "elite_control_circuit"), ModBlocks.technologyEgg)
             .put(new ResourceLocation("cyclic", "gem_amber"), ModBlocks.mysteriousEgg)
             .put(new ResourceLocation("powah", "player_transmitter_basic"), ModBlocks.energizedEgg)
+            .put(new ResourceLocation("feywild", "summoning_scroll_spring_pixie"), ModBlocks.dreamingEgg)
+            .put(new ResourceLocation("psi", "psimetal"), ModBlocks.iconicEgg)
+            .put(new ResourceLocation("bloodmagic", "apprenticebloodorb"), ModBlocks.agonyEgg)
+            .put(new ResourceLocation("eidolon", "soul_shard"), ModBlocks.evilEgg)
             .build();
     
     public static boolean handleBunnyFood(RabbitEntity bunny, ItemStack food) {

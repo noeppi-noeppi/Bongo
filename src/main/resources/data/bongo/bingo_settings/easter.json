@@ -19,6 +19,10 @@
       "Count": 4
     },
     {
+      "id": "minecraft:gold_ingot",
+      "Count": 4
+    },
+    {
       "id": "create:blaze_burner"
     },
     {
@@ -46,11 +50,15 @@
     },
     {
       "id": "mana-and-artifice:guide_book",
+      "Count": 1
+    },
+    {
+      "id": "feywild:summoning_scroll",
       "Count": 2
     },
     {
       "id": "minecraft:rabbit_spawn_egg",
-      "Count": 2
+      "Count": 3
     }
   ]
 }

@@ -23,4 +23,8 @@ public class ModBlocks {
     public static final BlockEgg<TileEntityBase> technologyEgg = new BlockEgg<>(BongoMod.getInstance(), TileEntityBase.class, AbstractBlock.Properties.create(Material.DRAGON_EGG));
     public static final BlockEgg<TileMysteriousEgg> mysteriousEgg = new BlockMysteriousEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
     public static final BlockEgg<TileEnergizedEgg> energizedEgg = new BlockEnergizedEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
+    public static final BlockEgg<TileDreamingEgg> dreamingEgg = new BlockDreamingEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
+    public static final BlockEgg<TileIconicEgg> iconicEgg = new BlockIconicEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
+    public static final BlockEgg<TileAgonyEgg> agonyEgg = new BlockAgonyEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
+    public static final BlockEgg<TileEvilEgg> evilEgg = new BlockEvilEgg(BongoMod.getInstance(), AbstractBlock.Properties.create(Material.DRAGON_EGG));
 }

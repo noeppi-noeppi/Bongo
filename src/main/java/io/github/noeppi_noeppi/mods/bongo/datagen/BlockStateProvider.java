@@ -39,6 +39,10 @@ public class BlockStateProvider extends BlockStateProviderBase {
         egg(ModBlocks.technologyEgg, new ResourceLocation("mekanism", "block/block_osmium"));
         egg(ModBlocks.mysteriousEgg, new ResourceLocation("cyclic", "blocks/eye/teleport"));
         egg(ModBlocks.energizedEgg, new ResourceLocation("powah", "block/blazing_crystal_block"));
+        egg(ModBlocks.dreamingEgg, new ResourceLocation("feywild", "block/spring_tree_log"));
+        egg(ModBlocks.iconicEgg, new ResourceLocation("psi", "blocks/psigem_block"));
+        egg(ModBlocks.agonyEgg, new ResourceLocation("bloodmagic", "block/largebloodstonebrick"));
+        egg(ModBlocks.evilEgg, new ResourceLocation("eidolon", "block/arcane_gold_block"));
     }
     
     private void egg(Block block, ResourceLocation texture) {

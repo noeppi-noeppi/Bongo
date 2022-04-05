@@ -1,0 +1,6 @@
+{
+  "parent": "bongo:block/egg",
+  "textures": {
+    "egg": "eidolon:block/arcane_gold_block"
+  }
+}

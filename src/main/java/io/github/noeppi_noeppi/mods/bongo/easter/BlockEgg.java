@@ -60,6 +60,7 @@ public class BlockEgg<T extends TileEntityBase> extends BlockTE<T> implements IW
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void registerClient(ResourceLocation id) {
         registerTESR();
     }
