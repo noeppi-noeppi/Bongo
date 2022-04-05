@@ -4,7 +4,7 @@ buildscript {
 
 apply from: 'https://raw.githubusercontent.com/noeppi-noeppi/ModUtils/master/mod.gradle'
 
-version='1.16.4-1-1-2-easter2'
+version='1.16.4-1-1-2-easter3'
 
 repositories {
     maven { url "https://dvs1.progwml6.com/files/maven/" }

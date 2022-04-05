@@ -15,10 +15,16 @@ public class TileIconicEgg extends TileEntityBase implements ITickableTileEntity
     public TileIconicEgg(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
-    
+
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void tick() {
+        if (world != null && world.isRemote) {
+            clientTick();
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void clientTick() {
         if (world != null && world.isRemote) {
             int hue = ((ClientTickHandler.ticksInGame % 360) + 360) % 360;
             int rgb = Color.HSBtoRGB(hue / 360f, 1, 1);
