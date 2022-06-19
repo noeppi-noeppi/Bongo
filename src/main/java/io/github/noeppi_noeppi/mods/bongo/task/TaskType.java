@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,13 +20,12 @@ public interface TaskType<T> {
 
     String id();
     Class<T> taskClass();
-    Codec<T> codec();
+    MapCodec<T> codec();
     Component name();
     Component contentName(T element, @Nullable MinecraftServer server);
     Comparator<T> order();
     
     default void validate(T element, MinecraftServer server) {}
-    default T copy(T element) { return element; }
     default void sync(T element, MinecraftServer server, @Nullable ServerPlayer target) {}
     Stream<T> listElements(MinecraftServer server, @Nullable ServerPlayer player);
     
