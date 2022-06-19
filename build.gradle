@@ -23,3 +23,7 @@ dependencies {
     implementation fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.19-2.0.0")
     implementation fg.deobf("curse.maven:jade-324717:3834997") // Jade-1.18.2-5.0.0
 }
+
+compileJava.options.compilerArgs += [
+        '-Amod.properties.strict_onlyin=true'
+]

@@ -2,20 +2,21 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class TaskTypes {
 
-    private static final Map<String, TaskType<?, ?>> taskTypes = new HashMap<>();
+    private static final Map<String, TaskType<?>> taskTypes = new HashMap<>();
 
-    public static TaskType<?, ?> getType(String id) {
+    public static TaskType<?> getType(String id) {
         if (id == null)
             return null;
-        return taskTypes.get(id.toLowerCase());
+        return taskTypes.get(id.toLowerCase(Locale.ROOT));
     }
 
-    public static void registerType(TaskType<?, ?> type) {
-        String id = type.getId().toLowerCase();
+    public static void registerType(TaskType<?> type) {
+        String id = type.id().toLowerCase(Locale.ROOT);
         if (taskTypes.containsKey(id)) {
             throw new IllegalStateException("TaskType with id '" + id + "' is already registered.");
         } else {
@@ -23,7 +24,7 @@ public class TaskTypes {
         }
     }
 
-    public static Collection<TaskType<?, ?>> getTypes() {
+    public static Collection<TaskType<?>> getTypes() {
         return taskTypes.values();
     }
 }
