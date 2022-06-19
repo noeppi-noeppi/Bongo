@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -70,7 +69,7 @@ public class TaskTypeAdvancement implements TaskTypeSimple<ResourceLocation> {
     public Component getContentName(ResourceLocation content, MinecraftServer server) {
         Advancement advancement = server.getAdvancements().getAdvancement(content);
         if (advancement == null) {
-            return new TranslatableComponent("bongo.task.advancement.invalid");
+            return Component.translatable("bongo.task.advancement.invalid");
         } else {
             return advancement.getChatComponent();
         }

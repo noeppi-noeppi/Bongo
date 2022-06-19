@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 public class BackPackCommand implements Command<CommandSourceStack> {
@@ -19,9 +19,9 @@ public class BackPackCommand implements Command<CommandSourceStack> {
         Team team = bongo.getTeam(player);
 
         if (team == null) {
-            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.bp.noteam")).create();
+            throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.bp.noteam")).create();
         } else if (!bongo.running()) {
-            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.bp.norun")).create();
+            throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.bp.norun")).create();
         }
 
         team.openBackPack(player);

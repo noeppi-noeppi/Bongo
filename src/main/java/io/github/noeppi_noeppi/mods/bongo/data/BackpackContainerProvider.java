@@ -1,8 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
-import io.github.noeppi_noeppi.libx.inventory.VanillaWrapper;
+import org.moddingx.libx.inventory.VanillaWrapper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +27,7 @@ public class BackpackContainerProvider implements MenuProvider {
     @Nonnull
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("bongo.backpack").append(team);
+        return Component.translatable("bongo.backpack").append(team);
     }
 
     @Nullable

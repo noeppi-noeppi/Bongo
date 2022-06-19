@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Unit;
@@ -64,7 +63,7 @@ public class TaskTypeEmpty implements TaskType<Unit, Void> {
 
     @Override
     public Component getContentName(Unit content, MinecraftServer server) {
-        return new TextComponent("");
+        return Component.empty();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,7 +26,7 @@ public class ClientAdvancementInfo {
         if (CACHE.containsKey(id)) {
             return CACHE.get(id).getMiddle();
         } else {
-            return new TranslatableComponent("bongo.task.advancement.invalid");
+            return Component.translatable("bongo.task.advancement.invalid");
         }
     }
 

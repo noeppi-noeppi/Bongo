@@ -103,7 +103,7 @@ public class Task implements INBTSerializable<CompoundTag> {
             //noinspection unchecked
             ((TaskType<Object, ?>) type).validate(element, server);
         } catch (Exception e) {
-            BongoMod.getInstance().logger.error("Failed to validate task of type {}: {}", type.getId(), e.getMessage());
+            BongoMod.logger.error("Failed to validate task of type {}: {}", type.getId(), e.getMessage());
         }
     }
 
@@ -118,7 +118,7 @@ public class Task implements INBTSerializable<CompoundTag> {
     public void deserializeNBT(CompoundTag nbt) {
         type = TaskTypes.getType(nbt.getString("type"));
         if (type == null) {
-            BongoMod.getInstance().logger.error("Failed to read task: Unknown task type: {}", nbt.getString("type"));
+            BongoMod.logger.error("Failed to read task: Unknown task type: {}", nbt.getString("type"));
             type = TaskTypeEmpty.INSTANCE;
             element = Unit.INSTANCE;
         } else {
@@ -128,7 +128,7 @@ public class Task implements INBTSerializable<CompoundTag> {
                 String typeId = type.getId();
                 type = TaskTypeEmpty.INSTANCE;
                 element = Unit.INSTANCE;
-                BongoMod.getInstance().logger.error("Failed to read task of type {}: {}", typeId, e.getMessage());
+                BongoMod.logger.error("Failed to read task of type {}: {}", typeId, e.getMessage());
             }
             validateElementType();
         }

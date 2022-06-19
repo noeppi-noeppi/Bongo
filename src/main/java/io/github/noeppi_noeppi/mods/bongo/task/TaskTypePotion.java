@@ -91,7 +91,7 @@ public class TaskTypePotion implements TaskTypeSimple<MobEffect> {
     @Nullable
     @Override
     public Comparator<MobEffect> getSorting() {
-        return Comparator.comparing(MobEffect::getRegistryName, Util.COMPARE_RESOURCE);
+        return Comparator.comparing(ForgeRegistries.MOB_EFFECTS::getKey, Util.COMPARE_RESOURCE);
     }
 
     @Override

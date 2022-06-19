@@ -2,7 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
+import org.moddingx.libx.render.ClientTickHandler;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
@@ -116,7 +116,7 @@ public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
     public EntityType<?> deserializeNBT(CompoundTag nbt) {
         EntityType<?> type = Util.getFromRegistry(ForgeRegistries.ENTITIES, nbt, "entity");
         if (!type.canSummon()) {
-            throw new IllegalStateException("Can't use non-summonable entity type for entity tasks: " + type.getRegistryName());
+            throw new IllegalStateException("Can't use non-summonable entity type for entity tasks: " + ForgeRegistries.ENTITIES.getKey(type));
         }
         return type;
     }
@@ -124,7 +124,7 @@ public class TaskTypeEntity implements TaskTypeSimple<EntityType<?>> {
     @Nullable
     @Override
     public Comparator<EntityType<?>> getSorting() {
-        return Comparator.comparing(EntityType::getRegistryName, Util.COMPARE_RESOURCE);
+        return Comparator.comparing(ForgeRegistries.ENTITIES::getKey, Util.COMPARE_RESOURCE);
     }
     
     @Override

@@ -9,10 +9,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
-import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -43,7 +44,7 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
             ResourceLocation rl = rla.parse(reader);
             GameSettings gs = games().get(rl);
             if (gs == null) {
-                throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.create.notfound")).create();
+                throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.create.notfound")).create();
             }
             list.add(gs);
         }
@@ -81,12 +82,18 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
         return games == null ? GameSettings.GAME_SETTINGS : games;
     }
 
-    public static class Serializer implements ArgumentSerializer<GameSettingsArgument> {
+    public static class Info implements ArgumentTypeInfo<GameSettingsArgument, Info.Template> {
 
+        public static final Info INSTANCE = new Info();
+        
+        private Info() {
+            
+        }
+        
         @Override
-        public void serializeToNetwork(GameSettingsArgument argument, FriendlyByteBuf buffer) {
-            buffer.writeInt(argument.games().size());
-            for (GameSettings gs : argument.games().values()) {
+        public void serializeToNetwork(@Nonnull Template template, @Nonnull FriendlyByteBuf buffer) {
+            buffer.writeInt(template.argument.games().size());
+            for (GameSettings gs : template.argument.games().values()) {
                 buffer.writeResourceLocation(gs.id);
                 buffer.writeNbt(gs.getTag());
             }
@@ -94,21 +101,48 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
 
         @Nonnull
         @Override
-        public GameSettingsArgument deserializeFromNetwork(@Nonnull FriendlyByteBuf buffer) {
+        public Template deserializeFromNetwork(@Nonnull FriendlyByteBuf buffer) {
             int amount = buffer.readInt();
             Map<ResourceLocation, GameSettings> defs = new HashMap<>();
-            for (int i = 0;i < amount; i++) {
+            for (int i = 0; i < amount; i++) {
                 ResourceLocation id = buffer.readResourceLocation();
-                //noinspection ConstantConditions
-                defs.put(id, new GameSettings(id, buffer.readNbt()));
+                defs.put(id, new GameSettings(id, Objects.requireNonNull(buffer.readNbt())));
             }
-            return new GameSettingsArgument(defs);
+            return new Template(new GameSettingsArgument(defs));
         }
 
         @Override
-        public void serializeToJson(GameSettingsArgument argument, @Nonnull JsonObject json) {
-            for (GameSettings gs : argument.games().values())
+        public void serializeToJson(@Nonnull Template template, @Nonnull JsonObject json) {
+            for (GameSettings gs : template.argument.games().values()) {
                 json.addProperty(gs.id.toString(), gs.id.toString());
+            }
+        }
+
+        @Nonnull
+        @Override
+        public Template unpack(@Nonnull GameSettingsArgument argument) {
+            return new Template(argument);
+        }
+
+        public class Template implements ArgumentTypeInfo.Template<GameSettingsArgument> {
+            
+            private final GameSettingsArgument argument;
+            
+            private Template(GameSettingsArgument argument) {
+                this.argument = argument;
+            }
+
+            @Nonnull
+            @Override
+            public ArgumentTypeInfo<GameSettingsArgument, ?> type() {
+                return Info.this;
+            }
+
+            @Nonnull
+            @Override
+            public GameSettingsArgument instantiate(@Nonnull CommandBuildContext ctx) {
+                return this.argument;
+            }
         }
     }
 }

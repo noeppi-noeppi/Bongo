@@ -4,15 +4,14 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import io.github.noeppi_noeppi.libx.util.ServerMessages;
+import net.minecraft.network.chat.Component;
+import org.moddingx.libx.util.game.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoChangeManyTeamsEvent;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -36,15 +35,15 @@ public class SpreadCommand implements Command<CommandSourceStack> {
         List<Player> players = new ArrayList<>(level.getServer().getPlayerList().getPlayers());
 
         if (!bongo.active()) {
-            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.team.noactive")).create();
+            throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.team.noactive")).create();
         } else if (bongo.running() || bongo.won()) {
-            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.team.running")).create();
+            throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.team.running")).create();
         } else if (teams > players.size()) {
-            throw new SimpleCommandExceptionType(new TranslatableComponent("bongo.cmd.spread.less", teams)).create();
+            throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.spread.less", teams)).create();
         }
 
         Set<Team> teamSet = Util.PREFERRED_COLOR_ORDER.subList(0, teams).stream().map(bongo::getTeam).collect(Collectors.toSet());
-        BongoChangeManyTeamsEvent event = new BongoChangeManyTeamsEvent(bongo, teamSet, new TranslatableComponent("bongo.cmd.team.denied.many"));
+        BongoChangeManyTeamsEvent event = new BongoChangeManyTeamsEvent(bongo, teamSet, Component.translatable("bongo.cmd.team.denied.many"));
         if (MinecraftForge.EVENT_BUS.post(event)) {
             throw new SimpleCommandExceptionType(event.getFailureMessage()).create();
         } else {
@@ -62,10 +61,10 @@ public class SpreadCommand implements Command<CommandSourceStack> {
                     team.addPlayer(player);
                     added.add(player);
                 }
-                MutableComponent tc = new TranslatableComponent("bongo.cmd.spread.added");
-                tc.append(team.getName()).append(new TextComponent(":"));
+                MutableComponent tc = Component.translatable("bongo.cmd.spread.added");
+                tc.append(team.getName()).append(Component.literal(":"));
                 for (Player player : added) {
-                    tc.append(new TextComponent(" ")).append(player.getDisplayName());
+                    tc.append(Component.literal(" ")).append(player.getDisplayName());
                 }
                 ServerMessages.broadcast(level, tc);
             }

@@ -121,7 +121,7 @@ public class TaskTypeItem implements TaskTypeSimple<ItemStack> {
     @Nullable
     @Override
     public Comparator<ItemStack> getSorting() {
-        return Comparator.comparing((ItemStack stack) -> stack.getItem().getRegistryName(), Util.COMPARE_RESOURCE)
+        return Comparator.comparing((ItemStack stack) -> ForgeRegistries.ITEMS.getKey(stack.getItem()), Util.COMPARE_RESOURCE)
                 .thenComparingInt(ItemStack::getCount);
     }
     

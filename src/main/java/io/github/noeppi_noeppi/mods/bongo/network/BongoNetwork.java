@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.network;
 
-import io.github.noeppi_noeppi.libx.mod.ModX;
-import io.github.noeppi_noeppi.libx.network.NetworkX;
+import org.moddingx.libx.mod.ModX;
+import org.moddingx.libx.network.NetworkX;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.Criterion;
@@ -13,6 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
+
+import org.moddingx.libx.network.NetworkX.Protocol;
 
 public class BongoNetwork extends NetworkX {
 

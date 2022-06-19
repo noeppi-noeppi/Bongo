@@ -6,8 +6,8 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import io.github.noeppi_noeppi.libx.command.CommandUtil;
-import io.github.noeppi_noeppi.libx.util.NbtToJson;
+import net.minecraft.network.chat.Component;
+import org.moddingx.libx.command.CommandUtil;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.BufferedWriter;
@@ -55,22 +54,25 @@ public class DumpCommand implements Command<CommandSourceStack> {
                 });
 
                 JsonObject json = new JsonObject();
-                json.add("tasks", NbtToJson.getJson(data, false));
+                //TODO
+//                json.add("tasks", NbtToJson.getJson(data, false));
                 Path path = base.resolve("bingo_tasks").resolve(type.getId().replace(".", "-") + ".json");
                 BufferedWriter w = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
                 w.write(BongoMod.PRETTY_GSON.toJson(json));
                 w.close();
                 types += 1;
             }
-            JsonElement json = NbtToJson.getJson(GameSettings.DEFAULT.getTag(), true);
+            //TODO
+//            JsonElement json = NbtToJson.getJson(GameSettings.DEFAULT.getTag(), true);
             Path path = base.resolve("bingo_settings").resolve("default.json");
             BufferedWriter w = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-            w.write(BongoMod.PRETTY_GSON.toJson(json));
+            //TODO
+//            w.write(BongoMod.PRETTY_GSON.toJson(json));
             w.close();
 
-            context.getSource().sendSuccess(new TextComponent("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize())).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).setUnderlined(true)), true);
+            context.getSource().sendSuccess(Component.literal("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize())).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).withUnderlined(true)), true);
         } catch (IOException e) {
-            throw new SimpleCommandExceptionType(new TextComponent("IOException: " + e.getMessage())).create();
+            throw new SimpleCommandExceptionType(Component.literal("IOException: " + e.getMessage())).create();
         }
         return 0;
     }

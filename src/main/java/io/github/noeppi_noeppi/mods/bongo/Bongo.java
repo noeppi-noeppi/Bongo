@@ -366,9 +366,7 @@ public class Bongo extends SavedData {
     }
 
     public void clearItems(boolean suppressBingoSync) {
-        for (int i = 0; i < items.size(); i++) {
-            items.set(i, Task.empty());
-        }
+        items.replaceAll(t -> Task.empty());
         setChanged(suppressBingoSync);
     }
 
@@ -553,8 +551,9 @@ public class Bongo extends SavedData {
     }
 
     public boolean isTooltipStack(ItemStack stack) {
-        if (tooltipPredicate == null)
+        if (tooltipPredicate == null) {
             updateTooltipPredicate();
+        }
         return !stack.isEmpty() && tooltipPredicate.test(stack);
     }
     

@@ -48,11 +48,11 @@ public class DefaultEffects {
     public void playerTask(BongoTaskEvent event) {
         Team team = event.getBongo().getTeam(event.getPlayer());
         if (team != null) {
-            MutableComponent tc = team.getName().append(new TranslatableComponent("bongo.task.complete")).append(event.getTask().getContentName(event.getLevel().getServer()));
+            MutableComponent tc = team.getName().append(Component.translatable("bongo.task.complete")).append(event.getTask().getContentName(event.getLevel().getServer()));
             event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
-                player.sendMessage(tc, player.getUUID());
+                player.sendSystemMessage(tc);
                 if (team.hasPlayer(player)) {
-                    player.connection.send(new ClientboundSoundPacket(SoundEvents.END_PORTAL_SPAWN, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 0.5f, 1));
+                    player.connection.send(new ClientboundSoundPacket(SoundEvents.END_PORTAL_SPAWN, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 0.5f, 1, 0));
                 }
             });
         }
@@ -60,12 +60,12 @@ public class DefaultEffects {
 
     @SubscribeEvent
     public void teamWin(BongoWinEvent event) {
-        MutableComponent tc = event.getTeam().getName().append(new TranslatableComponent("bongo.win"));
-        MutableComponent tcc = event.getTeam().getName().append(new TranslatableComponent("bongo.winplayers"));
+        MutableComponent tc = event.getTeam().getName().append(Component.translatable("bongo.win"));
+        MutableComponent tcc = event.getTeam().getName().append(Component.translatable("bongo.winplayers"));
 
         event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
             if (event.getTeam().hasPlayer(player)) {
-                tcc.append(new TextComponent(" "));
+                tcc.append(Component.literal(" "));
                 MutableComponent pname = player.getDisplayName().copy();
                 pname.setStyle(Style.EMPTY.applyFormat(ChatFormatting.RESET).applyFormat(ChatFormatting.UNDERLINE).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tp @p " + player.getX() + " " + player.getY() + " " + player.getZ())));
                 tcc.append(pname);
@@ -76,7 +76,7 @@ public class DefaultEffects {
         if (!event.getBongo().getSettings().leaderboard) {
             leaderboard = null;
         } else {
-            leaderboard = new TextComponent("");
+            leaderboard = Component.empty();
             // retrieve a sorted list of all teams in order of completed tasks amount descending
             List<Team> teams = event.getBongo().getTeams().stream()
                     .filter(team -> !team.getPlayers().isEmpty())
@@ -92,8 +92,8 @@ public class DefaultEffects {
                     place += toSkip;
                     toSkip = 0;
                 }
-                leaderboard.append(new TextComponent(" "));
-                leaderboard.append(new TranslatableComponent(
+                leaderboard.append(Component.literal(" "));
+                leaderboard.append(Component.translatable(
                         completed == 1 ? "bongo.completed_tasks.one" : "bongo.completed_tasks.multiple",
                         Integer.toString(place), team.getName(), Integer.toString(completed)
                 ));
@@ -103,12 +103,12 @@ public class DefaultEffects {
         }
         
         event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
-            player.sendMessage(tcc, player.getUUID());
+            player.sendSystemMessage(tcc);
             player.connection.send(new ClientboundSetTitleTextPacket(tc));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 10));
-            player.connection.send(new ClientboundSoundPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1));
+            player.connection.send(new ClientboundSoundPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1, 0));
             if (leaderboard != null) {
-                player.sendMessage(leaderboard, player.getUUID());
+                player.sendSystemMessage(leaderboard);
             }
         });
     }

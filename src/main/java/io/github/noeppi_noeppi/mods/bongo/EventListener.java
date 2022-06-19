@@ -13,19 +13,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.stats.ServerStatsCounter;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -66,7 +62,7 @@ public class EventListener {
                     }
                 }
                 if (!playerFound && !event.getPlayer().hasPermissions(2)) {
-                    ((ServerPlayer) event.getPlayer()).connection.disconnect(new TranslatableComponent("bongo.disconnect"));
+                    ((ServerPlayer) event.getPlayer()).connection.disconnect(Component.translatable("bongo.disconnect"));
                     return;
                 }
             }
@@ -155,7 +151,7 @@ public class EventListener {
 
                 ServerStatsCounter mgr = ((ServerPlayer) event.player).getLevel().getServer().getPlayerList().getPlayerStats(event.player);
                 bongo.getElementsOf(TaskTypeStat.INSTANCE)
-                        .map(value -> new StatAndValue(value.stat, mgr.getValue(value.stat)))
+                        .map(value -> new StatAndValue(value.stat(), mgr.getValue(value.stat())))
                         .forEach(value -> bongo.checkCompleted(TaskTypeStat.INSTANCE, event.player, value));
             }
         }
@@ -257,7 +253,7 @@ public class EventListener {
                 if (tc instanceof MutableComponent) {
                     tc = ((MutableComponent) tc).withStyle(team.getFormatting());
                 } else {
-                    tc = new TextComponent(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
+                    tc = Component.literal(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
                 }
                 event.setDisplayname(tc);
             }
@@ -275,7 +271,7 @@ public class EventListener {
                 if (tc instanceof MutableComponent) {
                     tc = ((MutableComponent) tc).withStyle(team.getFormatting());
                 } else {
-                    tc = new TextComponent(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
+                    tc = Component.literal(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
                 }
                 event.setDisplayName(tc);
             }
@@ -296,15 +292,15 @@ public class EventListener {
 
     @SubscribeEvent
     public void serverChat(ServerChatEvent event) {
-        if (!ModList.get().isLoaded("minemention")) {
+        if (!ModList.get().isLoaded("minemention") && event.getPlayer() != null) {
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.teamChat(event.getPlayer())) {
                 Team team = bongo.getTeam(event.getPlayer());
                 if (team != null) {
                     event.setCanceled(true);
-                    MutableComponent tc = new TextComponent("[");
+                    MutableComponent tc = Component.literal("[");
                     tc.append(team.getName());
-                    tc.append(new TextComponent("] ").withStyle(ChatFormatting.RESET));
+                    tc.append(Component.literal("] ").withStyle(ChatFormatting.RESET));
                     tc.append(event.getComponent());
                     Util.broadcastTeam(event.getPlayer().level, team, tc);
                 }

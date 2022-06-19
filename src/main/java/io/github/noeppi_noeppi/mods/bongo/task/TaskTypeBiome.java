@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,9 +54,10 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
 
     @Override
     public void renderSlotContent(Minecraft mc, Biome content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+        ResourceLocation biomeId = ForgeRegistries.BIOMES.getKey(content);
         ResourceLocation biomeTexture;
-        if (content.getRegistryName() != null) {
-            biomeTexture = new ResourceLocation(content.getRegistryName().getNamespace(), "textures/icon/biome/" + content.getRegistryName().getPath() + ".png");
+        if (biomeId != null) {
+            biomeTexture = new ResourceLocation(biomeId.getNamespace(), "textures/icon/biome/" + biomeId.getPath() + ".png");
         } else {
             biomeTexture = FALLBACK_TEXTURE;
         }
@@ -71,12 +71,12 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
 
     @Override
     public String getTranslatedContentName(Biome content) {
-        return new TranslatableComponent(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content))).getString(18);
+        return Component.translatable(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content))).getString(18);
     }
 
     @Override
     public Component getContentName(Biome content, MinecraftServer server) {
-        return new TranslatableComponent(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content)));
+        return Component.translatable(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content)));
     }
 
     @Override
@@ -99,7 +99,7 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
     @Nullable
     @Override
     public Comparator<Biome> getSorting() {
-        return Comparator.comparing(Biome::getRegistryName, Util.COMPARE_RESOURCE);
+        return Comparator.comparing(ForgeRegistries.BIOMES::getKey, Util.COMPARE_RESOURCE);
     }
 
     @Override

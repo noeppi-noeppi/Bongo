@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.network;
 
 import com.google.gson.JsonElement;
-import io.github.noeppi_noeppi.libx.network.PacketSerializer;
+import org.moddingx.libx.network.PacketSerializer;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;

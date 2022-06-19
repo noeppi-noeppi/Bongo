@@ -2,7 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.event;
 
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
-import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -21,9 +21,9 @@ public class BongoChangeTeamEvent extends Event {
     private final Team oldTeam;
     @Nullable
     private final Team newTeam;
-    private BaseComponent failureMessage; 
+    private Component failureMessage; 
 
-    public BongoChangeTeamEvent(ServerPlayer player, Bongo bongo, @Nullable Team oldTeam, @Nullable Team newTeam, BaseComponent failureMessage) {
+    public BongoChangeTeamEvent(ServerPlayer player, Bongo bongo, @Nullable Team oldTeam, @Nullable Team newTeam, Component failureMessage) {
         this.player = player;
         this.bongo = bongo;
         this.oldTeam = oldTeam;
@@ -49,11 +49,11 @@ public class BongoChangeTeamEvent extends Event {
         return newTeam;
     }
 
-    public BaseComponent getFailureMessage() {
+    public Component getFailureMessage() {
         return failureMessage;
     }
 
-    public void setFailureMessage(BaseComponent failureMessage) {
+    public void setFailureMessage(Component failureMessage) {
         this.failureMessage = failureMessage;
     }
 

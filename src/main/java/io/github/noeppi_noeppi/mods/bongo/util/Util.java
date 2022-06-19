@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
-import io.github.noeppi_noeppi.libx.util.Misc;
+import org.moddingx.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
@@ -22,7 +22,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -33,8 +32,8 @@ import java.util.function.Predicate;
 
 public class Util {
 
-    public static final Component REQUIRED_ITEM = new TranslatableComponent("bongo.tooltip.required").withStyle(ChatFormatting.GOLD);
-    public static final Comparator<ResourceLocation> COMPARE_RESOURCE = Comparator.comparing(ResourceLocation::getNamespace).thenComparing(ResourceLocation::getPath);
+    public static final Component REQUIRED_ITEM = Component.translatable("bongo.tooltip.required").withStyle(ChatFormatting.GOLD);
+    public static final Comparator<ResourceLocation> COMPARE_RESOURCE = Comparator.nullsFirst(Comparator.comparing(ResourceLocation::getNamespace).thenComparing(ResourceLocation::getPath));
 
     public static final List<DyeColor> PREFERRED_COLOR_ORDER = ImmutableList.of(
             DyeColor.ORANGE, DyeColor.LIME, DyeColor.LIGHT_BLUE, DyeColor.PINK, DyeColor.CYAN,
@@ -64,7 +63,7 @@ public class Util {
         if (server != null) {
             server.getPlayerList().getPlayers().forEach(player -> {
                 if (team.hasPlayer(player))
-                    player.sendMessage(message, player.getUUID());
+                    player.sendSystemMessage(message);
             });
         }
     }
@@ -114,7 +113,8 @@ public class Util {
         return rl;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> T getFromRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id) {
+    // DELME 
+    public static <T> T getFromRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id) {
         ResourceLocation rl = getLocationFor(nbt, id);
         T element = registry.getValue(rl);
         if (element == null) {
@@ -123,10 +123,11 @@ public class Util {
         return element;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> void putByForgeRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id, T element) {
+    // DELME
+    public static <T> void putByForgeRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id, T element) {
         ResourceLocation rl = registry.getKey(element);
         if (rl == null) {
-            BongoMod.getInstance().logger.warn("Failed to serialise " + id + " location: Not found in forge registry: " + element);
+            BongoMod.logger.warn("Failed to serialise " + id + " location: Not found in forge registry: " + element);
             rl = Misc.MISSIGNO;
         }
         nbt.putString(id, rl.toString());
@@ -152,12 +153,12 @@ public class Util {
         if (bongo.running() && bongo.getSettings().lockTaskOnDeath) {
             Team team = bongo.getTeam(player);
             if (team != null && team.lockRandomTask()) {
-                MutableComponent tc = new TranslatableComponent("bongo.task_locked.death", player.getDisplayName());
+                MutableComponent tc = Component.translatable("bongo.task_locked.death", player.getDisplayName());
                 if (player instanceof ServerPlayer) {
                     ((ServerPlayer) player).getLevel().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
                         if (team.hasPlayer(thePlayer)) {
-                            thePlayer.sendMessage(tc, thePlayer.getUUID());
-                            thePlayer.connection.send(new ClientboundSoundPacket(SoundEvents.ANVIL_LAND, SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1));
+                            thePlayer.sendSystemMessage(tc);
+                            thePlayer.connection.send(new ClientboundSoundPacket(SoundEvents.ANVIL_LAND, SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1, 0));
                         }
                     });
                 }

@@ -14,6 +14,7 @@ import java.util.Set;
 
 public class JeiIntegration {
 
+    // TODO
     public static void setBookmarks(Set<ItemStack> stacks, Set<ResourceLocation> advancements) {
         try {
             Object bookmarkList = getBookmarkList();
@@ -28,7 +29,7 @@ public class JeiIntegration {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             //
         } catch (Throwable t) {
-            BongoMod.getInstance().logger.warn("Could not modify JEI bookmark list: ", t);
+            BongoMod.logger.warn("Could not modify JEI bookmark list: ", t);
         }
     }
 
@@ -80,7 +81,7 @@ public class JeiIntegration {
                     // Ignore it, so the other elements can be added as well.
                 }
             } else {
-                BongoMod.getInstance().logger.warn("Failed to create JEI ingredient of bookmark object: " + bookmark);
+                BongoMod.logger.warn("Failed to create JEI ingredient of bookmark object: " + bookmark);
             }
         }
     }

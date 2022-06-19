@@ -2,7 +2,10 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.github.noeppi_noeppi.libx.mod.ModX;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.Registry;
+import net.minecraftforge.registries.RegisterEvent;
+import org.moddingx.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
@@ -19,7 +22,6 @@ import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
-import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -32,12 +34,16 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 @Mod("bongo")
 public final class BongoMod extends ModX {
-
+    
+    public static final Logger logger = LoggerFactory.getLogger("bongo");
+    
     private static BongoMod instance;
     private static BongoNetwork network;
 
@@ -60,7 +66,8 @@ public final class BongoMod extends ModX {
         network = new BongoNetwork(this);
 
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
-        
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::reloadClientResources);
         
         MinecraftForge.EVENT_BUS.register(new EventListener());
@@ -112,15 +119,20 @@ public final class BongoMod extends ModX {
         if (ModList.get().isLoaded("minemention")) {
             MineMentionIntegration.setup();
         }
-        
-        ArgumentTypes.register(modid + "_bongotasks", GameTasksArgument.class, new GameTasksArgument.Serializer());
-        ArgumentTypes.register(modid + "_bongosettings", GameSettingsArgument.class, new GameSettingsArgument.Serializer());
+
+        ArgumentTypeInfos.registerByClass(GameTasksArgument.class, GameTasksArgument.Info.INSTANCE);
+        ArgumentTypeInfos.registerByClass(GameSettingsArgument.class, GameSettingsArgument.Info.INSTANCE);
     }
 
     @Override
     protected void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
         MinecraftForge.EVENT_BUS.register(new RenderOverlay());
+    }
+    
+    private void registerStuff(RegisterEvent event) {
+        event.register(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, this.resource("tasks"), () -> GameTasksArgument.Info.INSTANCE);
+        event.register(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, this.resource("settings"), () -> GameSettingsArgument.Info.INSTANCE);
     }
     
     private void reloadClientResources(RegisterClientReloadListenersEvent event) {

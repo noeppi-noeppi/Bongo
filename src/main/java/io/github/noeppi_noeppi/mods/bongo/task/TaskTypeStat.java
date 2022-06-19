@@ -14,8 +14,6 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,22 +64,22 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
 
     @Override
     public void renderSlotContent(Minecraft mc, StatAndValue content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        Object value = content.stat.getValue();
+        Object value = content.stat().getValue();
         if (value instanceof ItemLike) {
-            ItemStack renderStack = new ItemStack((ItemLike) value, content.value);
+            ItemStack renderStack = new ItemStack((ItemLike) value, content.value());
             ItemRenderUtil.renderItem(poseStack, buffer, renderStack, false);
             int x = -1;
-            if (content.stat.getType() == Stats.ITEM_CRAFTED) {
+            if (content.stat().getType() == Stats.ITEM_CRAFTED) {
                 x = 19;
-            } else if (content.stat.getType() == Stats.ITEM_USED) {
+            } else if (content.stat().getType() == Stats.ITEM_USED) {
                 x = 37;
-            } else if (content.stat.getType() == Stats.BLOCK_MINED) {
+            } else if (content.stat().getType() == Stats.BLOCK_MINED) {
                 x = 55;
-            } else if (content.stat.getType() == Stats.ITEM_BROKEN) {
+            } else if (content.stat().getType() == Stats.ITEM_BROKEN) {
                 x = 74;
-            } else if (content.stat.getType() == Stats.ITEM_PICKED_UP) {
+            } else if (content.stat().getType() == Stats.ITEM_PICKED_UP) {
                 x = 91;
-            } else if (content.stat.getType() == Stats.ITEM_DROPPED) {
+            } else if (content.stat().getType() == Stats.ITEM_DROPPED) {
                 x = 109;
             }
             if (x >= 0) {
@@ -99,8 +97,8 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, poseStack, buffer, bigBongo);
         } else {
             boolean foundCustomTex = false;
-            if (Stats.CUSTOM.equals(content.stat.getType()) && content.stat.getValue() instanceof ResourceLocation) {
-                ResourceLocation textureLocation = new ResourceLocation(((ResourceLocation) content.stat.getValue()).getNamespace(), "textures/icon/stat/" + ((ResourceLocation) content.stat.getValue()).getPath() + ".png");
+            if (Stats.CUSTOM.equals(content.stat().getType()) && content.stat().getValue() instanceof ResourceLocation) {
+                ResourceLocation textureLocation = new ResourceLocation(((ResourceLocation) content.stat().getValue()).getNamespace(), "textures/icon/stat/" + ((ResourceLocation) content.stat().getValue()).getPath() + ".png");
                 RenderSystem.setShaderTexture(0, textureLocation);
                 AbstractTexture texture = mc.getTextureManager().getTexture(textureLocation);
                 //noinspection ConstantConditions
@@ -125,7 +123,7 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             poseStack.translate(0, 0, 200);
             poseStack.scale(2/3f, 2/3f, 1);
             Font fr = Minecraft.getInstance().font;
-            String text = content.stat.format(content.value);
+            String text = content.stat().format(content.value());
             fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, false, 0, 15728880);
             poseStack.popPose();
         }
@@ -134,27 +132,27 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
     @Override
     public String getTranslatedContentName(StatAndValue content) {
         String text = getContentName(content, null).getString(16);
-        return text + ": " + content.stat.format(content.value);
+        return text + ": " + content.stat().format(content.value());
     }
 
     @Override
     public Component getContentName(StatAndValue content, @CheckForNull MinecraftServer server) {
-        Component tc = new TextComponent("");
-        Object value = content.stat.getValue();
+        Component tc = Component.empty();
+        Object value = content.stat().getValue();
         if (value instanceof ItemLike) {
             tc = new ItemStack((ItemLike) value).getHoverName();
         } else if (value instanceof EntityType<?>) {
             tc = ((EntityType<?>) value).getDescription();
         } else if (value instanceof ResourceLocation) {
-            return new TextComponent(((ResourceLocation) value).getPath().replace('_', ' '));
+            return Component.literal(((ResourceLocation) value).getPath().replace('_', ' '));
         }
         //noinspection ConstantConditions
-        return new TranslatableComponent("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat.getType()).toString().replace(':', '.')).append(new TextComponent(" ")).append(tc);
+        return Component.translatable("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat().getType()).toString().replace(':', '.')).append(Component.literal(" ")).append(tc);
     }
 
     @Override
     public boolean shouldComplete(StatAndValue element, Player player, StatAndValue compare) {
-        return element.stat.getType().equals(compare.stat.getType()) && element.stat.getValue().equals(compare.stat.getValue()) && compare.value >= element.value;
+        return element.stat().getType().equals(compare.stat().getType()) && element.stat().getValue().equals(compare.stat().getValue()) && compare.value() >= element.value();
     }
 
     @Override
@@ -169,16 +167,16 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
 
     @Override
     public Predicate<ItemStack> bongoTooltipStack(StatAndValue element) {
-        Item item = element.stat.getValue() instanceof ItemLike ? ((ItemLike) element.stat.getValue()).asItem() : null;
+        Item item = element.stat().getValue() instanceof ItemLike ? ((ItemLike) element.stat().getValue()).asItem() : null;
         return stack -> item != null && stack.getItem() == item;
     }
 
     @Nullable
     @Override
     public Comparator<StatAndValue> getSorting() {
-        return Comparator.comparing((StatAndValue stat) -> stat.stat.getType().getRegistryName(), Util.COMPARE_RESOURCE)
+        return Comparator.comparing((StatAndValue stat) -> ForgeRegistries.STAT_TYPES.getKey(stat.stat().getType()), Util.COMPARE_RESOURCE)
                 .thenComparing(StatAndValue::getValueId, Util.COMPARE_RESOURCE)
-                .thenComparingInt((StatAndValue stat) -> stat.value);
+                .thenComparingInt(StatAndValue::value);
     }
 
     @Override

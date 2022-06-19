@@ -3,9 +3,9 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import io.github.noeppi_noeppi.libx.render.ClientTickHandler;
-import io.github.noeppi_noeppi.libx.util.Misc;
-import io.github.noeppi_noeppi.libx.util.TagAccess;
+import org.moddingx.libx.render.ClientTickHandler;
+import org.moddingx.libx.util.Misc;
+import org.moddingx.libx.util.data.TagAccess;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
@@ -18,7 +18,6 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -84,7 +83,7 @@ public class TaskTypeTag implements TaskTypeSimple<TagWithCount> {
 
     @Override
     public Component getContentName(TagWithCount content, MinecraftServer server) {
-        return new TextComponent(content.getId().toString());
+        return Component.literal(content.getId().toString());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
-import io.github.noeppi_noeppi.libx.util.LazyValue;
-import io.github.noeppi_noeppi.libx.util.TagAccess;
+import org.moddingx.libx.util.lazy.LazyValue;
+import org.moddingx.libx.util.data.TagAccess;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;

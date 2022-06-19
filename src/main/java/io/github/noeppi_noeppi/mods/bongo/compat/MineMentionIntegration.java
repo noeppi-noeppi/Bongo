@@ -6,7 +6,6 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMention;
 import io.github.noeppi_noeppi.mods.minemention.api.SpecialMentions;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -26,7 +25,7 @@ public class MineMentionIntegration {
 
         @Override
         public Component description() {
-            return new TranslatableComponent("bongo.mention");
+            return Component.translatable("bongo.mention");
         }
 
         @Override

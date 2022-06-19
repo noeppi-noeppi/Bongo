@@ -5,9 +5,9 @@ import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -42,7 +42,7 @@ public class Team {
     }
 
     public MutableComponent getName() {
-        return new TranslatableComponent("bongo.team." + color.getSerializedName()).withStyle(Util.getTextFormatting(color));
+        return Component.translatable("bongo.team." + color.getSerializedName()).withStyle(Util.getTextFormatting(color));
     }
 
     public Style getFormatting() {

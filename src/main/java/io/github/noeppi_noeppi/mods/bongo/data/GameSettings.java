@@ -162,7 +162,7 @@ public class GameSettings {
             String teleporterId = nbt.getString("teleporter");
             PlayerTeleporter tp = PlayerTeleporters.getTeleporter(teleporterId);
             if (tp == null) {
-                BongoMod.getInstance().logger.error("Player Teleporter '" + teleporterId + "' not found. Using default.");
+                BongoMod.logger.error("Player Teleporter '" + teleporterId + "' not found. Using default.");
                 this.teleporter = PlayerTeleporterDefault.INSTANCE;
             } else {
                 this.teleporter = tp;
