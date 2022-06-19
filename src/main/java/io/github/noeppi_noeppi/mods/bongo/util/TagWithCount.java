@@ -1,6 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
-import org.moddingx.libx.util.lazy.LazyValue;
+import com.mojang.serialization.Codec;
+import io.github.noeppi_noeppi.mods.bongo.BongoMod;
+import org.moddingx.libx.annotation.api.Codecs;
+import org.moddingx.libx.annotation.codec.PrimaryConstructor;
+import org.moddingx.libx.util.lazy.CachedValue;
 import org.moddingx.libx.util.data.TagAccess;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -16,17 +20,20 @@ import java.util.function.Predicate;
 
 public final class TagWithCount {
     
+    public static final Codec<TagWithCount> CODEC = Codecs.get(BongoMod.class, TagWithCount.class);
+    
     private final ResourceLocation id;
     private final TagKey<Item> tag;
-    private final LazyValue<Predicate<Item>> contains;
-    private final LazyValue<List<Item>> itemList;
+    private final CachedValue<Predicate<Item>> contains;
+    private final CachedValue<List<Item>> itemList;
     private final int count;
 
+    @PrimaryConstructor
     public TagWithCount(ResourceLocation id, int count) {
         this.id = id;
         this.count = count;
         this.tag = TagKey.create(Registry.ITEM_REGISTRY, id);
-        this.contains = new LazyValue<>(() -> {
+        this.contains = new CachedValue<>(() -> {
             try {
                 // Can't use TagAccess for performance reasons
                 @SuppressWarnings("unchecked")
@@ -39,7 +46,7 @@ public final class TagWithCount {
                 return item -> false;
             }
         });
-        this.itemList = new LazyValue<>(() -> {
+        this.itemList = new CachedValue<>(() -> {
             try {
                 HolderSet.Named<Item> tag = TagAccess.ROOT.get(this.tag);
                 return tag.stream().map(Holder::value).toList();
@@ -79,26 +86,11 @@ public final class TagWithCount {
     public int getCount() {
         return count;
     }
-    
-    public CompoundTag serialize() {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putString("tag", id.toString());
-        nbt.putInt("Count", count);
-        return nbt;
-    }
-    
-    public static TagWithCount deserialize(CompoundTag nbt) {
-        ResourceLocation id = Util.getLocationFor(nbt, "tag");
-        int count = nbt.contains("Count") ? nbt.getInt("Count") : 1;
-        if (count <= 0) {
-            throw new IllegalStateException("Tasks with no items are not allowed: Invalid count: " + count);
-        }
-        return new TagWithCount(id, count);
-    }
 
     // Will reset the lazy value
-    public TagWithCount copy() {
-        return new TagWithCount(id, count);
+    public void invalidate() {
+        this.contains.invalidate();
+        this.itemList.invalidate();
     }
     
     public TagWithCount withCount(int count) {

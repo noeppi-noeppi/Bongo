@@ -5,9 +5,9 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Predicate;
 
-public sealed class Highlight<T> {
+public abstract sealed class Highlight<T> {
     
-    private final T element;
+    protected final T element;
 
     public Highlight(T element) {
         this.element = element;
@@ -22,8 +22,8 @@ public sealed class Highlight<T> {
         private final Predicate<ItemStack> predicate;
         
         public Item(ItemStack element) {
-            super(element);
-            this.predicate = stack -> stack.getItem() == element.getItem();
+            super(element.copy());
+            this.predicate = stack -> stack.getItem() == this.element.getItem();
         }
 
         public Predicate<ItemStack> predicate() {

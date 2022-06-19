@@ -1,7 +1,8 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
@@ -10,35 +11,25 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.Objects;
 
 public record StatAndValue(Stat<?> stat, int value) {
-
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putString("category", Objects.requireNonNull(ForgeRegistries.STAT_TYPES.getKey(stat.getType())).toString());
-        //noinspection unchecked
-        Registry<Object> registry = (Registry<Object>) stat.getType().getRegistry();
-        nbt.putString("stat", Objects.requireNonNull(registry.getKey(stat.getValue())).toString());
-        nbt.putInt("value", value);
-        return nbt;
-    }
-
-    public static StatAndValue deserializeNBT(CompoundTag nbt) {
-        ResourceLocation categoryRL = ResourceLocation.tryParse(nbt.getString("category"));
-        if (categoryRL == null)
-            throw new IllegalStateException("Invalid stat category id: " + nbt.getString("category"));
-        //noinspection unchecked
-        StatType<Object> type = (StatType<Object>) ForgeRegistries.STAT_TYPES.getValue(categoryRL);
-        if (type == null) throw new IllegalStateException("Unknown stat category: " + categoryRL);
-        ResourceLocation statRL = ResourceLocation.tryParse(nbt.getString("stat"));
-        if (statRL == null)
-            throw new IllegalStateException("Invalid stat value id for " + categoryRL + ": " + nbt.getString("category"));
-        Object stat = type.getRegistry().get(statRL);
-        if (stat == null) throw new IllegalStateException("Unknown stat value for " + categoryRL + ": " + statRL);
-        int value = nbt.getInt("value");
-        return new StatAndValue(type.get(stat), value);
+    
+    public static final Codec<StatAndValue> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ForgeRegistries.STAT_TYPES.getCodec().fieldOf("category").forGetter(stat -> stat.stat().getType()),
+            ResourceLocation.CODEC.fieldOf("stat").forGetter(StatAndValue::getValueId),
+            Codec.INT.fieldOf("value").forGetter(StatAndValue::value)
+    ).apply(instance, (StatType<?> type, ResourceLocation id, Integer value) -> new StatAndValue(resolve(type, id), value)));
+    
+    private static Stat<?> resolve(StatType<?> statType, ResourceLocation id) {
+        Object elem = statType.getRegistry().get(id);
+        if (elem == null) {
+            throw new IllegalStateException("Invalid stat value id for " + ForgeRegistries.STAT_TYPES.getKey(statType) + ": " + id);
+        } else {
+            //noinspection unchecked
+            return ((StatType<Object>) statType).get(elem);
+        }
     }
 
     public ResourceLocation getValueId() {
         //noinspection unchecked
-        return ((Registry<Object>) stat.getType().getRegistry()).getKey(stat.getValue());
+        return Objects.requireNonNull(((Registry<Object>) stat.getType().getRegistry()).getKey(stat.getValue()), "Invalid stat object: No id");
     }
 }

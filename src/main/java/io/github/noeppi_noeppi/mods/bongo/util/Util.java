@@ -1,6 +1,10 @@
 package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
@@ -24,10 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class Util {
@@ -44,6 +45,14 @@ public class Util {
 
     private static final Map<DyeColor, TextColor> COLOR_CACHE = new HashMap<>();
 
+    public static String resourceStr(ResourceLocation rl) {
+        if ("minecraft".equals(rl.getNamespace())) {
+            return rl.getPath();
+        } else {
+            return rl.toString();
+        }
+    }
+    
     public static Style getTextFormatting(@Nullable DyeColor color) {
         if (color == null) {
             return Style.EMPTY.applyFormat(ChatFormatting.RESET);
@@ -101,7 +110,25 @@ public class Util {
                 && level.getBlockState(pos.above()).getBlock().isPossibleToRespawnInThis()
                 && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP);
     }
+    
+    public static Optional<ResourceLocation> biome(ServerLevel level, BlockPos pos) {
+        return join(level.getBiome(pos).unwrap()
+                .mapLeft(ResourceKey::location)
+                .mapLeft(Optional::of)
+                .mapRight(ForgeRegistries.BIOMES::getKey)
+                .mapRight(Optional::ofNullable));
+    }
+    
+    public static <T> T join(Either<? extends T, ? extends T> either) {
+        if (either.left().isPresent()) {
+            return either.left().get();
+        } else {
+            //noinspection OptionalGetWithoutIsPresent
+            return either.right().get();
+        }
+    }
 
+    // DELME 
     public static ResourceLocation getLocationFor(CompoundTag nbt, String id) {
         if (!nbt.contains(id, Tag.TAG_STRING)) {
             throw new IllegalStateException("Resource property for " + id + " missing or not a string.");

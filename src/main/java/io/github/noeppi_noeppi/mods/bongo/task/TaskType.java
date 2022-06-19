@@ -8,12 +8,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.moddingx.libx.util.game.ComponentUtil;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public interface TaskType<T> {
@@ -31,8 +32,14 @@ public interface TaskType<T> {
     
     boolean shouldComplete(ServerPlayer player, T element, T compare);
     default void consume(ServerPlayer player, T element, T found) {}
-    default Set<Highlight<?>> highlight(T element) { return Set.of(); }
+    default Stream<Highlight<?>> highlight(T element) { return Stream.empty(); }
+    default void invalidate(T element) {}
+    
+    @OnlyIn(Dist.CLIENT)
+    default FormattedCharSequence renderDisplayName(Minecraft mc, T element) {
+        return ComponentUtil.subSequence(this.contentName(element, null).getVisualOrderText(), 0, 16);
+    }
     
     @OnlyIn(Dist.CLIENT) void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer);
-    @OnlyIn(Dist.CLIENT) void renderSlotContent(Minecraft mc, T content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo);
+    @OnlyIn(Dist.CLIENT) void renderSlotContent(Minecraft mc, T element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo);
 }

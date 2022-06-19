@@ -104,7 +104,7 @@ public final class BongoMod extends ModX {
         TaskTypes.registerType(TaskTypeAdvancement.INSTANCE);
         TaskTypes.registerType(TaskTypeEntity.INSTANCE);
         TaskTypes.registerType(TaskTypeBiome.INSTANCE);
-        TaskTypes.registerType(TaskTypePotion.INSTANCE);
+        TaskTypes.registerType(TaskTypeEffect.INSTANCE);
         TaskTypes.registerType(TaskTypeStat.INSTANCE);
         TaskTypes.registerType(TaskTypeTag.INSTANCE);
 

@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.moddingx.libx.codec.CodecHelper;
-import org.moddingx.libx.codec.MoreCodecs;
 
 import javax.annotation.Nullable;
 import java.util.*;

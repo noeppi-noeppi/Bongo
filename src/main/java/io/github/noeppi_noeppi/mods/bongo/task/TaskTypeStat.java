@@ -2,6 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.MapCodec;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
@@ -12,7 +13,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -20,19 +20,16 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
-import java.util.function.Predicate;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
+public class TaskTypeStat implements TaskType<StatAndValue> {
 
     public static final TaskTypeStat INSTANCE = new TaskTypeStat();
     
@@ -43,18 +40,70 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
     }
 
     @Override
-    public Class<StatAndValue> getTaskClass() {
-        return StatAndValue.class;
-    }
-
-    @Override
-    public String getId() {
+    public String id() {
         return "bongo.stat";
     }
 
     @Override
-    public String getTranslationKey() {
-        return "bongo.task.stat.name";
+    public Class<StatAndValue> taskClass() {
+        return StatAndValue.class;
+    }
+
+    @Override
+    public MapCodec<StatAndValue> codec() {
+        return StatAndValue.CODEC.fieldOf("value");
+    }
+
+    @Override
+    public Component name() {
+        return Component.translatable("bongo.task.stat.name");
+    }
+
+    @Override
+    public Component contentName(StatAndValue element, @Nullable MinecraftServer server) {
+        Component cmp = Component.empty();
+        Object value = element.stat().getValue();
+        if (value instanceof ItemLike item) {
+            cmp = new ItemStack(item).getHoverName();
+        } else if (value instanceof EntityType<?> entity) {
+            cmp = entity.getDescription();
+        } else if (value instanceof ResourceLocation rl) {
+            return Component.literal(Util.resourceStr(rl));
+        }
+        //noinspection ConstantConditions
+        return Component.translatable("stat_type." + ForgeRegistries.STAT_TYPES.getKey(element.stat().getType()).toString().replace(':', '.')).append(Component.literal(" ")).append(cmp);
+    }
+
+    @Override
+    public Comparator<StatAndValue> order() {
+        return Comparator.<StatAndValue, ResourceLocation>comparing(stat -> ForgeRegistries.STAT_TYPES.getKey(stat.stat().getType()), Util.COMPARE_RESOURCE)
+                .thenComparing(StatAndValue::getValueId, Util.COMPARE_RESOURCE)
+                .thenComparingInt(StatAndValue::value);
+    }
+
+    @Override
+    public void validate(StatAndValue element, MinecraftServer server) {
+        element.getValueId();
+    }
+
+    @Override
+    public Stream<StatAndValue> listElements(MinecraftServer server, @Nullable ServerPlayer player) {
+        if (player != null) {
+            ServerStatsCounter mgr = server.getPlayerList().getPlayerStats(player);
+            return mgr.stats.object2IntEntrySet().stream().filter(entry -> entry.getIntValue() > 0).map(entry -> new StatAndValue(entry.getKey(), entry.getIntValue()));
+        } else {
+            return ForgeRegistries.STAT_TYPES.getEntries().stream()
+                    .map(entry -> Map.entry(entry.getKey().location(), entry.getValue()))
+                    .flatMap(entry -> entry.getValue().getRegistry().entrySet().stream()
+                            .map(Map.Entry::getValue)
+                            .map(obj -> new StatAndValue(entry.getValue().get(obj), 1))
+                    );
+        }
+    }
+
+    @Override
+    public boolean shouldComplete(ServerPlayer player, StatAndValue element, StatAndValue compare) {
+        return element.stat().getType().equals(compare.stat().getType()) && element.stat().getValue().equals(compare.stat().getValue()) && compare.value() >= element.value();
     }
 
     @Override
@@ -63,23 +112,23 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, StatAndValue content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        Object value = content.stat().getValue();
+    public void renderSlotContent(Minecraft mc, StatAndValue element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+        Object value = element.stat().getValue();
         if (value instanceof ItemLike) {
-            ItemStack renderStack = new ItemStack((ItemLike) value, content.value());
+            ItemStack renderStack = new ItemStack((ItemLike) value, element.value());
             ItemRenderUtil.renderItem(poseStack, buffer, renderStack, false);
             int x = -1;
-            if (content.stat().getType() == Stats.ITEM_CRAFTED) {
+            if (element.stat().getType() == Stats.ITEM_CRAFTED) {
                 x = 19;
-            } else if (content.stat().getType() == Stats.ITEM_USED) {
+            } else if (element.stat().getType() == Stats.ITEM_USED) {
                 x = 37;
-            } else if (content.stat().getType() == Stats.BLOCK_MINED) {
+            } else if (element.stat().getType() == Stats.BLOCK_MINED) {
                 x = 55;
-            } else if (content.stat().getType() == Stats.ITEM_BROKEN) {
+            } else if (element.stat().getType() == Stats.ITEM_BROKEN) {
                 x = 74;
-            } else if (content.stat().getType() == Stats.ITEM_PICKED_UP) {
+            } else if (element.stat().getType() == Stats.ITEM_PICKED_UP) {
                 x = 91;
-            } else if (content.stat().getType() == Stats.ITEM_DROPPED) {
+            } else if (element.stat().getType() == Stats.ITEM_DROPPED) {
                 x = 109;
             }
             if (x >= 0) {
@@ -97,8 +146,8 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, poseStack, buffer, bigBongo);
         } else {
             boolean foundCustomTex = false;
-            if (Stats.CUSTOM.equals(content.stat().getType()) && content.stat().getValue() instanceof ResourceLocation) {
-                ResourceLocation textureLocation = new ResourceLocation(((ResourceLocation) content.stat().getValue()).getNamespace(), "textures/icon/stat/" + ((ResourceLocation) content.stat().getValue()).getPath() + ".png");
+            if (Stats.CUSTOM.equals(element.stat().getType()) && element.stat().getValue() instanceof ResourceLocation) {
+                ResourceLocation textureLocation = new ResourceLocation(((ResourceLocation) element.stat().getValue()).getNamespace(), "textures/icon/stat/" + ((ResourceLocation) element.stat().getValue()).getPath() + ".png");
                 RenderSystem.setShaderTexture(0, textureLocation);
                 AbstractTexture texture = mc.getTextureManager().getTexture(textureLocation);
                 //noinspection ConstantConditions
@@ -123,69 +172,9 @@ public class TaskTypeStat implements TaskTypeSimple<StatAndValue> {
             poseStack.translate(0, 0, 200);
             poseStack.scale(2/3f, 2/3f, 1);
             Font fr = Minecraft.getInstance().font;
-            String text = content.stat().format(content.value());
+            String text = element.stat().format(element.value());
             fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, false, 0, 15728880);
             poseStack.popPose();
-        }
-    }
-
-    @Override
-    public String getTranslatedContentName(StatAndValue content) {
-        String text = getContentName(content, null).getString(16);
-        return text + ": " + content.stat().format(content.value());
-    }
-
-    @Override
-    public Component getContentName(StatAndValue content, @CheckForNull MinecraftServer server) {
-        Component tc = Component.empty();
-        Object value = content.stat().getValue();
-        if (value instanceof ItemLike) {
-            tc = new ItemStack((ItemLike) value).getHoverName();
-        } else if (value instanceof EntityType<?>) {
-            tc = ((EntityType<?>) value).getDescription();
-        } else if (value instanceof ResourceLocation) {
-            return Component.literal(((ResourceLocation) value).getPath().replace('_', ' '));
-        }
-        //noinspection ConstantConditions
-        return Component.translatable("stat_type." + ForgeRegistries.STAT_TYPES.getKey(content.stat().getType()).toString().replace(':', '.')).append(Component.literal(" ")).append(tc);
-    }
-
-    @Override
-    public boolean shouldComplete(StatAndValue element, Player player, StatAndValue compare) {
-        return element.stat().getType().equals(compare.stat().getType()) && element.stat().getValue().equals(compare.stat().getValue()) && compare.value() >= element.value();
-    }
-
-    @Override
-    public CompoundTag serializeNBT(StatAndValue element) {
-        return element.serializeNBT();
-    }
-
-    @Override
-    public StatAndValue deserializeNBT(CompoundTag nbt) {
-        return StatAndValue.deserializeNBT(nbt);
-    }
-
-    @Override
-    public Predicate<ItemStack> bongoTooltipStack(StatAndValue element) {
-        Item item = element.stat().getValue() instanceof ItemLike ? ((ItemLike) element.stat().getValue()).asItem() : null;
-        return stack -> item != null && stack.getItem() == item;
-    }
-
-    @Nullable
-    @Override
-    public Comparator<StatAndValue> getSorting() {
-        return Comparator.comparing((StatAndValue stat) -> ForgeRegistries.STAT_TYPES.getKey(stat.stat().getType()), Util.COMPARE_RESOURCE)
-                .thenComparing(StatAndValue::getValueId, Util.COMPARE_RESOURCE)
-                .thenComparingInt(StatAndValue::value);
-    }
-
-    @Override
-    public Stream<StatAndValue> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
-        if (player != null) {
-            ServerStatsCounter mgr = server.getPlayerList().getPlayerStats(player);
-            return mgr.stats.object2IntEntrySet().stream().filter(entry -> entry.getIntValue() > 0).map(entry -> new StatAndValue(entry.getKey(), entry.getIntValue()));
-        } else {
-            return Stream.empty();
         }
     }
 }

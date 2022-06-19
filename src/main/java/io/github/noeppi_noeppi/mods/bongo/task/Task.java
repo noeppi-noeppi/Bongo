@@ -10,11 +10,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class Task {
 
@@ -68,9 +70,20 @@ public class Task {
         }
     }
     
-    public Set<Highlight<?>> highlight() {
+    public Stream<Highlight<?>> highlight() {
         //noinspection unchecked
         return ((TaskType<Object>) this.type).highlight(this.element);
+    }
+    
+    public void invalidate() {
+        //noinspection unchecked
+        ((TaskType<Object>) this.type).invalidate(this.element);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public FormattedCharSequence renderDisplayName(Minecraft mc) {
+        //noinspection unchecked
+        return ((TaskType<Object>) this.type).renderDisplayName(mc, this.element);
     }
     
     @OnlyIn(Dist.CLIENT)

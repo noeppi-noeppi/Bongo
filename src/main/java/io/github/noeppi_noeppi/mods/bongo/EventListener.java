@@ -92,7 +92,7 @@ public class EventListener {
         if (event.getEntityLiving() instanceof Player player) {
             Level level = player.getCommandSenderWorld();
             if (!level.isClientSide) {
-                Bongo.get(level).checkCompleted(TaskTypePotion.INSTANCE, player, event.getPotionEffect().getEffect());
+                Bongo.get(level).checkCompleted(TaskTypeEffect.INSTANCE, player, event.getPotionEffect().getEffect());
             }
         }
     }

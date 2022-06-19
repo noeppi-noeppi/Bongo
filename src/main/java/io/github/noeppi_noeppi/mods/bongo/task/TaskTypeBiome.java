@@ -2,27 +2,26 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.serialization.MapCodec;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class TaskTypeBiome implements TaskTypeSimple<Biome> {
+// This is a datapack registry, so we can't use Biome here.
+public class TaskTypeBiome implements TaskType<ResourceLocation> {
 
     public static final TaskTypeBiome INSTANCE = new TaskTypeBiome();
 
@@ -33,18 +32,54 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
     }
 
     @Override
-    public Class<Biome> getTaskClass() {
-        return Biome.class;
-    }
-
-    @Override
-    public String getId() {
+    public String id() {
         return "bongo.biome";
     }
 
     @Override
-    public String getTranslationKey() {
-        return "bongo.task.biome.name";
+    public Class<ResourceLocation> taskClass() {
+        return ResourceLocation.class;
+    }
+
+    @Override
+    public MapCodec<ResourceLocation> codec() {
+        return ResourceLocation.CODEC.fieldOf("value");
+    }
+
+    @Override
+    public Component name() {
+        return Component.translatable("bongo.task.biome.name");
+    }
+
+    @Override
+    public Component contentName(ResourceLocation element, @Nullable MinecraftServer server) {
+        return Component.translatable(net.minecraft.Util.makeDescriptionId("biome", element));
+    }
+
+    @Override
+    public Comparator<ResourceLocation> order() {
+        return Util.COMPARE_RESOURCE;
+    }
+
+    @Override
+    public void validate(ResourceLocation element, MinecraftServer server) {
+        if (ForgeRegistries.BIOMES.getValue(element) == null) {
+            throw new IllegalStateException("Biome not registered: " + element);
+        }
+    }
+
+    @Override
+    public Stream<ResourceLocation> listElements(MinecraftServer server, @Nullable ServerPlayer player) {
+        if (player == null) {
+            return ForgeRegistries.BIOMES.getKeys().stream();
+        } else {
+            return Util.biome(player.getLevel(), player.blockPosition()).stream();
+        }
+    }
+
+    @Override
+    public boolean shouldComplete(ServerPlayer player, ResourceLocation element, ResourceLocation compare) {
+        return Objects.equals(element, compare);
     }
 
     @Override
@@ -53,11 +88,10 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
     }
 
     @Override
-    public void renderSlotContent(Minecraft mc, Biome content, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        ResourceLocation biomeId = ForgeRegistries.BIOMES.getKey(content);
+    public void renderSlotContent(Minecraft mc, ResourceLocation element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ResourceLocation biomeTexture;
-        if (biomeId != null) {
-            biomeTexture = new ResourceLocation(biomeId.getNamespace(), "textures/icon/biome/" + biomeId.getPath() + ".png");
+        if (element != null) {
+            biomeTexture = new ResourceLocation(element.getNamespace(), "textures/icon/biome/" + element.getPath() + ".png");
         } else {
             biomeTexture = FALLBACK_TEXTURE;
         }
@@ -67,52 +101,5 @@ public class TaskTypeBiome implements TaskTypeSimple<Biome> {
         if (texture == null || texture.getId() == MissingTextureAtlasSprite.getTexture().getId())
             RenderSystem.setShaderTexture(0, FALLBACK_TEXTURE);
         GuiComponent.blit(poseStack, 0, 0, 0, 0, 16, 16, 16, 16);
-    }
-
-    @Override
-    public String getTranslatedContentName(Biome content) {
-        return Component.translatable(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content))).getString(18);
-    }
-
-    @Override
-    public Component getContentName(Biome content, MinecraftServer server) {
-        return Component.translatable(net.minecraft.Util.makeDescriptionId("biome", ForgeRegistries.BIOMES.getKey(content)));
-    }
-
-    @Override
-    public boolean shouldComplete(Biome element, Player player, Biome compare) {
-        return element == compare;
-    }
-
-    @Override
-    public CompoundTag serializeNBT(Biome element) {
-        CompoundTag nbt = new CompoundTag();
-        Util.putByForgeRegistry(ForgeRegistries.BIOMES, nbt, "biome", element);
-        return nbt;
-    }
-
-    @Override
-    public Biome deserializeNBT(CompoundTag nbt) {
-        return Util.getFromRegistry(ForgeRegistries.BIOMES, nbt, "biome");
-    }
-
-    @Nullable
-    @Override
-    public Comparator<Biome> getSorting() {
-        return Comparator.comparing(ForgeRegistries.BIOMES::getKey, Util.COMPARE_RESOURCE);
-    }
-
-    @Override
-    public Stream<Biome> getAllElements(MinecraftServer server, @Nullable ServerPlayer player) {
-        if (player == null) {
-            return ForgeRegistries.BIOMES.getValues().stream();
-        } else {
-            try {
-                return Stream.of(ForgeRegistries.BIOMES.getValue(player.getCommandSenderWorld().registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(player.getCommandSenderWorld().getBiome(player.blockPosition()).value())));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return Stream.empty();
-            }
-        }
     }
 }
