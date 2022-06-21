@@ -64,20 +64,20 @@ public class TaskTypeTag implements TaskType<TagWithCount> {
 
     @Override
     public Component contentName(TagWithCount element, @Nullable MinecraftServer server) {
-        return Component.literal(Util.resourceStr(element.getId()));
+        return Component.literal(Util.resourceStr(element.getTag()));
     }
 
     @Override
     public Comparator<TagWithCount> order() {
-        return Comparator.comparing(TagWithCount::getId, Util.COMPARE_RESOURCE).thenComparingInt(TagWithCount::getCount);
+        return Comparator.comparing(TagWithCount::getTag, Util.COMPARE_RESOURCE).thenComparingInt(TagWithCount::getCount);
     }
 
     @Override
     public void validate(TagWithCount element, MinecraftServer server) {
-        if (!element.getId().equals(Misc.MISSIGNO)) {
-            Optional<HolderSet.Named<Item>> tag = TagAccess.ROOT.tryGet(element.getTag());
+        if (!element.getTag().equals(Misc.MISSIGNO)) {
+            Optional<HolderSet.Named<Item>> tag = TagAccess.ROOT.tryGet(element.getKey());
             if (tag.isEmpty() || tag.get().stream().toList().isEmpty()) {
-                throw new IllegalStateException("Empty or unknown tag: " + element.getId());
+                throw new IllegalStateException("Empty or unknown tag: " + element.getTag());
             }
         }
     }
@@ -103,7 +103,7 @@ public class TaskTypeTag implements TaskType<TagWithCount> {
 
     @Override
     public boolean shouldComplete(ServerPlayer player, TagWithCount element, TagWithCount compare) {
-        return element.getId().equals(compare.getId()) && element.getCount() <= compare.getCount();
+        return element.getTag().equals(compare.getTag()) && element.getCount() <= compare.getCount();
     }
 
     @Override

@@ -21,25 +21,25 @@ public final class TagWithCount {
     
     public static final Codec<TagWithCount> CODEC = Codecs.get(BongoMod.class, TagWithCount.class);
     
-    private final ResourceLocation id;
-    private final TagKey<Item> tag;
+    private final ResourceLocation tag;
+    private final TagKey<Item> key;
     private final CachedValue<Predicate<Item>> contains;
     private final CachedValue<List<Item>> itemList;
     private final int count;
 
     @PrimaryConstructor
-    public TagWithCount(ResourceLocation id, int count) {
-        this.id = id;
+    public TagWithCount(ResourceLocation tag, int count) {
+        this.tag = tag;
         this.count = count;
-        this.tag = TagKey.create(Registry.ITEM_REGISTRY, id);
+        this.key = TagKey.create(Registry.ITEM_REGISTRY, tag);
         this.contains = new CachedValue<>(() -> {
             try {
                 // Can't use TagAccess for performance reasons
                 @SuppressWarnings("unchecked")
                 Registry<Item> registry = (Registry<Item>) Registry.REGISTRY.get(Registry.ITEM_REGISTRY.location());
                 if (registry == null) throw new IllegalStateException("Item registry not found");
-                HolderSet.Named<Item> tag = TagAccess.ROOT.get(this.tag);
-                return item -> registry.getHolder(registry.getId(item)).map(tag::contains).orElse(false);
+                HolderSet.Named<Item> holderSet = TagAccess.ROOT.get(this.key);
+                return item -> registry.getHolder(registry.getId(item)).map(holderSet::contains).orElse(false);
             } catch (Exception e) {
                 e.printStackTrace();
                 return item -> false;
@@ -47,8 +47,8 @@ public final class TagWithCount {
         });
         this.itemList = new CachedValue<>(() -> {
             try {
-                HolderSet.Named<Item> tag = TagAccess.ROOT.get(this.tag);
-                return tag.stream().map(Holder::value).toList();
+                HolderSet.Named<Item> holderSet = TagAccess.ROOT.get(this.key);
+                return holderSet.stream().map(Holder::value).toList();
             } catch (Exception e) {
                 e.printStackTrace();
                 return List.of();
@@ -58,20 +58,20 @@ public final class TagWithCount {
     
     private TagWithCount(TagWithCount parent, int count) {
         // We leave the lazy value here
-        this.id = parent.id;
-        this.count = count;
         this.tag = parent.tag;
+        this.count = count;
+        this.key = parent.key;
         // Keep the lazy value for performance reasons
         this.contains = parent.contains;
         this.itemList = parent.itemList;
     }
 
-    public ResourceLocation getId() {
-        return id;
+    public ResourceLocation getTag() {
+        return tag;
     }
 
-    public TagKey<Item> getTag() {
-        return tag;
+    public TagKey<Item> getKey() {
+        return key;
     }
 
     public List<Item> getItems() {
@@ -101,16 +101,16 @@ public final class TagWithCount {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TagWithCount that = (TagWithCount) o;
-        return count == that.count && id.equals(that.id);
+        return count == that.count && tag.equals(that.tag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(tag);
     }
 
     @Override
     public String toString() {
-        return "TagWithCount[ " + id + " x " + count + " ]";
+        return "TagWithCount[ " + tag + " x " + count + " ]";
     }
 }

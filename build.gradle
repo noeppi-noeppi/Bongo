@@ -13,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor files("/home/tux/dev/mods/LibX/build/libs/LibX-1.19-4.0.0-deobf.jar")
+    annotationProcessor files("/home/tux/dev/mods/LibX/build/libs/LibX-1.19-4.0.3-deobf.jar")
 
-    implementation files("/home/tux/dev/mods/LibX/build/libs/LibX-1.19-4.0.0-deobf.jar")
+    implementation files("/home/tux/dev/mods/LibX/build/libs/LibX-1.19-4.0.3-deobf.jar")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19-5.1.0.1:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.19-forge:11.0.0.206")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.19-4.0.0")

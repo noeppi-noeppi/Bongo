@@ -54,14 +54,14 @@ public record GameSettings(
         } else if (!GAME_SETTINGS.containsKey(settings.get(0))) {
             throw new NoSuchElementException("Settings not found: " + settings.get(0));
         } else try {
-            return mergeTo(load(settings.subList(1, settings.size()))).decode(GAME_SETTINGS.get(0)).getOrThrow(false, err -> {}).getFirst();
+            return mergeTo(load(settings.subList(1, settings.size()))).decode(GAME_SETTINGS.get(settings.get(0))).getOrThrow(false, err -> {}).getFirst();
         } catch (RuntimeException e) {
             throw new IllegalStateException("Failed to merge settings");
         }
     }
 
     public static void loadGameSettings(ResourceManager rm) throws IOException {
-        GAME_SETTINGS = DataLoader.loadJson(rm, "bingo_settings", (id, json) -> new Dynamic<>(JsonOps.INSTANCE, json));
         SETTING_KEYS.invalidate();
+        GAME_SETTINGS = DataLoader.loadJson(rm, "bingo_settings", (id, json) -> new Dynamic<>(JsonOps.INSTANCE, json));
     }
 }
