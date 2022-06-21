@@ -17,6 +17,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.codec.MoreCodecs;
 
@@ -99,6 +101,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public FormattedCharSequence renderDisplayName(Minecraft mc, ItemStack element) {
         FormattedCharSequence name = TaskType.super.renderDisplayName(mc, element);
         if (element.getCount() != 1) {
@@ -109,11 +112,13 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 256, 256);
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, ItemStack element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemRenderUtil.renderItem(poseStack, buffer, element, !bigBongo);
     }

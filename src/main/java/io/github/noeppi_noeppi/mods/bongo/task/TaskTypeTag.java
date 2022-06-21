@@ -21,6 +21,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.moddingx.libx.render.ClientTickHandler;
 import org.moddingx.libx.util.Misc;
 import org.moddingx.libx.util.data.TagAccess;
@@ -120,6 +122,7 @@ public class TaskTypeTag implements TaskType<TagWithCount> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public FormattedCharSequence renderDisplayName(Minecraft mc, TagWithCount element) {
         ItemStack stack = cycle(element);
         if (stack == null) {
@@ -135,11 +138,13 @@ public class TaskTypeTag implements TaskType<TagWithCount> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 256, 256);
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, TagWithCount element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemStack stack = cycle(element);
         ItemRenderUtil.renderItem(poseStack, buffer, stack == null ? new ItemStack(Items.BARRIER) : stack, !bigBongo);

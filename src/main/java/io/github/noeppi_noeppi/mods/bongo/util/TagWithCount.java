@@ -2,17 +2,16 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.mojang.serialization.Codec;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import org.moddingx.libx.annotation.api.Codecs;
-import org.moddingx.libx.annotation.codec.PrimaryConstructor;
-import org.moddingx.libx.util.lazy.CachedValue;
-import org.moddingx.libx.util.data.TagAccess;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import org.moddingx.libx.annotation.api.Codecs;
+import org.moddingx.libx.annotation.codec.PrimaryConstructor;
+import org.moddingx.libx.util.data.TagAccess;
+import org.moddingx.libx.util.lazy.CachedValue;
 
 import java.util.List;
 import java.util.Objects;

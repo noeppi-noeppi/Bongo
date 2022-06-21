@@ -1,6 +1,5 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
-import org.moddingx.libx.inventory.VanillaWrapper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -8,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraftforge.items.ItemStackHandler;
+import org.moddingx.libx.inventory.VanillaWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

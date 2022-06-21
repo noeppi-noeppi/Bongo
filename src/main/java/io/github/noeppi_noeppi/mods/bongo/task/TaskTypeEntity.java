@@ -15,6 +15,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.moddingx.libx.render.ClientTickHandler;
 
@@ -56,6 +58,7 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         poseStack.translate(-2, -2, 0);
         poseStack.scale(22 / 26f, 22 / 26f, 1);
@@ -63,6 +66,7 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, EntityType<?> element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         @SuppressWarnings("unchecked")
         EntityRenderer<Entity> render = (EntityRenderer<Entity>) mc.getEntityRenderDispatcher().renderers.get(element);

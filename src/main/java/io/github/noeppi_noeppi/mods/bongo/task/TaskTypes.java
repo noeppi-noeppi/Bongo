@@ -5,7 +5,10 @@ import com.mojang.serialization.DataResult;
 import org.moddingx.libx.codec.CodecHelper;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class TaskTypes {
 

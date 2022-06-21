@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.network;
 
-import org.moddingx.libx.network.PacketSerializer;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import org.moddingx.libx.network.PacketSerializer;
 
 import java.util.Objects;
 

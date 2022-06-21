@@ -3,7 +3,6 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import net.minecraft.client.Minecraft;

@@ -16,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
@@ -117,6 +119,7 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         poseStack.translate(-1, -1, 0);
         poseStack.scale(20 / 26f, 20 / 26f, 1);
@@ -124,6 +127,7 @@ public class TaskTypeAdvancement implements TaskType<ResourceLocation> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, ResourceLocation element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         ItemStack icon = ClientAdvancementInfo.getDisplay(element);
         ItemRenderUtil.renderItem(poseStack, buffer, icon, false);

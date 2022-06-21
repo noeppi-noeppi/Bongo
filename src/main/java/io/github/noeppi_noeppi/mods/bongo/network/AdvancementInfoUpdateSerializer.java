@@ -1,7 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.network;
 
 import com.google.gson.JsonElement;
-import org.moddingx.libx.network.PacketSerializer;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.nbt.CompoundTag;
@@ -9,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import org.moddingx.libx.network.PacketSerializer;
 
 public class AdvancementInfoUpdateSerializer implements PacketSerializer<AdvancementInfoUpdateSerializer.AdvancementInfoUpdateMessage> {
 

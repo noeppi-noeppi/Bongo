@@ -22,6 +22,8 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -107,11 +109,13 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         GuiComponent.blit(poseStack, 0, 0, 36, 0, 18, 18, 256, 256);
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, StatAndValue element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         Object value = element.stat().getValue();
         if (value instanceof ItemLike) {

@@ -5,10 +5,8 @@ import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.settings.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.data.task.GameTasks;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
-import org.moddingx.libx.util.lazy.LazyValue;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class GameDef {
 

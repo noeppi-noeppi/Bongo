@@ -11,6 +11,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -49,12 +51,14 @@ public class TaskTypeEffect extends RegistryTaskType<MobEffect> {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
         poseStack.translate(-1, -1, 0);
         GuiComponent.blit(poseStack, 0, 0, 26, 18, 20, 20, 256, 256);
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, MobEffect element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
         poseStack.translate(-1, -1, 0);
         RenderSystem.setShaderTexture(0, PotionTextureRenderCache.getRenderTexture(element));

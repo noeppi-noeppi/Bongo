@@ -4,10 +4,10 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.network.chat.Component;
-import org.moddingx.libx.util.game.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import org.moddingx.libx.util.game.ServerMessages;
 
 public class StartCommand implements Command<CommandSourceStack> {
 

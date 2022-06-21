@@ -2,10 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.commands.synchronization.ArgumentTypeInfos;
-import net.minecraft.core.Registry;
-import net.minecraftforge.registries.RegisterEvent;
-import org.moddingx.libx.mod.ModX;
 import io.github.noeppi_noeppi.mods.bongo.command.BongoCommands;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameSettingsArgument;
 import io.github.noeppi_noeppi.mods.bongo.command.arg.GameTasksArgument;
@@ -22,6 +18,8 @@ import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterDefault;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.Registry;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -34,11 +32,12 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegisterEvent;
+import org.moddingx.libx.mod.ModX;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.lang.module.ModuleDescriptor;
 
 @Mod("bongo")
 public final class BongoMod extends ModX {

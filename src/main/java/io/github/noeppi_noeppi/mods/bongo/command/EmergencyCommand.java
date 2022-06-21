@@ -9,7 +9,6 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 
 public class EmergencyCommand implements Command<CommandSourceStack> {
 
