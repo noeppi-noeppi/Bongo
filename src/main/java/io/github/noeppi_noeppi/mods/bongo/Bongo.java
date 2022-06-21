@@ -12,10 +12,12 @@ import io.github.noeppi_noeppi.mods.bongo.event.*;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
+import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -27,10 +29,12 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
+import org.moddingx.libx.codec.CodecHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -70,8 +74,8 @@ public class Bongo extends SavedData {
                     Set<ItemStack> stacks = new HashSet<>();
                     Set<ResourceLocation> advancements = new HashSet<>();
                     for (Task task : bongo.items) {
-                        stacks.addAll(task.bookmarkStacks());
-                        advancements.addAll(task.bookmarkAdvancements());
+                        stacks.addAll(task.highlight().flatMap(Highlight::asItem).map(Highlight::element).toList());
+                        advancements.addAll(task.highlight().flatMap(Highlight::asAdvancement).map(Highlight::element).toList());
                     }
                     JeiIntegration.setBookmarks(stacks, advancements);
                 } else {
@@ -93,7 +97,6 @@ public class Bongo extends SavedData {
     private boolean teamWon;
     private long runningSince = 0;
     private long ranUntil = 0;
-    private boolean hasTimeLimit = false;
     private long runningUntil = 0;
     private int taskAmountOutOfTime = -1;
     private DyeColor winningTeam;
@@ -107,8 +110,9 @@ public class Bongo extends SavedData {
         }
         teams = teamBuilder.build();
         items = new ArrayList<>();
-        for (int i = 0; i < 25; i++)
-            items.add(Task.empty());
+        for (int i = 0; i < 25; i++) {
+            items.add(Task.EMPTY);
+        }
         tooltipPredicate = null;
         active = false;
         running = false;
@@ -152,7 +156,6 @@ public class Bongo extends SavedData {
         this.active = true;
         this.running = false;
         this.teamWon = false;
-        this.hasTimeLimit = settings.maxTime >= 0;
         if (level != null) {
             for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
                 player.refreshDisplayName();
@@ -172,18 +175,18 @@ public class Bongo extends SavedData {
         this.teamWon = false;
         this.runningSince = System.currentTimeMillis();
         this.ranUntil = 0;
-        if (this.hasTimeLimit) {
-            this.runningUntil = System.currentTimeMillis() + (1000l * settings.maxTime);
+        if (settings.game().time().limit().isPresent()) {
+            this.runningUntil = System.currentTimeMillis() + (1000l * settings.game().time().limit().get());
         } else {
             this.runningUntil = 0;
         }
         this.taskAmountOutOfTime = -1;
         Set<UUID> uids = new HashSet<>();
         for (Team team : teams.values()) {
-            settings.fillBackPackInventory(team, true);
+            settings.equipment().equip(team, true);
             team.resetCompleted(true);
             team.resetLocked(true);
-            team.teleportsLeft(getSettings().teleportsPerTeam);
+            team.teleportsLeft(getSettings().game().teleportsPerTeam());
             uids.addAll(team.getPlayers());
         }
         if (level != null) {
@@ -200,8 +203,8 @@ public class Bongo extends SavedData {
             for (Team team : getTeams()) {
                 List<ServerPlayer> players = level.getServer().getPlayerList().getPlayers().stream().filter(team::hasPlayer).collect(ImmutableList.toImmutableList());
                 if (!players.isEmpty()) {
-                    settings.getTeleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, settings.teleportRadius, random);
-                    MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameLevel, team, settings.getTeleporter(), players));
+                    settings.level().teleporter().teleportTeam(this, gameLevel, team, players, BlockPos.ZERO, settings.level().teleportRadius(), random);
+                    MinecraftForge.EVENT_BUS.post(new BongoTeleportedEvent(this, gameLevel, team, settings.level().teleporter(), players));
                 }
             }
         }
@@ -254,23 +257,22 @@ public class Bongo extends SavedData {
         compound.putBoolean("teamWon", teamWon);
         compound.putLong("runningSince", runningSince);
         compound.putLong("ranUntil", ranUntil);
-        compound.putBoolean("hasTimeLimit", hasTimeLimit);
         compound.putLong("runningUntil", runningUntil);
         compound.putInt("taskAmountOutOfTime", taskAmountOutOfTime);
 
-        if (winningTeam != null)
+        if (winningTeam != null) {
             compound.putInt("winningTeam", winningTeam.ordinal());
+        }
 
-        compound.putString("settings_id", settings.id.toString());
-        compound.put("settings", settings.getTag());
+        safe(() -> CodecHelper.NBT.write(GameSettings.CODEC, settings)).ifPresent(elem -> compound.put("settings", elem));
 
         for (DyeColor dc : DyeColor.values()) {
-            compound.put(dc.getSerializedName(), getTeam(dc).serializeNBT());
+            compound.put("team_" + dc.getSerializedName(), getTeam(dc).serializeNBT());
         }
 
         ListTag itemList = new ListTag();
         for (Task item : items) {
-            itemList.add(item.serializeNBT());
+            itemList.add(safe(() -> CodecHelper.NBT.write(Task.CODEC, item)).orElse(StringTag.valueOf("invalid")));
         }
         compound.put("items", itemList);
 
@@ -291,7 +293,6 @@ public class Bongo extends SavedData {
         teamWon = nbt.getBoolean("teamWon");
         runningSince = nbt.getLong("runningSince");
         ranUntil = nbt.getLong("ranUntil");
-        hasTimeLimit = nbt.getBoolean("hasTimeLimit");
         runningUntil = nbt.getLong("runningUntil");
         taskAmountOutOfTime = nbt.getInt("taskAmountOutOfTime");
         
@@ -300,14 +301,14 @@ public class Bongo extends SavedData {
         } else {
             winningTeam = null;
         }
-
-        if (nbt.contains("settings_id", Tag.TAG_STRING) && nbt.contains("settings", Tag.TAG_COMPOUND)) {
-            settings = new GameSettings(new ResourceLocation(nbt.getString("settings_id")), nbt.getCompound("settings"));
-        } else {
-            settings = GameSettings.DEFAULT;
+        
+        settings = GameSettings.DEFAULT;
+        if (nbt.contains("settings")) {
+            settings = safe(() -> CodecHelper.NBT.read(GameSettings.CODEC, nbt.get("settings"))).orElse(GameSettings.DEFAULT);
         }
+        
         for (DyeColor dc : DyeColor.values()) {
-            if (nbt.contains(dc.getSerializedName(), Tag.TAG_COMPOUND)) {
+            if (nbt.contains("team_" + dc.getSerializedName(), Tag.TAG_COMPOUND)) {
                 getTeam(dc).deserializeNBT(nbt.getCompound(dc.getSerializedName()));
             }
         }
@@ -315,10 +316,13 @@ public class Bongo extends SavedData {
         if (nbt.contains("items", Tag.TAG_LIST)) {
             ListTag itemList = nbt.getList("items", Tag.TAG_COMPOUND);
             for (int i = 0; i < items.size(); i++) {
-                if (i < itemList.size()) {
-                    items.get(i).deserializeNBT(itemList.getCompound(i));
+                if (i >= itemList.size()) {
+                    items.set(i, Task.EMPTY);
+                } else if (itemList.get(i) instanceof StringTag && "invalid".equals(itemList.getString(i))) {
+                    items.set(i, Task.EMPTY);
                 } else {
-                    items.set(i, Task.empty());
+                    int idx = i;
+                    items.set(i, safe(() -> CodecHelper.NBT.read(Task.CODEC, itemList.get(idx))).orElse(Task.EMPTY));
                 }
             }
         } else {
@@ -335,10 +339,19 @@ public class Bongo extends SavedData {
             }
         }
     }
+    
+    private static <T> Optional<T> safe(Callable<T> value) {
+        try {
+            return Optional.of(value.call());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 
     public void reset() {
-        for (Team team : teams.values())
+        for (Team team : teams.values()) {
             team.reset(true);
+        }
 
         active = false;
         running = false;
@@ -366,14 +379,15 @@ public class Bongo extends SavedData {
     }
 
     public void clearItems(boolean suppressBingoSync) {
-        items.replaceAll(t -> Task.empty());
+        items.replaceAll(t -> Task.EMPTY);
         setChanged(suppressBingoSync);
     }
 
     public Task task(int slot) {
         Task task = items.get(slot);
-        if (task == null)
-            return Task.empty();
+        if (task == null) {
+            return Task.EMPTY;
+        }
         return task;
     }
 
@@ -387,27 +401,24 @@ public class Bongo extends SavedData {
         return running() && getTeam(player) != null;
     }
     
-    public <C> void checkCompleted(TaskType<?, C> type, Player player, C compare) {
-        if (!running)
-            return;
+    public <C> void checkCompleted(TaskType<C> type, Player player, C compare) {
+        if (!running || player.level.isClientSide) return;
         Team team = getTeam(player);
-        if (team != null) {
+        if (team != null && player instanceof ServerPlayer serverPlayer) {
             for (int i = 0; i < items.size(); i++) {
-                if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(player, compare)) {
+                if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(type, serverPlayer, compare)) {
                     team.complete(i);
-                    if (getSettings().consumeItems) {
-                        task(i).consumeItem(player, compare);
+                    if (getSettings().game().consumeItems()) {
+                        task(i).consume(type, serverPlayer, compare);
                     }
-                    if (getSettings().lockout) {
+                    if (getSettings().game().lockout()) {
                         for (Team t : teams.values()) {
                             if (!t.completed(i)) {
                                 t.lock(i);
                             }
                         }
                     }
-                    if (player instanceof ServerPlayer) {
-                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, ((ServerPlayer) player).getLevel(), (ServerPlayer) player, task(i)));
-                    }
+                    MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
                 }
             }
         }
@@ -415,7 +426,7 @@ public class Bongo extends SavedData {
     }
 
     public void checkWin() {
-        if (hasTimeLimit && System.currentTimeMillis() > runningUntil) {
+        if (settings.game().time().limited() && System.currentTimeMillis() > runningUntil) {
             if (taskAmountOutOfTime >= 0) {
                 for (Team team : teams.values()) {
                     if (team.completionAmount() >= taskAmountOutOfTime) {
@@ -444,15 +455,14 @@ public class Bongo extends SavedData {
                 if (winning == null) {
                     taskAmountOutOfTime = Math.min(25, max + 1);
                     setDirty();
-                    return;
                 } else {
                     setWin(winning);
-                    return;
                 }
+                return;
             }
         }
         for (Team team : teams.values()) {
-            if (getSettings().winCondition.won(this, team)) {
+            if (getSettings().game().winCondition().won(this, team)) {
                 setWin(team);
                 return;
             }
@@ -517,9 +527,9 @@ public class Bongo extends SavedData {
 
     public void setTasks(List<Task> tasks) {
         for (int i = 0; i < 25; i++) {
-            items.set(i, tasks.get(i).copy());
+            items.set(i, tasks.get(i));
             if (level != null) {
-                tasks.get(i).syncToClient(level.getServer(), null);
+                tasks.get(i).sync(level.getServer(), null);
             }
         }
         updateTooltipPredicate();
@@ -532,10 +542,11 @@ public class Bongo extends SavedData {
     private void updateTooltipPredicate() {
         if (level == null) {
             // We cache the predicates to reduce lag
-            List<Predicate<ItemStack>> predicates = new ArrayList<>();
-            for (int i = 0; i < 25; i++) {
-                predicates.add(task(i).bongoTooltipStack());
-            }
+            List<Predicate<ItemStack>> predicates = this.items.stream()
+                    .flatMap(Task::highlight)
+                    .flatMap(Highlight::asItem)
+                    .map(Highlight.Item::predicate)
+                    .toList();
             tooltipPredicate = stack -> {
                 for (Predicate<ItemStack> predicate : predicates) {
                     if (predicate.test(stack))
@@ -546,8 +557,8 @@ public class Bongo extends SavedData {
         }
     }
 
-    public <T> Stream<T> getElementsOf(TaskType<T, ?> type) {
-        return items.stream().map(task -> task.getElement(type)).filter(Objects::nonNull);
+    public <T> Stream<T> getElementsOf(TaskType<T> type) {
+        return items.stream().flatMap(task -> task.getElement(type).stream());
     }
 
     public boolean isTooltipStack(ItemStack stack) {
@@ -570,10 +581,6 @@ public class Bongo extends SavedData {
         if (ModList.get().isLoaded("minemention")) {
             MineMentionIntegration.availabilityChange(player);
         }
-    }
-    
-    public boolean hasTimeLimit() {
-        return hasTimeLimit;
     }
     
     public long runningUntil() {

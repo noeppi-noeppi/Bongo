@@ -19,6 +19,7 @@ import org.moddingx.libx.codec.CodecHelper;
 import org.moddingx.libx.codec.MoreCodecs;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Task {
@@ -112,13 +113,12 @@ public class Task {
         }
     }
     
-    @Nullable
-    public <T> T getElement(TaskType<T> type) {
+    public <T> Optional<T> getElement(TaskType<T> type) {
         if (this.type == type) {
             //noinspection unchecked
-            return (T) element;
+            return Optional.of((T) element);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
     
