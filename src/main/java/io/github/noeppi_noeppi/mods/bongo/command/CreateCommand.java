@@ -9,8 +9,6 @@ import org.moddingx.libx.command.CommandUtil;
 import org.moddingx.libx.util.game.ServerMessages;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.data.GameDef;
-import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
-import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerLevel;
 

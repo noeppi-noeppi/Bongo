@@ -1,6 +1,5 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,7 +8,6 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.network.chat.Component;
 import org.moddingx.libx.command.CommandUtil;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskType;
 import io.github.noeppi_noeppi.mods.bongo.task.TaskTypes;
 import net.minecraft.commands.CommandSourceStack;

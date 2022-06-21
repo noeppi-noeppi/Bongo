@@ -89,7 +89,7 @@ public class SkyblockIntegration {
         }
 
         @Override
-        public String getId() {
+        public String id() {
             return "bongo.skyblock";
         }
 

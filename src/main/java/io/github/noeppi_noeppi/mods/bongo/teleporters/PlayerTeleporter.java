@@ -16,7 +16,7 @@ import java.util.Random;
  */
 public interface PlayerTeleporter {
 
-    String getId();
+    String id();
     
     /**
      * This method should teleport a team in the world.

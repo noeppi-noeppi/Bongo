@@ -19,7 +19,7 @@ public class PlayerTeleporterNothing implements PlayerTeleporter {
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return "bongo.no_tp";
     }
 

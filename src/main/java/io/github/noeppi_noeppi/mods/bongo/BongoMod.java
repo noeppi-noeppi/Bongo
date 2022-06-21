@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.lang.module.ModuleDescriptor;
 
 @Mod("bongo")
 public final class BongoMod extends ModX {

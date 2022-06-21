@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
+import com.mojang.serialization.Codec;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.world.phys.shapes.BooleanOp;
 
@@ -17,6 +18,8 @@ public enum WinCondition {
     ROWS_AND_COLUMNS("bongo.rows_and_columns", compose(BooleanOp.OR, ROWS, COLUMNS)),
     DEFAULT("bongo.default", compose(BooleanOp.OR, ROWS, COLUMNS, DIAGONALS)),
     ROW_AND_COLUMN("bongo.row_and_column", compose(BooleanOp.AND, ROWS, COLUMNS));
+    
+    public static final Codec<WinCondition> CODEC = Codec.STRING.xmap(WinCondition::getWinOrDefault, wc -> wc.id);
 
     public final String id;
     private final BiFunction<Bongo, Team, Boolean> won;
@@ -32,8 +35,9 @@ public enum WinCondition {
 
     public static WinCondition getWin(String id) {
         for (WinCondition wc : values()) {
-            if (wc.id.equalsIgnoreCase(id))
+            if (wc.id.equalsIgnoreCase(id)) {
                 return wc;
+            }
         }
         return null;
     }

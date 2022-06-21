@@ -1,9 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
-import io.github.noeppi_noeppi.mods.bongo.data.GameSettings;
-import io.github.noeppi_noeppi.mods.bongo.data.GameTasks;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.data.settings.GameSettings;
+import io.github.noeppi_noeppi.mods.bongo.data.task.GameTasks;
 import io.github.noeppi_noeppi.mods.bongo.network.BongoMessageType;
 import io.github.noeppi_noeppi.mods.bongo.task.*;
 import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;

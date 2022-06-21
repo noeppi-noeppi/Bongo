@@ -20,7 +20,7 @@ public class PlayerTeleporterDefault implements PlayerTeleporter {
     }
     
     @Override
-    public String getId() {
+    public String id() {
         return "bongo.default";
     }
 

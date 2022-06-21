@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
@@ -11,21 +12,26 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Unit;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.moddingx.libx.codec.CodecHelper;
+import org.moddingx.libx.codec.MoreCodecs;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class Task {
 
-    public static Task EMPTY = null; //new Task();
-    
-    public static final Codec<Task> CODEC = TaskTypes.CODEC.partialDispatch("type",
-            (Task task) -> DataResult.success(task.getType()), TaskTypes::getCodec
-    );
+    public static Task EMPTY = new Task(TaskTypeEmpty.INSTANCE, Unit.INSTANCE);
 
+    @SuppressWarnings("unchecked")
+    public static final Codec<Task> CODEC = MoreCodecs.mapDispatch(
+            TaskTypes.CODEC.fieldOf("type"),
+            TaskTypes::getCodec,
+            task -> Pair.of(task.type, task.element),
+            (type, element) -> CodecHelper.doesNotThrow(() -> new Task((TaskType<Object>) type, element))
+    );
 
     private final TaskType<?> type;
     private final Object element;

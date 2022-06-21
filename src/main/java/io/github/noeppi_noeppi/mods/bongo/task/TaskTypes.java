@@ -2,7 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.moddingx.libx.codec.CodecHelper;
 
 import javax.annotation.Nullable;
@@ -16,7 +15,7 @@ public class TaskTypes {
     );
     
     private static final Map<String, TaskType<?>> taskTypes = new HashMap<>();
-    private static final Map<TaskType<?>, Codec<Task>> taskCodecs = new HashMap<>();
+    private static final Map<TaskType<?>, Codec<?>> taskCodecs = new HashMap<>();
     
     @Nullable
     public static TaskType<?> getType(String id) {
@@ -24,8 +23,8 @@ public class TaskTypes {
         return taskTypes.get(id.toLowerCase(Locale.ROOT));
     }
     
-    public static DataResult<Codec<Task>> getCodec(TaskType<?> type) {
-        Codec<Task> codec = type == null ? null : taskCodecs.get(type);
+    public static DataResult<Codec<?>> getCodec(TaskType<?> type) {
+        Codec<?> codec = type == null ? null : taskCodecs.get(type);
         return codec == null ? DataResult.error("Task type not found: " + (type == null ? "null" : type.id())) : DataResult.success(codec);
     }
 
@@ -35,11 +34,7 @@ public class TaskTypes {
             throw new IllegalStateException("TaskType with id '" + id + "' is already registered.");
         } else {
             taskTypes.put(id, type);
-            //noinspection unchecked
-            taskCodecs.put(type, RecordCodecBuilder.create(instance -> instance.group(
-                    TaskTypes.CODEC.fieldOf("type").forGetter(t -> type),
-                    type.codec().forGetter((Task task) -> Objects.requireNonNull(task.getElement(type), "Task has invalid type"))
-            ).apply(instance, (TaskType<?> t, T elem) -> new Task((TaskType<T>) t, elem))));
+            taskCodecs.put(type, type.codec().codec());
         }
     }
 
