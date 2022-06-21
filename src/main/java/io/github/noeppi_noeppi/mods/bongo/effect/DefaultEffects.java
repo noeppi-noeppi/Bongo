@@ -36,7 +36,7 @@ public class DefaultEffects {
         event.getPlayer().setExperienceLevels(0);
         event.getPlayer().setExperiencePoints(0);
         event.getPlayer().setGameMode(GameType.SURVIVAL);
-        event.getBongo().getSettings().fillStartingInventory(event.getPlayer());
+        event.getBongo().getSettings().equipment().equip(event.getPlayer());
         AdvancementCommands.Action.REVOKE.perform(event.getPlayer(), event.getLevel().getServer().getAdvancements().getAllAdvancements());
         ServerStatsCounter mgr = event.getLevel().getServer().getPlayerList().getPlayerStats(event.getPlayer());
         mgr.stats.keySet().forEach(stat -> mgr.stats.put(stat, 0));
@@ -48,7 +48,7 @@ public class DefaultEffects {
     public void playerTask(BongoTaskEvent event) {
         Team team = event.getBongo().getTeam(event.getPlayer());
         if (team != null) {
-            MutableComponent tc = team.getName().append(Component.translatable("bongo.task.complete")).append(event.getTask().getContentName(event.getLevel().getServer()));
+            MutableComponent tc = team.getName().append(Component.translatable("bongo.task.complete")).append(event.getTask().contentName(event.getLevel().getServer()));
             event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.sendSystemMessage(tc);
                 if (team.hasPlayer(player)) {
@@ -73,7 +73,7 @@ public class DefaultEffects {
         });
 
         MutableComponent leaderboard;
-        if (!event.getBongo().getSettings().leaderboard) {
+        if (!event.getBongo().getSettings().game().leaderboard()) {
             leaderboard = null;
         } else {
             leaderboard = Component.empty();

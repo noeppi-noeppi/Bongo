@@ -24,7 +24,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -39,7 +38,6 @@ import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -68,7 +66,7 @@ public class EventListener {
             }
             for (Task task : bongo.tasks()) {
                 if (task != null)
-                    task.syncToClient(level.getServer(), (ServerPlayer) event.getPlayer());
+                    task.sync(level.getServer(), (ServerPlayer) event.getPlayer());
             }
             BongoMod.getNetwork().updateBongo(event.getPlayer(), BongoMessageType.FORCE);
         }
@@ -137,14 +135,13 @@ public class EventListener {
                 // This is a bit hacky but it works
                 try {
                     ResourceLocation biomeKey = event.player.level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(event.player.level.getBiome(event.player.blockPosition()).value());
-                    Biome realBiome = ForgeRegistries.BIOMES.getValue(biomeKey);
-                    bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, realBiome);
+                    bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, biomeKey);
                 } catch (Exception e) {
                     // In case of unbound values
                     e.printStackTrace();
                 }
                 
-                if (bongo.getSettings().invulnerable) {
+                if (bongo.getSettings().game().invulnerable()) {
                     event.player.getFoodData().setFoodLevel(20);
                     event.player.setAirSupply(event.player.getMaxAirSupply());
                 }
@@ -206,14 +203,14 @@ public class EventListener {
             Team team = bongo.getTeam(player);
             if (bongo.running() && team != null) {
                 if (source.getEntity() instanceof Player damageSourcePlayer) {
-                    if (!bongo.getSettings().pvp) {
+                    if (!bongo.getSettings().game().pvp()) {
                         cancelDamage(event, player, source, setDamageToZero);
                     } else if (team.hasPlayer(damageSourcePlayer)) {
-                        if (!bongo.getSettings().friendlyFire) {
+                        if (!bongo.getSettings().game().friendlyFire()) {
                             cancelDamage(event, player, source, setDamageToZero);
                         }
                     }
-                } else if (bongo.getSettings().invulnerable) {
+                } else if (bongo.getSettings().game().invulnerable()) {
                     cancelDamage(event, player, source, setDamageToZero);
                 }
             }

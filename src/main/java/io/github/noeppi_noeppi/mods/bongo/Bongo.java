@@ -176,7 +176,7 @@ public class Bongo extends SavedData {
         this.runningSince = System.currentTimeMillis();
         this.ranUntil = 0;
         if (settings.game().time().limit().isPresent()) {
-            this.runningUntil = System.currentTimeMillis() + (1000l * settings.game().time().limit().get());
+            this.runningUntil = System.currentTimeMillis() + (1000l * settings.game().time().limit().getAsInt());
         } else {
             this.runningUntil = 0;
         }

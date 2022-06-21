@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public record WeightedTask(Task task, int weight) implements WeightedTaskProvider {
     
-    public static final Codec<WeightedTask> CODEC = MoreCodecs.extend(Task.CODEC, Codec.INT.fieldOf("weight"), task -> Pair.of(task.task(), task.weight()), WeightedTask::new);
+    public static final Codec<WeightedTask> CODEC = MoreCodecs.extend(Task.CODEC, Codec.INT.fieldOf("weight").orElse(1), task -> Pair.of(task.task(), task.weight()), WeightedTask::new);
 
     @Override
     public int totalWeight() {

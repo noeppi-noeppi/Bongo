@@ -12,26 +12,17 @@ import java.util.function.Supplier;
 
 public class GameDef {
 
-    public final LazyValue<GameTasks> tasks;
-    public final LazyValue<GameSettings> settings;
+    public final GameTasks tasks;
+    public final GameSettings settings;
 
-    public GameDef(Supplier<GameTasks> tasks, Supplier<GameSettings> settings) {
-        this.tasks = new LazyValue<>(tasks);
-        this.settings = new LazyValue<>(settings);
+    public GameDef(GameTasks tasks, GameSettings settings) {
+        this.tasks = tasks;
+        this.settings = settings;
     }
 
     public String createBongo(Bongo bongo) {
         if (bongo.running()) {
             bongo.stop();
-        }
-        
-        GameTasks tasks;
-        GameSettings settings;
-        try {
-            tasks = this.tasks.get();
-            settings = this.settings.get();
-        } catch (RuntimeException e) {
-            return e.getMessage();
         }
         
         Either<List<Task>, String> taskList = tasks.getBingoTasks();

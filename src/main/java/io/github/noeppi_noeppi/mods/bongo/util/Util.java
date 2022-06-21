@@ -2,22 +2,21 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Either;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.moddingx.libx.util.Misc;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
-import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -128,38 +127,6 @@ public class Util {
         }
     }
 
-    // DELME 
-    public static ResourceLocation getLocationFor(CompoundTag nbt, String id) {
-        if (!nbt.contains(id, Tag.TAG_STRING)) {
-            throw new IllegalStateException("Resource property for " + id + " missing or not a string.");
-        }
-        ResourceLocation rl = ResourceLocation.tryParse(nbt.getString(id));
-        if (rl == null) {
-            throw new IllegalStateException("Invalid " + id + " resource location: '" + nbt.getString(id) + "'");
-        }
-        return rl;
-    }
-
-    // DELME 
-    public static <T> T getFromRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id) {
-        ResourceLocation rl = getLocationFor(nbt, id);
-        T element = registry.getValue(rl);
-        if (element == null) {
-            throw new IllegalStateException("Unknown " + id + ": " + rl);
-        }
-        return element;
-    }
-
-    // DELME
-    public static <T> void putByForgeRegistry(IForgeRegistry<T> registry, CompoundTag nbt, String id, T element) {
-        ResourceLocation rl = registry.getKey(element);
-        if (rl == null) {
-            BongoMod.logger.warn("Failed to serialise " + id + " location: Not found in forge registry: " + element);
-            rl = Misc.MISSIGNO;
-        }
-        nbt.putString(id, rl.toString());
-    }
-
     public static void removeItems(Player player, int amount, Predicate<ItemStack> test) {
         int removeLeft = amount;
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
@@ -177,7 +144,7 @@ public class Util {
     }
     
     public static void handleTaskLocking(Bongo bongo, Player player) {
-        if (bongo.running() && bongo.getSettings().lockTaskOnDeath) {
+        if (bongo.running() && bongo.getSettings().game().lockTaskOnDeath()) {
             Team team = bongo.getTeam(player);
             if (team != null && team.lockRandomTask()) {
                 MutableComponent tc = Component.translatable("bongo.task_locked.death", player.getDisplayName());

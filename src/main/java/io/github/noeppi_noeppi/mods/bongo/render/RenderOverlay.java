@@ -138,12 +138,12 @@ public class RenderOverlay {
                             poseStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 700);
                             poseStack.scale(0.3f, 0.3f, 1);
 
-                            RenderHelper.renderText(task.getTranslatedName(), poseStack);
+                            RenderHelper.renderText(task.typeName(), poseStack);
 
                             poseStack.translate(0, 8 / 0.3, 10);
                             poseStack.scale(0.8f, 0.8f, 1);
 
-                            RenderHelper.renderText(task.getTranslatedContentName(), poseStack);
+                            RenderHelper.renderText(task.renderDisplayName(mc), poseStack);
 
                             poseStack.popPose();
                         }
@@ -170,13 +170,13 @@ public class RenderOverlay {
                 if (!itemNames) {
                     List<String> lines = new ArrayList<>();
 
-                    if (bongo.getSettings().winCondition != WinCondition.DEFAULT) {
-                        lines.add(I18n.get("bongo.wc." + bongo.getSettings().winCondition.id));
+                    if (bongo.getSettings().game().winCondition() != WinCondition.DEFAULT) {
+                        lines.add(I18n.get("bongo.wc." + bongo.getSettings().game().winCondition().id));
                     }
 
-                    if (bongo.getSettings().teleportsPerTeam != 0 && !bongo.won()) {
+                    if (bongo.getSettings().game().teleportsPerTeam() != 0 && !bongo.won()) {
                         boolean hasRunningTeam = team != null && bongo.running();
-                        int tpLeft = hasRunningTeam ? team.teleportsLeft() : bongo.getSettings().teleportsPerTeam;
+                        int tpLeft = hasRunningTeam ? team.teleportsLeft() : bongo.getSettings().game().teleportsPerTeam();
                         String tpLeftStr = tpLeft < 0 ? I18n.get("bongo.infinite") : Integer.toString(tpLeft);
                         lines.add(I18n.get(hasRunningTeam ? "bongo.tp_left": "bongo.tp_team", tpLeftStr));
                     }
@@ -189,7 +189,7 @@ public class RenderOverlay {
                             boolean isTimer = true;
                             if (bongo.won()) {
                                 millis = bongo.ranUntil() - bongo.runningSince();
-                            } else if (bongo.hasTimeLimit()) {
+                            } else if (bongo.getSettings().game().time().limited()) {
                                 isTimer = false;
                                 millis = Math.max(0, bongo.runningUntil() - System.currentTimeMillis());
                             } else {
@@ -201,10 +201,11 @@ public class RenderOverlay {
                             int hour = (int) millis / 3600000;
                             lines.add(I18n.get(isTimer ? "bongo.timer" : "bongo.timeleft") + Util.formatTime(hour, min, sec, decimal));
                         }
-                    } else if (bongo.active() && bongo.hasTimeLimit() && bongo.getSettings().maxTime >= 0) {
-                        int sec = bongo.getSettings().maxTime % 60;
-                        int min = (bongo.getSettings().maxTime / 60) % 60;
-                        int hour = bongo.getSettings().maxTime / 3600;
+                    } else if (bongo.active() && bongo.getSettings().game().time().limit().orElse(-1) >= 0) {
+                        int maxTime = bongo.getSettings().game().time().limit().orElse(0);
+                        int sec = maxTime % 60;
+                        int min = (maxTime / 60) % 60;
+                        int hour = maxTime / 3600;
                         lines.add(I18n.get("bongo.maxtime") + Util.formatTime(hour, min, sec));
                     }
 

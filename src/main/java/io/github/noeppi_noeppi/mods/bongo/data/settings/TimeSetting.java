@@ -2,13 +2,13 @@ package io.github.noeppi_noeppi.mods.bongo.data.settings;
 
 import com.mojang.serialization.*;
 
-import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.stream.Stream;
 
 public sealed interface TimeSetting {
     
     boolean limited();
-    Optional<Integer> limit();
+    OptionalInt limit();
     
     record Time(int time) implements TimeSetting {
 
@@ -18,8 +18,8 @@ public sealed interface TimeSetting {
         }
 
         @Override
-        public Optional<Integer> limit() {
-            return Optional.of(this.time());
+        public OptionalInt limit() {
+            return OptionalInt.of(this.time());
         }
     }
     
@@ -31,8 +31,8 @@ public sealed interface TimeSetting {
         }
 
         @Override
-        public Optional<Integer> limit() {
-            return Optional.empty();
+        public OptionalInt limit() {
+            return OptionalInt.empty();
         }
     }
 

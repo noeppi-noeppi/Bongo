@@ -5,14 +5,13 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import io.github.noeppi_noeppi.mods.bongo.data.settings.GameSettings;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -20,14 +19,14 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
+public class GameSettingsArgument implements ArgumentType<List<ResourceLocation>> {
 
     @Nullable
-    private final Map<ResourceLocation, GameSettings> games;
+    private final Set<ResourceLocation> games;
 
     private final ResourceLocationArgument rla = new ResourceLocationArgument();
 
-    public GameSettingsArgument(@Nullable Map<ResourceLocation, GameSettings> games) {
+    public GameSettingsArgument(@Nullable Set<ResourceLocation> games) {
         this.games = games;
     }
 
@@ -35,19 +34,15 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
         return new GameSettingsArgument(null);
     }
 
-    public GameSettings[] parse(StringReader reader) throws CommandSyntaxException {
-        List<GameSettings> list = new ArrayList<>();
+    public List<ResourceLocation> parse(StringReader reader) throws CommandSyntaxException {
+        List<ResourceLocation> list = new ArrayList<>();
         while(true) {
             reader.skipWhitespace();
             if (!reader.canRead()) break;
             ResourceLocation rl = rla.parse(reader);
-            GameSettings gs = games().get(rl);
-            if (gs == null) {
-                throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.create.notfound")).create();
-            }
-            list.add(gs);
+            list.add(rl);
         }
-        return list.toArray(new GameSettings[]{});
+        return List.copyOf(list);
     }
 
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
@@ -63,7 +58,7 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
             start = "";
             current = theString;
         }
-        for (ResourceLocation rl : games().keySet()) {
+        for (ResourceLocation rl : games()) {
             if (rl.toString().toLowerCase().startsWith(current))
                 builder.suggest(start + rl);
         }
@@ -72,13 +67,13 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
 
     public Collection<String> getExamples() {
         List<String> examples = new ArrayList<>();
-        for (ResourceLocation rl : games().keySet())
+        for (ResourceLocation rl : games())
             examples.add(rl.toString());
         return examples;
     }
 
-    private Map<ResourceLocation, GameSettings> games() {
-        return games == null ? GameSettings.GAME_SETTINGS : games;
+    private Set<ResourceLocation> games() {
+        return games == null ? GameSettings.gameSettings() : games;
     }
 
     public static class Info implements ArgumentTypeInfo<GameSettingsArgument, Info.Template> {
@@ -92,9 +87,8 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
         @Override
         public void serializeToNetwork(@Nonnull Template template, @Nonnull FriendlyByteBuf buffer) {
             buffer.writeInt(template.argument.games().size());
-            for (GameSettings gs : template.argument.games().values()) {
-                buffer.writeResourceLocation(gs.id);
-                buffer.writeNbt(gs.getTag());
+            for (ResourceLocation rl : template.argument.games()) {
+                buffer.writeResourceLocation(rl);
             }
         }
 
@@ -102,18 +96,17 @@ public class GameSettingsArgument implements ArgumentType<GameSettings[]> {
         @Override
         public Template deserializeFromNetwork(@Nonnull FriendlyByteBuf buffer) {
             int amount = buffer.readInt();
-            Map<ResourceLocation, GameSettings> defs = new HashMap<>();
+            Set<ResourceLocation> ids = new HashSet<>();
             for (int i = 0; i < amount; i++) {
-                ResourceLocation id = buffer.readResourceLocation();
-                defs.put(id, new GameSettings(id, Objects.requireNonNull(buffer.readNbt())));
+                ids.add(buffer.readResourceLocation());
             }
-            return new Template(new GameSettingsArgument(defs));
+            return new Template(new GameSettingsArgument(ids));
         }
 
         @Override
         public void serializeToJson(@Nonnull Template template, @Nonnull JsonObject json) {
-            for (GameSettings gs : template.argument.games().values()) {
-                json.addProperty(gs.id.toString(), gs.id.toString());
+            for (ResourceLocation id : template.argument.games()) {
+                json.addProperty(id.toString(), id.toString());
             }
         }
 

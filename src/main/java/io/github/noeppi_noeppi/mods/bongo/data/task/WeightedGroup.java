@@ -14,7 +14,7 @@ public record WeightedGroup(GameTaskGroup group, List<Integer> weights) implemen
 
     private static final Codec<List<Integer>> WEIGHTS_CODEC = Codec.either(Codec.INT, Codec.INT.listOf()).xmap(either -> Util.join(either.mapLeft(List::of)), Either::right);
 
-    public static final Codec<WeightedGroup> CODEC = MoreCodecs.extend(GameTaskGroup.CODEC, WEIGHTS_CODEC.fieldOf("weight"), group -> Pair.of(group.group(), group.weights()), WeightedGroup::new);
+    public static final Codec<WeightedGroup> CODEC = MoreCodecs.extend(GameTaskGroup.CODEC, WEIGHTS_CODEC.fieldOf("weight").orElse(List.of(1)), group -> Pair.of(group.group(), group.weights()), WeightedGroup::new);
 
     @Override
     public int totalWeight() {
