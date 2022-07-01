@@ -54,7 +54,7 @@ public record GameSettings(
         } else if (!GAME_SETTINGS.containsKey(settings.get(0))) {
             throw new NoSuchElementException("Settings not found: " + settings.get(0));
         } else try {
-            return mergeTo(load(settings.subList(1, settings.size()))).decode(GAME_SETTINGS.get(settings.get(0))).getOrThrow(false, err -> {}).getFirst();
+            return mergeTo(load(settings.subList(0, settings.size() - 1))).decode(GAME_SETTINGS.get(settings.get(settings.size() - 1))).getOrThrow(false, err -> {}).getFirst();
         } catch (RuntimeException e) {
             throw new IllegalStateException("Failed to merge settings");
         }

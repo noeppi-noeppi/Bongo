@@ -61,9 +61,8 @@ public final class TagWithCount {
         this.tag = parent.tag;
         this.count = count;
         this.key = parent.key;
-        // Keep the lazy value for performance reasons
-        this.contains = parent.contains;
-        this.itemList = parent.itemList;
+        this.contains = parent.contains.copy();
+        this.itemList = parent.itemList.copy();
     }
 
     public ResourceLocation getTag() {

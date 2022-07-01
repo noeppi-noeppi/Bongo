@@ -17,7 +17,7 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[41.0.33,)"
+    versionRange="[41.0.62,)"
     ordering="NONE"
     side="BOTH"
 
@@ -31,14 +31,14 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.19-4.0.3,)"
+    versionRange="[1.19-4.0.4,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="skyblockbuilder"
     mandatory=false
-    versionRange="[1.19-4.0.0,)"
+    versionRange="[1.19-4.0.4,)"
     ordering="NONE"
     side="BOTH"
 

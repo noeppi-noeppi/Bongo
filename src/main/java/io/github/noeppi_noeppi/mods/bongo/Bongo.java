@@ -309,7 +309,7 @@ public class Bongo extends SavedData {
         
         for (DyeColor dc : DyeColor.values()) {
             if (nbt.contains("team_" + dc.getSerializedName(), Tag.TAG_COMPOUND)) {
-                getTeam(dc).deserializeNBT(nbt.getCompound(dc.getSerializedName()));
+                getTeam(dc).deserializeNBT(nbt.getCompound("team_" + dc.getSerializedName()));
             }
         }
 
