@@ -16,14 +16,24 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.moddingx.libx.render.RenderHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class RenderOverlay {
+public class RenderOverlay implements IGuiOverlay {
+    
+    public static RenderOverlay INSTANCE = new RenderOverlay();
+    
+    private RenderOverlay() {
+        
+    }
 
     public static final ResourceLocation BINGO_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo.png");
     public static final ResourceLocation BINGO_SLOTS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo_slots.png");
@@ -31,52 +41,51 @@ public class RenderOverlay {
     public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/completed_rects.png");
     public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/icons.png");
 
+    public static final Set<ResourceLocation> HIDDEN_OVERLAYS = Set.of(
+            VanillaGuiOverlay.CHAT_PANEL.id(),
+            VanillaGuiOverlay.DEBUG_TEXT.id(),
+            VanillaGuiOverlay.BOSS_EVENT_PROGRESS.id(),
+            VanillaGuiOverlay.PLAYER_LIST.id()
+    );
+    
     @SubscribeEvent
-    public void renderChat(RenderGameOverlayEvent.Pre event) {
-        // When some elements the bingo card occasionally there are render problems. So we
-        // just hide man GUI parts when the bingo card is enlarged.
-        if (Keybinds.BIG_OVERLAY.isDown()) {
-            if (Minecraft.getInstance().level != null) {
+    public static void renderGuiPart(RenderGuiOverlayEvent.Pre event) {
+        if (HIDDEN_OVERLAYS.contains(event.getOverlay().id())) {
+            if (Keybinds.BIG_OVERLAY.isDown() && Minecraft.getInstance().level != null) {
                 Bongo bongo = Bongo.get(Minecraft.getInstance().level);
                 if (bongo.active()) {
-                    RenderGameOverlayEvent.ElementType type = event.getType();
-                    if (type == RenderGameOverlayEvent.ElementType.CHAT
-                            || type == RenderGameOverlayEvent.ElementType.DEBUG
-                            || type == RenderGameOverlayEvent.ElementType.TEXT
-                            || type == RenderGameOverlayEvent.ElementType.LAYER
-                            || type == RenderGameOverlayEvent.ElementType.BOSSINFO) {
-                        event.setCanceled(true);
-                    }
+                    event.setCanceled(true);
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    public void renderOverlay(RenderGameOverlayEvent.Post event) {
-        PoseStack poseStack = event.getPoseStack();
+    @Override
+    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int width, int height) {
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null && mc.player != null && mc.screen == null && (!mc.options.renderDebug || Keybinds.BIG_OVERLAY.isDown()) && event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+        if (mc.level != null && mc.player != null && mc.screen == null && (!mc.options.renderDebug || Keybinds.BIG_OVERLAY.isDown())) {
             Bongo bongo = Bongo.get(mc.level);
             Team team = bongo.getTeam(mc.player);
             if (bongo.active() && (!bongo.running() || team != null)) {
+                gui.setupOverlayRenderState(false, false);
+                poseStack.pushPose();
+                
                 double padding = 5;
-                double px = mc.getWindow().getGuiScaledHeight() / 3.5d;
+                double px = height / 3.5d;
                 double x = padding;
                 double y = padding;
                 boolean itemNames = false;
                 if (Keybinds.BIG_OVERLAY.isDown()) {
-                    px = Math.min(mc.getWindow().getGuiScaledWidth() - (2 * padding), mc.getWindow().getGuiScaledHeight() - (6 * padding));
-                    x = (mc.getWindow().getGuiScaledWidth() - px) / 2;
-                    y = ((mc.getWindow().getGuiScaledHeight() - px) / 2) - (2 * padding);
+                    px = Math.min(width - (2 * padding), height - (6 * padding));
+                    x = (width - px) / 2;
+                    y = ((height - px) / 2) - (2 * padding);
                     itemNames = true;
                 } else {
                     float scale = (float) (double) ClientConfig.bongoMapScaleFactor.get();
                     poseStack.scale(scale, scale, 1);
                 }
 
-                poseStack.pushPose();
                 poseStack.translate(x, y, 0);
                 poseStack.scale((float) px / 138, (float) px / 138, 1);
 

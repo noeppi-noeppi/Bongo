@@ -23,8 +23,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -69,6 +74,10 @@ public final class BongoMod extends ModX {
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::reloadClientResources);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerGUIs);
+            FMLJavaModLoadingContext.get().getModEventBus().addListener(Keybinds::registerKeyBinds);
+        });
         
         MinecraftForge.EVENT_BUS.register(new EventListener());
         MinecraftForge.EVENT_BUS.register(new DefaultEffects());
@@ -125,9 +134,14 @@ public final class BongoMod extends ModX {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     protected void clientSetup(FMLClientSetupEvent event) {
-        Keybinds.init();
-        MinecraftForge.EVENT_BUS.register(new RenderOverlay());
+        MinecraftForge.EVENT_BUS.addListener(RenderOverlay::renderGuiPart);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private void registerGUIs(RegisterGuiOverlaysEvent event) {
+        event.registerAbove(VanillaGuiOverlay.BOSS_EVENT_PROGRESS.id(), "bongo", RenderOverlay.INSTANCE);
     }
     
     private void registerStuff(RegisterEvent event) {

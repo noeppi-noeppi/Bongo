@@ -48,49 +48,49 @@ public class EventListener {
 
     @SubscribeEvent(priority = EventPriority.LOW) // We need to run after JEA
     public void playerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        BongoMod.getNetwork().updateBongo(event.getPlayer());
-        Level level = event.getPlayer().getCommandSenderWorld();
-        if (!level.isClientSide && level instanceof ServerLevel && event.getPlayer() instanceof ServerPlayer) {
+        BongoMod.getNetwork().updateBongo(event.getEntity());
+        Level level = event.getEntity().getCommandSenderWorld();
+        if (!level.isClientSide && level instanceof ServerLevel && event.getEntity() instanceof ServerPlayer) {
             Bongo bongo = Bongo.get(level);
             if (bongo.running()) {
                 boolean playerFound = false;
                 for (Team team : bongo.getTeams()) {
-                    if (team.hasPlayer(event.getPlayer())) {
+                    if (team.hasPlayer(event.getEntity())) {
                         playerFound = true;
                     }
                 }
-                if (!playerFound && !event.getPlayer().hasPermissions(2)) {
-                    ((ServerPlayer) event.getPlayer()).connection.disconnect(Component.translatable("bongo.disconnect"));
+                if (!playerFound && !event.getEntity().hasPermissions(2)) {
+                    ((ServerPlayer) event.getEntity()).connection.disconnect(Component.translatable("bongo.disconnect"));
                     return;
                 }
             }
             for (Task task : bongo.tasks()) {
                 if (task != null)
-                    task.sync(level.getServer(), (ServerPlayer) event.getPlayer());
+                    task.sync(level.getServer(), (ServerPlayer) event.getEntity());
             }
-            BongoMod.getNetwork().updateBongo(event.getPlayer(), BongoMessageType.FORCE);
+            BongoMod.getNetwork().updateBongo(event.getEntity(), BongoMessageType.FORCE);
         }
     }
 
     @SubscribeEvent
     public void playerChangeDim(PlayerEvent.PlayerChangedDimensionEvent event) {
-        BongoMod.getNetwork().updateBongo(event.getPlayer());
+        BongoMod.getNetwork().updateBongo(event.getEntity());
     }
 
     @SubscribeEvent
     public void advancementGrant(AdvancementEvent event) {
-        Level level = event.getPlayer().getCommandSenderWorld();
+        Level level = event.getEntity().getCommandSenderWorld();
         if (!level.isClientSide) {
-            Bongo.get(level).checkCompleted(TaskTypeAdvancement.INSTANCE, event.getPlayer(), event.getAdvancement().getId());
+            Bongo.get(level).checkCompleted(TaskTypeAdvancement.INSTANCE, event.getEntity(), event.getAdvancement().getId());
         }
     }
 
     @SubscribeEvent
-    public void potionAdd(PotionEvent.PotionAddedEvent event) {
-        if (event.getEntityLiving() instanceof Player player) {
+    public void potionAdd(MobEffectEvent.Added event) {
+        if (event.getEntity() instanceof Player player) {
             Level level = player.getCommandSenderWorld();
             if (!level.isClientSide) {
-                Bongo.get(level).checkCompleted(TaskTypeEffect.INSTANCE, player, event.getPotionEffect().getEffect());
+                Bongo.get(level).checkCompleted(TaskTypeEffect.INSTANCE, player, event.getEffectInstance().getEffect());
             }
         }
     }
@@ -198,7 +198,7 @@ public class EventListener {
     }
 
     private void handleCommonDamageEvent(LivingEvent event, DamageSource source, Runnable setDamageToZero) {
-        if (!event.getEntityLiving().level.isClientSide && event.getEntityLiving() instanceof Player player && !source.isBypassInvul()) {
+        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player player && !source.isBypassInvul()) {
             Bongo bongo = Bongo.get(player.level);
             Team team = bongo.getTeam(player);
             if (bongo.running() && team != null) {
@@ -230,9 +230,9 @@ public class EventListener {
     public void addTooltip(ItemTooltipEvent event) {
         if (ClientConfig.addItemTooltips.get()) {
             ItemStack stack = event.getItemStack();
-            if (stack.isEmpty() || event.getPlayer() == null)
+            if (stack.isEmpty() || event.getEntity() == null)
                 return;
-            Bongo bongo = Bongo.get(event.getPlayer().level);
+            Bongo bongo = Bongo.get(event.getEntity().level);
             if (bongo.active() && bongo.isTooltipStack(stack)) {
                 event.getToolTip().add(Util.REQUIRED_ITEM);
             }
@@ -241,7 +241,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void playerName(PlayerEvent.NameFormat event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         Bongo bongo = Bongo.get(player.level);
         if (bongo.active()) {
             Team team = bongo.getTeam(player);
@@ -250,7 +250,7 @@ public class EventListener {
                 if (tc instanceof MutableComponent) {
                     tc = ((MutableComponent) tc).withStyle(team.getFormatting());
                 } else {
-                    tc = Component.literal(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
+                    tc = Component.literal(event.getEntity().getScoreboardName()).withStyle(team.getFormatting());
                 }
                 event.setDisplayname(tc);
             }
@@ -259,7 +259,7 @@ public class EventListener {
     
     @SubscribeEvent
     public void tablistName(PlayerEvent.TabListNameFormat event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         Bongo bongo = Bongo.get(player.level);
         if (bongo.active()) {
             Team team = bongo.getTeam(player);
@@ -268,7 +268,7 @@ public class EventListener {
                 if (tc instanceof MutableComponent) {
                     tc = ((MutableComponent) tc).withStyle(team.getFormatting());
                 } else {
-                    tc = Component.literal(event.getPlayer().getScoreboardName()).withStyle(team.getFormatting());
+                    tc = Component.literal(event.getEntity().getScoreboardName()).withStyle(team.getFormatting());
                 }
                 event.setDisplayName(tc);
             }
@@ -281,7 +281,7 @@ public class EventListener {
             Bongo bongo = Bongo.get(player.level);
             bongo.checkCompleted(TaskTypeEntity.INSTANCE, player, event.getEntity().getType());
         }
-        if (event.getEntityLiving() instanceof Player player && !event.getEntityLiving().level.isClientSide) {
+        if (event.getEntity() instanceof Player player && !event.getEntity().level.isClientSide) {
             Bongo bongo = Bongo.get(player.level);
             Util.handleTaskLocking(bongo, player);
         }

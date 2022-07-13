@@ -30,7 +30,7 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
 
     private TaskTypeEntity() {
         //noinspection unchecked
-        super((Class<EntityType<?>>) (Class<?>) EntityType.class, ForgeRegistries.ENTITIES);
+        super((Class<EntityType<?>>) (Class<?>) EntityType.class, ForgeRegistries.ENTITY_TYPES);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
     @Override
     public Stream<EntityType<?>> listElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
-            return ForgeRegistries.ENTITIES.getValues().stream().filter(type -> type.canSummon() && type.getCategory() != MobCategory.MISC);
+            return ForgeRegistries.ENTITY_TYPES.getValues().stream().filter(type -> type.canSummon() && type.getCategory() != MobCategory.MISC);
         } else {
             return player.getCommandSenderWorld().getEntities(player, new AABB(player.getX() - 10, player.getY() - 5, player.getZ() - 10, player.getX() + 10, player.getY() + 5, player.getZ() + 10)).stream().<EntityType<?>>map(Entity::getType).collect(Collectors.toSet()).stream();
         }
