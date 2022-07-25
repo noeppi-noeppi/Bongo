@@ -4,15 +4,18 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DynamicUtil {
     
-    public static <T> void mergeMaps(Dynamic<T> dynamic, Dynamic<T> additional) {
+    public static <T> DataResult<Dynamic<T>> mergeMaps(Dynamic<T> dynamic, Dynamic<T> additional) {
+        AtomicReference<DataResult<Dynamic<T>>> result = new AtomicReference<>(DataResult.success(dynamic));
         additional.getMapValues().result().ifPresent(map -> {
             for (Map.Entry<Dynamic<T>, Dynamic<T>> entry : map.entrySet()) {
-                dynamic.merge(entry.getKey(), entry.getValue());
+                result.updateAndGet(r -> r.flatMap(d -> d.merge(entry.getKey(), entry.getValue()).get()));
             }
         });
+        return result.get();
     }
     
     public static <T> Codec<T> createMergedCodec(Codec<T> codec, T defaultValue) {
@@ -29,8 +32,9 @@ public class DynamicUtil {
                     return DataResult.error("Failed to encode default value: " + dflRes.error().map(DataResult.PartialResult::message).orElse("null") + ": " + defaultValue);
                 } else {
                     Dynamic<A> dynamic = dflRes.result().get();
-                    mergeMaps(dynamic, new Dynamic<>(ops, input));
-                    return codec.decode(dynamic);
+                    DataResult<Dynamic<A>> merged = mergeMaps(dynamic, new Dynamic<>(ops, input));
+                    //noinspection Convert2MethodRef
+                    return merged.flatMap(r -> codec.decode(r));
                 }
             }
         };
