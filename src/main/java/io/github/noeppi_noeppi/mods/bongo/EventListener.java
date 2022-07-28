@@ -288,7 +288,7 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public void serverChat(ServerChatEvent event) {
+    public void serverChat(ServerChatEvent.Submitted event) {
         if (!ModList.get().isLoaded("minemention") && event.getPlayer() != null) {
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.teamChat(event.getPlayer())) {
@@ -298,7 +298,7 @@ public class EventListener {
                     MutableComponent tc = Component.literal("[");
                     tc.append(team.getName());
                     tc.append(Component.literal("] ").withStyle(ChatFormatting.RESET));
-                    tc.append(event.getComponent());
+                    tc.append(event.getMessage());
                     Util.broadcastTeam(event.getPlayer().level, team, tc);
                 }
             }
