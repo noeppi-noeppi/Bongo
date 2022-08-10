@@ -197,14 +197,14 @@ Example:
       "type": "bongo.item",
       "weight": 9,
       "value": {
-        "id": "minecraft:golden_apple"
+        "item": "minecraft:golden_apple"
       }
     },
     {
       "type": "bongo.item",
       "weight": 1,
       "value": {
-        "id": "minecraft:enchanted_golden_apple"
+        "item": "minecraft:enchanted_golden_apple"
       }
     }
   ]
@@ -223,7 +223,7 @@ Example:
 {
   "type": "bongo.item",
   "value": {
-    "id": "minecraft:golden_apple"
+    "item": "minecraft:golden_apple"
   }
 }
 ```
@@ -340,7 +340,7 @@ Example:
 
 ```json
 {
-  "type": "bongo.item",
+  "type": "bongo.tag",
   "value": {
     "id": "minecraft:leaves",
     "count": 1
