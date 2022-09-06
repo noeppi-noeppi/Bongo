@@ -112,8 +112,14 @@ public class EventListener {
                     if (!stack.isEmpty()) {
                         for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
                             ItemStack test = entry.getKey();
-                            if (ItemStack.isSame(stack, test) && ItemStack.tagMatches(stack, test)) {
-                                entry.setValue(entry.getValue() + stack.getCount());
+                            ItemStack copy = stack.copy();
+                            // Remove Durability Tag
+                            if (test.getTag() != null && test.getTag().contains("Damage"))
+                                test.getTag().remove("Damage");
+                            if (copy.getTag() != null && copy.getTag().contains("Damage"))
+                                copy.getTag().remove("Damage");
+                            if (ItemStack.isSameIgnoreDurability(copy, test) && ItemStack.tagMatches(copy, test)) {
+                                entry.setValue(entry.getValue() + copy.getCount());
                             }
                         }
                         for (Map.Entry<TagWithCount, Integer> entry : tags.entrySet()) {
