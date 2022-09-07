@@ -84,16 +84,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     @Override
     public boolean shouldComplete(ServerPlayer player, ItemStack element, ItemStack compare) {
         if (ItemStack.isSameIgnoreDurability(element, compare) && element.getCount() <= compare.getCount()) {
-
-            ItemStack copy = compare.copy();
-
-            if (element.getTag() != null && element.getTag().contains("Damage"))
-                element.getTag().remove("Damage");
-
-            if (copy.getTag() != null && copy.getTag().contains("Damage"))
-                copy.getTag().remove("Damage");
-
-            return Util.matchesNBT(element.getTag(), copy.getTag());
+            return Util.matchesNBT(element.getTag(), compare.getTag());
         } else {
             return false;
         }

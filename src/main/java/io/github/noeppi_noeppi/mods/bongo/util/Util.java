@@ -83,6 +83,10 @@ public class Util {
         if (actual == null || actual.isEmpty())
             return false;
 
+        if (required.contains("Damage") && required.getInt("Damage") == 0)
+            required.remove("Damage");
+        // Remove the ItemStack automatic Damage value, it does make no durability lost tools' requirement impossible tho
+
         CompoundTag copy = actual.copy();
         copy.merge(required);
         return copy.equals(actual);
