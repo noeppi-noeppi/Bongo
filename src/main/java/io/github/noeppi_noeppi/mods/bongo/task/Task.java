@@ -1,13 +1,21 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
@@ -16,25 +24,39 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.moddingx.libx.codec.CodecHelper;
 import org.moddingx.libx.codec.MoreCodecs;
+import org.moddingx.libx.render.RenderHelper;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Task {
 
-    public static Task EMPTY = new Task(new TaskContent(TaskTypeEmpty.INSTANCE, Unit.INSTANCE));
+    public static Task EMPTY = new Task(TaskContent.EMPTY, TaskExtension.EMPTY);
 
-    public static final Codec<Task> CODEC = TaskContent.CODEC.xmap(Task::new, t -> t.content);
+    public static final Codec<Task> CODEC = MoreCodecs.extend(TaskContent.CODEC, TaskExtension.CODEC, task -> Pair.of(task.content, task.ext), Task::new);
+    
+    public static final Set<JsonElement> RESERVED_KEYS = Stream.concat(
+            Stream.of(new JsonPrimitive("type"), new JsonPrimitive("weight")),
+            TaskExtension.CODEC.keys(JsonOps.INSTANCE)
+    ).collect(Collectors.toUnmodifiableSet());
     
     private final TaskContent content;
+    private final TaskExtension ext;
     
     public <T> Task(TaskType<T> type, T element) {
-        this(new TaskContent(type, element));
+        this(type, element, null);
     }
     
-    private Task(TaskContent content) {
+    public <T> Task(TaskType<T> type, T element, @Nullable ResourceLocation customTexture) {
+        this(new TaskContent(type, element), new TaskExtension(Optional.ofNullable(customTexture)));
+    }
+    
+    private Task(TaskContent content, TaskExtension ext) {
         this.content = content;
+        this.ext = ext;
     }
 
     public TaskType<?> getType() {
@@ -89,13 +111,22 @@ public class Task {
     
     @OnlyIn(Dist.CLIENT)
     public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        this.content.type.renderSlot(mc, poseStack, buffer);
+        if (this.customTexture() == null) {
+            this.content.type.renderSlot(mc, poseStack, buffer);
+        }
     }
     
     @OnlyIn(Dist.CLIENT)
     public void renderSlotContent(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        //noinspection unchecked
-        ((TaskType<Object>) this.content.type).renderSlotContent(mc, this.content.element, poseStack, buffer, bigBongo);
+        ResourceLocation tex = this.customTexture();
+        if (tex == null) {
+            //noinspection unchecked
+            ((TaskType<Object>) this.content.type).renderSlotContent(mc, this.content.element, poseStack, buffer, bigBongo);
+        } else {
+            RenderHelper.resetColor();
+            RenderSystem.setShaderTexture(0, tex);
+            GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 18, 18);
+        }
     }
     
     public void validate(MinecraftServer server) {
@@ -116,8 +147,15 @@ public class Task {
         }
     }
     
+    @Nullable
+    public ResourceLocation customTexture() {
+        return this.ext.customTexture.orElse(null);
+    }
+    
     private static class TaskContent {
 
+        public static final TaskContent EMPTY = new TaskContent(TaskTypeEmpty.INSTANCE, Unit.INSTANCE);
+        
         @SuppressWarnings("unchecked")
         public static final Codec<TaskContent> CODEC = MoreCodecs.mapDispatch(
                 TaskTypes.CODEC.fieldOf("type"),
@@ -140,5 +178,14 @@ public class Task {
                 throw new IllegalStateException("Can't create task of type " + type.id() + " with element of type " + element.getClass());
             }
         }
+    }
+    
+    private record TaskExtension(Optional<ResourceLocation> customTexture) {
+
+        public static final TaskExtension EMPTY = new TaskExtension(null);
+        
+        public static final MapCodec<TaskExtension> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                ResourceLocation.CODEC.optionalFieldOf("custom_texture").forGetter(TaskExtension::customTexture)
+        ).apply(instance, TaskExtension::new));
     }
 }

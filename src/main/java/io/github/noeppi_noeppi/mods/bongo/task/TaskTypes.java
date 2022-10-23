@@ -2,13 +2,12 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
 import org.moddingx.libx.codec.CodecHelper;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class TaskTypes {
 
@@ -36,8 +35,17 @@ public class TaskTypes {
         if (taskTypes.containsKey(id)) {
             throw new IllegalStateException("TaskType with id '" + id + "' is already registered.");
         } else {
+            MapCodec<T> codec = type.codec();
+            List<String> forbiddenKeys = codec.keys(JsonOps.INSTANCE)
+                    .filter(Task.RESERVED_KEYS::contains)
+                    .map(j -> j.isJsonPrimitive() ? j.getAsString() : j.toString())
+                    .toList();
+            if (!forbiddenKeys.isEmpty()) {
+                throw new IllegalStateException("Task type can't declare reserved keys: [ " + String.join(", ", forbiddenKeys) + " ]");
+            }
+            
             taskTypes.put(id, type);
-            taskCodecs.put(type, type.codec().codec());
+            taskCodecs.put(type, codec.codec());
         }
     }
 

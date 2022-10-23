@@ -167,9 +167,11 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_tasks/<bi
 Each entry in the tasks list describes a task. All tasks share the following properties:
 
 ```
-type      The type of the task. (Items, Advancements, ...)
-weight    (optional) How likely it is that this task gets into the bingo card. Higher
-          values mean more likely. Default is 1
+type              The type of the task. (Items, Advancements, ...)
+weight            (optional) How likely it is that this task gets into the bingo card. Higher
+                  values mean more likely. Default is 1
+custom_texture    (optional) A texture resource location that is used to display the task in the
+                  bingo card instead of its default way of display. Example: minecraft:textures/apple.png
 ```
 
 For a valid game tasks definition there must be at minimum 25 tasks.
