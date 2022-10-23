@@ -63,8 +63,7 @@ public class Bongo extends SavedData {
         if (mc == null) {
             mc = Minecraft.getInstance();
         }
-        if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP
-                || bongoMessageType == BongoMessageType.FORCE) {
+        if (bongoMessageType == BongoMessageType.START || bongoMessageType == BongoMessageType.STOP || bongoMessageType == BongoMessageType.FORCE) {
             if (mc.player != null) {
                 mc.player.refreshDisplayName();
             }
