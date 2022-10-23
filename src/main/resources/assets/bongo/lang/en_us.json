@@ -1,4 +1,5 @@
 {
+  "bongo.avoid": "Avoid %s",
   "bongo.backpack": "Backpack of ",
   "bongo.big_overlay": "Enlarge Bingo Overlay",
   "bongo.cmd.bp.norun": "You cannot access your team's backpack while the game is not running.",
@@ -50,7 +51,8 @@
   "bongo.task.advancement.invalid": "Invalid Advancement",
   "bongo.task.advancement.name": "Advancement",
   "bongo.task.biome.name": "Biome",
-  "bongo.task.complete": " has completed task ",
+  "bongo.task.complete": "%s has completed task %s",
+  "bongo.task.fail": "%s has failed task %s",
   "bongo.task.entity.name": "Kill Entity",
   "bongo.task.item.name": "Item",
   "bongo.task.potion.name": "Potion Effect",

@@ -50,7 +50,7 @@
   "bongo.task.advancement.invalid": "无效的进度",
   "bongo.task.advancement.name": "进度",
   "bongo.task.biome.name": "生物群系",
-  "bongo.task.complete": " 完成了任务 ",
+  "bongo.task.complete": "%s 完成了任务 %s",
   "bongo.task.entity.name": "杀死实体",
   "bongo.task.item.name": "物品",
   "bongo.task.potion.name": "状态效果",

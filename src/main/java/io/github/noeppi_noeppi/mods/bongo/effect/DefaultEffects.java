@@ -51,7 +51,7 @@ public class DefaultEffects {
     public void playerTask(BongoTaskEvent event) {
         Team team = event.getBongo().getTeam(event.getPlayer());
         if (team != null) {
-            MutableComponent tc = team.getName().append(Component.translatable("bongo.task.complete")).append(event.getTask().contentName(event.getLevel().getServer()));
+            MutableComponent tc = Component.translatable(event.getTask().inverted() ? "bongo.task.fail" : "bongo.task.complete", team.getName(), event.getTask().contentName(event.getLevel().getServer()));
             event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.sendSystemMessage(tc);
                 if (team.hasPlayer(player)) {
@@ -83,13 +83,13 @@ public class DefaultEffects {
             // retrieve a sorted list of all teams in order of completed tasks amount descending
             List<Team> teams = event.getBongo().getTeams().stream()
                     .filter(team -> !team.getPlayers().isEmpty())
-                    .sorted(Comparator.comparingInt(Team::completionAmount).reversed())
+                    .sorted(Comparator.comparingInt((Team team) -> team.completion().count()).reversed())
                     .toList();
             int place = 0; // the current placement
             int toSkip = 0; // the amount of places to skip (because of equal amount of completed tasks)
             int prevTeam = -1; // the amount of tasks the previous team had
             for (Team team : teams) {
-                int completed = team.completionAmount();
+                int completed = team.completion().count();
                 toSkip += 1;
                 if (prevTeam != completed) {
                     place += toSkip;

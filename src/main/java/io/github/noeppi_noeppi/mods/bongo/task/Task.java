@@ -47,11 +47,11 @@ public class Task {
     private final TaskExtension ext;
     
     public <T> Task(TaskType<T> type, T element) {
-        this(type, element, null);
+        this(new TaskContent(type, element), TaskExtension.EMPTY);
     }
     
-    public <T> Task(TaskType<T> type, T element, @Nullable ResourceLocation customTexture) {
-        this(new TaskContent(type, element), new TaskExtension(Optional.ofNullable(customTexture)));
+    public <T> Task(TaskType<T> type, T element, boolean inverted, @Nullable ResourceLocation customTexture) {
+        this(new TaskContent(type, element), new TaskExtension(inverted, Optional.ofNullable(customTexture)));
     }
     
     private Task(TaskContent content, TaskExtension ext) {
@@ -64,7 +64,11 @@ public class Task {
     }
 
     public Component typeName() {
-        return this.content.type.name();
+        if (this.inverted()) {
+            return Component.translatable("bongo.avoid", this.content.type.name());
+        } else {
+            return this.content.type.name();
+        }
     }
     
     public Component contentName(@Nullable MinecraftServer server) {
@@ -77,23 +81,30 @@ public class Task {
         ((TaskType<Object>) this.content.type).sync(this.content.element, server, target);
     }
     
-    public <T> boolean shouldComplete(TaskType<T> type, ServerPlayer player, T compare) {
+    public <T> CompletionState shouldComplete(TaskType<T> type, ServerPlayer player, T compare) {
         if (this.content.type == type) {
             //noinspection unchecked
-            return ((TaskType<Object>) this.content.type).shouldComplete(player, this.content.element, compare);
+            if (((TaskType<Object>) this.content.type).shouldComplete(player, this.content.element, compare)) {
+                return this.inverted() ? CompletionState.LOCK : CompletionState.COMPLETE;
+            } else {
+                return CompletionState.KEEP;
+            }
         } else {
-            return false;
+            return CompletionState.KEEP;
         }
     }
     
     public <T> void consume(TaskType<T> type, ServerPlayer player, T found) {
-        if (this.content.type == type) {
-            //noinspection unchecked
-            ((TaskType<Object>) this.content.type).consume(player, this.content.element, found);
+        if (!this.inverted()) {
+            if (this.content.type == type) {
+                //noinspection unchecked
+                ((TaskType<Object>) this.content.type).consume(player, this.content.element, found);
+            }
         }
     }
     
     public Stream<Highlight<?>> highlight() {
+        if (this.inverted()) return Stream.empty();
         //noinspection unchecked
         return ((TaskType<Object>) this.content.type).highlight(this.content.element);
     }
@@ -152,6 +163,14 @@ public class Task {
         return this.ext.customTexture.orElse(null);
     }
     
+    public boolean inverted() {
+        return this.ext.inverted;
+    }
+    
+    public boolean isWinningTask(boolean completed, boolean locked) {
+        return this.inverted() ? !locked : completed;
+    }
+    
     private static class TaskContent {
 
         public static final TaskContent EMPTY = new TaskContent(TaskTypeEmpty.INSTANCE, Unit.INSTANCE);
@@ -180,12 +199,27 @@ public class Task {
         }
     }
     
-    private record TaskExtension(Optional<ResourceLocation> customTexture) {
+    private record TaskExtension(boolean inverted, Optional<ResourceLocation> customTexture) {
 
-        public static final TaskExtension EMPTY = new TaskExtension(null);
+        public static final TaskExtension EMPTY = new TaskExtension(false, null);
         
         public static final MapCodec<TaskExtension> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Codec.BOOL.optionalFieldOf("inverted", false).forGetter(TaskExtension::inverted),
                 ResourceLocation.CODEC.optionalFieldOf("custom_texture").forGetter(TaskExtension::customTexture)
         ).apply(instance, TaskExtension::new));
+    }
+    
+    public enum CompletionState {
+        KEEP(false, false),
+        COMPLETE(true, false),
+        LOCK(false, true);
+        
+        public final boolean shouldComplete;
+        public final boolean shouldLock;
+
+        CompletionState(boolean shouldComplete, boolean shouldLock) {
+            this.shouldComplete = shouldComplete;
+            this.shouldLock = shouldLock;
+        }
     }
 }

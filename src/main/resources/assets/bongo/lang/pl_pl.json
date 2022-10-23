@@ -50,7 +50,7 @@
   "bongo.task.advancement.invalid": "Nieprawidłowy postęp",
   "bongo.task.advancement.name": "Postęp",
   "bongo.task.biome.name": "Biom",
-  "bongo.task.complete": " wykonała zadanie ",
+  "bongo.task.complete": "%s wykonała zadanie %s",
   "bongo.task.entity.name": "Zabij byt",
   "bongo.task.item.name": "Przedmiot",
   "bongo.task.potion.name": "Efekt mikstury",

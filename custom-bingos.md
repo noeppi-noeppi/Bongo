@@ -170,6 +170,9 @@ Each entry in the tasks list describes a task. All tasks share the following pro
 type              The type of the task. (Items, Advancements, ...)
 weight            (optional) How likely it is that this task gets into the bingo card. Higher
                   values mean more likely. Default is 1
+inverted          (optional) If a task is inverted, it counts toward winning tasks by default until
+                  a player completes the task causes it to be locked. Players then need to avoid a certain
+                  action instead of achieving it. Default is false
 custom_texture    (optional) A texture resource location that is used to display the task in the
                   bingo card instead of its default way of display. Example: minecraft:textures/apple.png
 ```

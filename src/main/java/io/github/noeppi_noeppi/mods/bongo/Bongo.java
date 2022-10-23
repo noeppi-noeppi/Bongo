@@ -25,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,8 +46,9 @@ public class Bongo extends SavedData {
     private static Bongo clientInstance;
     private static Minecraft mc = null;
 
-    public static Bongo get(net.minecraft.world.level.Level level) {
+    public static Bongo get(Level level) {
         if (!level.isClientSide) {
+            //noinspection resource
             DimensionDataStorage storage = ((ServerLevel) level).getServer().overworld().getDataStorage();
             Bongo bongo = storage.computeIfAbsent(Bongo::new, Bongo::new, ID);
             bongo.level = ((ServerLevel) level).getServer().overworld();
@@ -406,19 +408,33 @@ public class Bongo extends SavedData {
         Team team = getTeam(player);
         if (team != null && player instanceof ServerPlayer serverPlayer) {
             for (int i = 0; i < items.size(); i++) {
-                if (!team.completed(i) && !team.locked(i) && task(i).getType() == type && items.get(i).shouldComplete(type, serverPlayer, compare)) {
-                    team.complete(i);
-                    if (getSettings().game().consumeItems()) {
-                        task(i).consume(type, serverPlayer, compare);
-                    }
-                    if (getSettings().game().lockout()) {
-                        for (Team t : teams.values()) {
-                            if (!t.completed(i)) {
-                                t.lock(i);
+                if (!team.completed(i) && !team.locked(i) && task(i).getType() == type) {
+                    Task.CompletionState state = items.get(i).shouldComplete(type, serverPlayer, compare);
+                    if (state.shouldComplete) {
+                        team.complete(i);
+                        if (getSettings().game().consumeItems()) {
+                            task(i).consume(type, serverPlayer, compare);
+                        }
+                        if (getSettings().game().lockout()) {
+                            for (Team t : teams.values()) {
+                                if (!t.completed(i)) {
+                                    t.lock(i);
+                                }
                             }
                         }
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
+                    } else if (state.shouldLock) {
+                        team.lock(i);
+                        // inverted tasks are completed for everyone if the first player fails it
+                        if (getSettings().game().lockout()) {
+                            for (Team t : teams.values()) {
+                                if (!t.locked(i)) {
+                                    t.complete(i);
+                                }
+                            }
+                        }
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
                     }
-                    MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
                 }
             }
         }
@@ -429,7 +445,7 @@ public class Bongo extends SavedData {
         if (settings.game().time().limited() && System.currentTimeMillis() > runningUntil) {
             if (taskAmountOutOfTime >= 0) {
                 for (Team team : teams.values()) {
-                    if (team.completionAmount() >= taskAmountOutOfTime) {
+                    if (team.completion().count() >= taskAmountOutOfTime) {
                         setWin(team);
                         return;
                     }
@@ -437,12 +453,12 @@ public class Bongo extends SavedData {
             } else {
                 int max = 0;
                 for (Team team : teams.values()) {
-                    int amount = team.completionAmount();
+                    int amount = team.completion().count();
                     if (amount > max) max = amount;
                 }
                 Team winning = null;
                 for (Team team : teams.values()) {
-                    if (team.completionAmount() >= max) {
+                    if (team.completion().count() >= max) {
                         if (winning == null) {
                             winning = team;
                         } else {
@@ -462,7 +478,7 @@ public class Bongo extends SavedData {
             }
         }
         for (Team team : teams.values()) {
-            if (getSettings().game().winCondition().won(this, team)) {
+            if (getSettings().game().winCondition().won(team.completion())) {
                 setWin(team);
                 return;
             }

@@ -1,4 +1,5 @@
 {
+  "bongo.avoid": "Meide %s",
   "bongo.backpack": "Rucksack von ",
   "bongo.big_overlay": "Große Bingo Karte",
   "bongo.cmd.bp.norun": "Du kannst jetzt nicht auf deinen Rucksack zugreifen. Das Spiel wurde noch nicht gestartet.",
@@ -50,7 +51,8 @@
   "bongo.task.advancement.invalid": "Ungültiger Fortschritt",
   "bongo.task.advancement.name": "Fortschritt",
   "bongo.task.biome.name": "Biom",
-  "bongo.task.complete": " hat eine Aufgabe beendet: ",
+  "bongo.task.complete": "%s hat eine Aufgabe beendet: %s",
+  "bongo.task.fail": "%s ist an einer Aufgabe gescheitert: %s",
   "bongo.task.entity.name": "Mob töten",
   "bongo.task.item.name": "Gegenstand",
   "bongo.task.potion.name": "Trank-Effekt",

@@ -1,10 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.data;
 
 import com.mojang.serialization.Codec;
-import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import net.minecraft.world.phys.shapes.BooleanOp;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static io.github.noeppi_noeppi.mods.bongo.data.WinValues.*;
 
@@ -22,15 +21,15 @@ public enum WinCondition {
     public static final Codec<WinCondition> CODEC = Codec.STRING.xmap(WinCondition::getWinOrDefault, wc -> wc.id);
 
     public final String id;
-    private final BiFunction<Bongo, Team, Boolean> won;
+    private final Function<TeamCompletion, Boolean> won;
 
-    WinCondition(String id, BiFunction<Bongo, Team, Boolean> won) {
+    WinCondition(String id, Function<TeamCompletion, Boolean> won) {
         this.id = id;
         this.won = won;
     }
 
-    public boolean won(Bongo bongo, Team team) {
-        return won.apply(bongo, team);
+    public boolean won(TeamCompletion completion) {
+        return won.apply(completion);
     }
 
     public static WinCondition getWin(String id) {
@@ -50,12 +49,12 @@ public enum WinCondition {
         return DEFAULT;
     }
 
-    private static BiFunction<Bongo, Team, Boolean> when(int[][] winValues) {
-        return (bongo, team) -> {
+    private static Function<TeamCompletion, Boolean> when(int[][] winValues) {
+        return completion -> {
             wincheck:
             for (int[] win : winValues) {
                 for (int slot : win) {
-                    if (!team.completed(slot))
+                    if (!completion.has(slot))
                         continue wincheck;
                 }
                 return true;
@@ -65,29 +64,29 @@ public enum WinCondition {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static BiFunction<Bongo, Team, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2) {
-        return (bongo, team) -> combine.apply(c1.won(bongo, team), c2.won(bongo, team));
+    private static Function<TeamCompletion, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2) {
+        return completion -> combine.apply(c1.won(completion), c2.won(completion));
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static BiFunction<Bongo, Team, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2, WinCondition c3) {
-        return (bongo, team) -> combine.apply(combine.apply(c1.won(bongo, team), c2.won(bongo, team)), c3.won(bongo, team));
+    private static Function<TeamCompletion, Boolean> compose(BooleanOp combine, WinCondition c1, WinCondition c2, WinCondition c3) {
+        return completion -> combine.apply(combine.apply(c1.won(completion), c2.won(completion)), c3.won(completion));
     }
 
-    private static BiFunction<Bongo, Team, Boolean> one() {
-        return (bongo, team) -> {
+    private static Function<TeamCompletion, Boolean> one() {
+        return completion -> {
             for (int i = 0; i < 25; i++) {
-                if (team.completed(i))
+                if (completion.has(i))
                     return true;
             }
             return false;
         };
     }
 
-    private static BiFunction<Bongo, Team, Boolean> all() {
-        return (bongo, team) -> {
+    private static Function<TeamCompletion, Boolean> all() {
+        return completion -> {
             for (int i = 0; i < 25; i++) {
-                if (!team.completed(i))
+                if (!completion.has(i))
                     return false;
             }
             return true;

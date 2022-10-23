@@ -38,6 +38,7 @@ public class RenderOverlay implements IGuiOverlay {
     public static final ResourceLocation BINGO_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo.png");
     public static final ResourceLocation BINGO_SLOTS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/bingo_slots.png");
     public static final ResourceLocation BEACON_TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/beacon.png");
+    public static final ResourceLocation BARRIER_TEXTURE = new ResourceLocation("minecraft", "textures/item/barrier.png");
     public static final ResourceLocation COMPLETED_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/completed_rects.png");
     public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation(BongoMod.getInstance().modid, "textures/overlay/icons.png");
 
@@ -99,7 +100,7 @@ public class RenderOverlay implements IGuiOverlay {
                         int slot = xSlot + (5 * ySlot);
                         List<Integer> colorCodes = new ArrayList<>();
                         for (DyeColor dc : DyeColor.values()) {
-                            if (bongo.getTeam(dc).completed(slot))
+                            if (!bongo.getTeam(dc).isEmpty() && bongo.getTeam(dc).completion().has(slot))
                                 colorCodes.add(dc.getTextColor());
                         }
 
@@ -142,6 +143,16 @@ public class RenderOverlay implements IGuiOverlay {
 
                         poseStack.popPose();
 
+                        boolean hasOverlayIcon = team != null && (team.completed(slot) || team.locked(slot));
+                        if (!hasOverlayIcon && task.inverted() && task.customTexture() == null) {
+                            poseStack.pushPose();
+                            poseStack.translate(xSlot * 27 - 4, ySlot * 27 - 4, 650);
+                            RenderSystem.setShaderTexture(0, BARRIER_TEXTURE);
+                            poseStack.scale(24f/16f, 24f/16f, 24f/16f);
+                            GuiComponent.blit(poseStack, 0, 0, 0, 0, 16, 16, 16, 16);
+                            poseStack.popPose();
+                        }
+                        
                         if (itemNames) {
                             poseStack.pushPose();
                             poseStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 700);
