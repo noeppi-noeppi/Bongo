@@ -13,13 +13,13 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf("org.moddingx:LibX:1.19.1-4.1.0")
+    annotationProcessor fg.deobf('org.moddingx:LibX:1.19.2-4.2.1')
 
-    implementation fg.deobf("org.moddingx:LibX:1.19.1-4.1.0")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19-5.1.0.4:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.19-forge:11.1.1.239")
+    implementation fg.deobf('org.moddingx:LibX:1.19.2-4.2.1')
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19.2-5.1.1.0:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:11.2.0.256")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.19-4.0.2")
-    compileOnly fg.deobf("de.melanx:SkyblockBuilder:1.19-4.0.19")
+    compileOnly fg.deobf("de.melanx:SkyblockBuilder:1.19.1-4.1.2")
     implementation fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.19.1-2.1.0")
     implementation fg.deobf("curse.maven:jade-324717:3903693") // Jade-1.19.1-forge-8.0.1.jar
 }

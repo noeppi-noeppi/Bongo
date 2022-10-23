@@ -112,7 +112,7 @@ public class EventListener {
                     if (!stack.isEmpty()) {
                         for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
                             ItemStack test = entry.getKey();
-                            if (ItemStack.isSame(stack, test) && ItemStack.tagMatches(stack, test)) {
+                            if (ItemStack.isSameIgnoreDurability(stack, test) && Util.matchesNBT(test.getTag(), stack.getTag())) {
                                 entry.setValue(entry.getValue() + stack.getCount());
                             }
                         }

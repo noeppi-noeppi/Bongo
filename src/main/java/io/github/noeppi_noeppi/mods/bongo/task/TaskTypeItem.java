@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
+import io.github.noeppi_noeppi.mods.bongo.util.StackTagReader;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -20,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.moddingx.libx.codec.MoreCodecs;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -46,7 +46,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public MapCodec<ItemStack> codec() {
-        return MoreCodecs.SAFE_ITEM_STACK.fieldOf("value");
+        return StackTagReader.DIRECT_STACK_CODEC.fieldOf("value");
     }
 
     @Override
