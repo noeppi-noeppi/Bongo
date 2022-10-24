@@ -201,7 +201,7 @@ public class Task {
     
     private record TaskExtension(boolean inverted, Optional<ResourceLocation> customTexture) {
 
-        public static final TaskExtension EMPTY = new TaskExtension(false, null);
+        public static final TaskExtension EMPTY = new TaskExtension(false, Optional.empty());
         
         public static final MapCodec<TaskExtension> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.BOOL.optionalFieldOf("inverted", false).forGetter(TaskExtension::inverted),

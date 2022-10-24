@@ -84,6 +84,7 @@ public class DumpCommand implements Command<CommandSourceStack> {
                     try {
                         return Stream.of(CodecHelper.JSON.write(Task.CODEC, task));
                     } catch (Exception e) {
+                        e.printStackTrace();
                         return Stream.empty();
                     }
                 })
