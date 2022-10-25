@@ -136,7 +136,7 @@ public class Task {
         } else {
             RenderHelper.resetColor();
             RenderSystem.setShaderTexture(0, tex);
-            GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 18, 18);
+            GuiComponent.blit(poseStack, -1, -1, 0, 0, 18, 18, 18, 18);
         }
     }
     
