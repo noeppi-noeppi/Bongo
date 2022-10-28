@@ -1,0 +1,172 @@
+{
+  "tasks": [
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "bonezone:spinal_skull_deer",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "cursedcrypts:cursed_wand",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "gardens_of_the_dead:whistlecane",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "mandragora:mandragora",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "villagersoctober:garland",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "villagersoctober:scarecrow",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.advancement",
+      "value": "villagersoctober:villagersoctober/halloween"
+    },
+    {
+      "type": "bongo.entity",
+      "value": "broglisowls:entity_owl"
+    },
+    {
+      "type": "bongo.biome",
+      "value": "gardens_of_the_dead:soulblight_forest"
+    },
+    {
+      "type": "spooky.pumpkillager",
+      "value": "INITIAL_ENCOUNTER"
+    },
+    {
+      "type": "spooky.pumpkillager",
+      "value": "AFTER_RITUAL"
+    },
+    {
+      "type": "spooky.painting",
+      "value": "funkyframes:troubles_brewing"
+    },
+    {
+      "type": "spooky.structure",
+      "value": "cursedcrypts:cursed_crypt",
+      "custom_texture": "bongo:textures/cursed_crypt.png"
+    },
+    {
+      "type": "spooky.maledicta",
+      "custom_texture": "bongo:textures/maledictus_aufero.png"
+    },
+    {
+      "type": "bongo.effect",
+      "value": "minecraft:darkness"
+    },
+    {
+      "type": "bongo.group",
+      "weight": [ 1, 1 ],
+      "tasks": [
+        {
+          "type": "bongo.item",
+          "value": {
+            "item": "halloween_mood:fire_resistance_candy",
+            "count": 1
+          }
+        },
+        {
+          "type": "bongo.item",
+          "value": {
+            "item": "halloween_mood:health_candy",
+            "count": 1
+          }
+        },
+        {
+          "type": "bongo.item",
+          "value": {
+            "item": "halloween_mood:night_vision_candy",
+            "count": 1
+          }
+        },
+        {
+          "type": "bongo.item",
+          "value": {
+            "item": "halloween_mood:speed_candy",
+            "count": 1
+          }
+        },
+        {
+          "type": "bongo.item",
+          "value": {
+            "item": "halloween_mood:water_breathing_candy",
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "minecraft:pumpkin_pie",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "minecraft:jack_o_lantern",
+        "count": 1
+      }
+    },
+    {
+      "type": "spooky.structure",
+      "value": "halloween_mood:big_pumpkin",
+      "custom_texture": "bongo:textures/big_pumpkin.png"
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "gardens_of_the_dead:soulblight_fungus",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "minecraft:golden_sword",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.item",
+      "value": {
+        "item": "minecraft:soul_campfire",
+        "count": 1
+      }
+    },
+    {
+      "type": "bongo.advancement",
+      "value": "villagersoctober:villagersoctober/ghast"
+    },
+    {
+      "type": "bongo.entity",
+      "value": "minecraft:wither_skeleton"
+    }
+  ]
+}

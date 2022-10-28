@@ -21,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class DefaultEffects {
 
@@ -39,6 +40,8 @@ public class DefaultEffects {
         event.getPlayer().setExperienceLevels(0);
         event.getPlayer().setExperiencePoints(0);
         event.getPlayer().setGameMode(GameType.SURVIVAL);
+        // Clear Pumpkillager quest line
+        for (String tag : Set.copyOf(event.getPlayer().getTags())) event.getPlayer().removeTag(tag);
         event.getBongo().getSettings().equipment().equip(event.getPlayer());
         AdvancementCommands.Action.REVOKE.perform(event.getPlayer(), event.getLevel().getServer().getAdvancements().getAllAdvancements());
         ServerStatsCounter mgr = event.getLevel().getServer().getPlayerList().getPlayerStats(event.getPlayer());

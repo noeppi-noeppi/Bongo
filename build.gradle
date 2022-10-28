@@ -4,6 +4,9 @@ buildscript {
 
 apply from: 'https://moddingx.github.io/ModUtils/v4/mod.gradle'
 
+apply plugin: 'org.moddingx.modgradle.coremods'
+apply plugin: 'org.moddingx.modgradle.cursedep'
+
 repositories {
     maven { url = "https://dvs1.progwml6.com/files/maven/" }
     maven { url = "https://maven.moddingx.org/" }
@@ -13,15 +16,36 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf('org.moddingx:LibX:1.19.2-4.2.1')
-
-    implementation fg.deobf('org.moddingx:LibX:1.19.2-4.2.1')
+    annotationProcessor fg.deobf('org.moddingx:LibX:1.19.2-4.2.7')
+    
+    coremods 'org.moddingx:CoreModTypes:5.0.2-2'
+    
+    implementation fg.deobf('org.moddingx:LibX:1.19.2-4.2.7')
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.19.2-5.1.1.0:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.19.2-forge:11.2.0.256")
     runtimeOnly fg.deobf("de.melanx:JustEnoughAdvancements:1.19-4.0.2")
     compileOnly fg.deobf("de.melanx:SkyblockBuilder:1.19.1-4.1.2")
     implementation fg.deobf("io.github.noeppi_noeppi.mods:MineMention:1.19.1-2.1.0")
     implementation fg.deobf("curse.maven:jade-324717:3903693") // Jade-1.19.1-forge-8.0.1.jar
+    
+    implementation curse.mod(684453, 4052170) // Maledicta-1.19.2-1.0.1.jar
+    implementation curse.mod(686211, 4027610) // Broglis Owls 1.19 - 0.0.3
+    implementation curse.mod(689392, 4051647) // Cursed Crypts 1.1.0 FORGE
+    implementation curse.mod(687086, 4033678) // FunkyFrames-forge-1.19.2-1.0.0.3.jar
+    implementation curse.mod(690176, 4035566) // BoneZone-Forge-1.19.2-1.0.0.jar
+    implementation curse.mod(690188, 4054824) // mandragora-0.4.jar
+    implementation curse.mod(683174, 4035897) // gardens-of-the-dead-1.19.2-1.1.0.jar
+    implementation curse.mod(687184, 4054140) // HalloweenMood 1.0.7
+    implementation curse.mod(683144, 4048744) // VillagersOctober-1.19.2-1.1.jar
+    implementation curse.mod(689943, 4049715) // pumpkillagersquest_1.19.2-2.1.jar
+    
+    implementation curse.mod(388172, 4036065) // geckolib-forge-1.19-3.1.28.jar
+    implementation curse.mod(378802, 4029363) // Structure Gel 1.19.2-v2.7.1
+    implementation curse.mod(228525, 4033122) // Bookshelf-Forge-1.19.2-16.1.9.jar
+    implementation curse.mod(563928, 4013816) // TerraBlender Forge 1.19.2-2.0.1.128
+    implementation curse.mod(306770, 4031402) // Patchouli-1.19.2-77.jar
+    implementation curse.mod(653732, 4029683) // SandBox-1.19.2-1.0.1.jar
+    implementation curse.mod(342584, 4035506) // collective-1.19.2-5.11.jar
 }
 
 compileJava.options.compilerArgs += [

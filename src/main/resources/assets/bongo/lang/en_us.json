@@ -91,5 +91,17 @@
   "bongo.wc.bongo.rows": "One row",
   "bongo.wc.bongo.rows_and_columns": "A row or a column",
   "bongo.win": " won",
-  "bongo.winplayers": " won. Players:"
+  "bongo.winplayers": " won. Players:",
+  
+  "bongo.spooky.pumpkillager.task": "Pumpkillager",
+  "bongo.spooky.pumpkillager.initial": "Encounter",
+  "bongo.spooky.pumpkillager.ritual": "Perform Ritual",
+  "bongo.spooky.pumpkillager.boss": "Bossfight",
+  "bongo.spooky.painting.task": "Hang up Painting",
+  "bongo.spooky.structure.task": "Structure",
+  "bongo.spooky.maledicta.task": "Maledictus Aufero",
+  "bongo.spooky.maledicta.desc": "Strike item with lightning",
+  
+  "structure.cursedcrypts.cursed_crypt": "Cursed Crypt",
+  "structure.halloween_mood.big_pumpkin": "Big Pumpkin"
 }

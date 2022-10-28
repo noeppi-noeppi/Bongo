@@ -1,0 +1,23 @@
+{
+  "game": {
+    "win_condition": "bongo.all",
+    "time": 5400,
+    "leaderboard": true,
+    "teleports_per_team": 1
+  },
+  "level": {
+    "teleporter": "bongo.no_tp"
+  },
+  "equipment": {
+    "head": {
+      "item": "minecraft:carved_pumpkin",
+      "count": 1
+    },
+    "backpack": [
+      {
+        "item": "minecraft:netherite_ingot",
+        "count": 3
+      }
+    ]
+  }
+}

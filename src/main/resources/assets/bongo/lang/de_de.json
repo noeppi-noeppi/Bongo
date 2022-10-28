@@ -91,5 +91,14 @@
   "bongo.wc.bongo.rows": "Eine Zeile",
   "bongo.wc.bongo.rows_and_columns": "Eine Zeile oder eine Spalte",
   "bongo.win": " won",
-  "bongo.winplayers": " hat gewonnen. Spieler:"
+  "bongo.winplayers": " hat gewonnen. Spieler:",
+
+  "bongo.spooky.pumpkillager.initial": "Begegnung",
+  "bongo.spooky.pumpkillager.ritual": "Ritual",
+  "bongo.spooky.pumpkillager.boss": "Bosskampf",
+  "bongo.spooky.painting.task": "Gemälde aufhängen",
+  "bongo.spooky.structure.task": "Struktur",
+  "bongo.spooky.maledicta.task": "Maledictus Aufero",
+
+  "structure.halloween_mood.big_pumpkin": "Großer Kürbis"
 }

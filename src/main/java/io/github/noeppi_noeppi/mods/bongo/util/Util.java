@@ -7,6 +7,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -24,11 +25,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Util {
 
@@ -116,6 +119,19 @@ public class Util {
                 .mapLeft(Optional::of)
                 .mapRight(ForgeRegistries.BIOMES::getKey)
                 .mapRight(Optional::ofNullable));
+    }
+    
+    public static Set<ResourceLocation> structures(ServerLevel level, BlockPos pos) {
+        if (!level.structureManager().hasAnyStructureAt(pos)) return Set.of();
+        Registry<Structure> registry = level.registryAccess().registryOrThrow(Registry.STRUCTURE_REGISTRY);
+        return level.structureManager().getAllStructuresAt(pos).entrySet().stream()
+                .filter(e -> !e.getValue().isEmpty())
+                .map(Map.Entry::getKey)
+                .map(registry::getResourceKey)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(ResourceKey::location)
+                .collect(Collectors.toUnmodifiableSet());
     }
     
     public static <T> T join(Either<? extends T, ? extends T> either) {

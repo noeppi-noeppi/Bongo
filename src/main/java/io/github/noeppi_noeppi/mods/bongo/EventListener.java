@@ -1,5 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo;
 
+import com.natamus.pumpkillagersquest.api.PumpkillagerSummonEvent;
+import de.melanx.maledicta.api.MaledictusAuferoEvent;
 import io.github.noeppi_noeppi.mods.bongo.config.ClientConfig;
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.data.settings.GameSettings;
@@ -19,8 +21,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.stats.ServerStatsCounter;
+import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -43,6 +47,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class EventListener {
 
@@ -97,7 +102,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void playerTick(TickEvent.PlayerTickEvent event) {
-        if (!event.player.getCommandSenderWorld().isClientSide && event.player.tickCount % 20 == 0 && event.player instanceof ServerPlayer) {
+        if (!event.player.getCommandSenderWorld().isClientSide && event.player.tickCount % 20 == 0 && event.player instanceof ServerPlayer serverPlayer) {
             Bongo bongo = Bongo.get(event.player.level);
             if (bongo.canCompleteTasks(event.player)) {
                 Map<ItemStack, Integer> stacks = new HashMap<>();
@@ -139,6 +144,11 @@ public class EventListener {
                 } catch (Exception e) {
                     // In case of unbound values
                     e.printStackTrace();
+                }
+
+                Set<ResourceLocation> structures = Util.structures(serverPlayer.getLevel(), event.player.blockPosition());
+                for (ResourceLocation structure : structures) {
+                    bongo.checkCompleted(TaskTypeStructure.INSTANCE, event.player, structure);
                 }
                 
                 if (bongo.getSettings().game().invulnerable()) {
@@ -300,6 +310,27 @@ public class EventListener {
                     tc.append(Component.literal("] ").withStyle(ChatFormatting.RESET));
                     tc.append(event.getMessage());
                     Util.broadcastTeam(event.getPlayer().level, team, tc);
+                }
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void summonPumpkillager(PumpkillagerSummonEvent event) {
+        if (!event.getSummoner().level.isClientSide) {
+            TaskTypePumpkillager.Type type = TaskTypePumpkillager.Type.of(event.getType());
+            if (type != null) {
+                Bongo.get(event.getSummoner().level).checkCompleted(TaskTypePumpkillager.INSTANCE, event.getSummoner(), type);
+            }
+        }
+    }
+    
+    @SubscribeEvent
+    public void lightningStrikeMaledicta(MaledictusAuferoEvent event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            for (ItemEntity ie : event.getAllItems()) {
+                if (ie.getThrower() != null && serverLevel.getEntity(ie.getThrower()) instanceof Player player) {
+                    Bongo.get(serverLevel).checkCompleted(TaskTypeMaledicta.INSTANCE, player, Unit.INSTANCE);
                 }
             }
         }

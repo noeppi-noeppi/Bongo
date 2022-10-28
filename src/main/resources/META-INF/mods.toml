@@ -17,7 +17,7 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[43.1.2,)"
+    versionRange="[43.1.43,)"
     ordering="NONE"
     side="BOTH"
 
@@ -31,7 +31,7 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.19.1-4.1.0,)"
+    versionRange="[1.19.2-4.2.7,)"
     ordering="NONE"
     side="BOTH"
 
@@ -63,3 +63,72 @@ It's a bingo mod.
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.bongo]]
+    modId="broglisowls"
+    mandatory=true
+    versionRange="[0.0.3,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="mandragora"
+    mandatory=true
+    versionRange="[0.4,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="gardens_of_the_dead"
+    mandatory=true
+    versionRange="[1.19.2-1.1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="villagersoctober"
+    mandatory=true
+    versionRange="[1.19.2-1.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="halloween_mood"
+    mandatory=true
+    versionRange="[1.0.7,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="bonezone"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="funkyframes"
+    mandatory=true
+    versionRange="[1.0.0.3,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="cursedcrypts"
+    mandatory=true
+    versionRange="[1.1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="pumpkillagersquest"
+    mandatory=true
+    versionRange="[2.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="maledicta"
+    mandatory=true
+    versionRange="[1.19.2-1.0.1,)"
+    ordering="NONE"
+    side="BOTH"
