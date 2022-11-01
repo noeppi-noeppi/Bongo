@@ -94,14 +94,14 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="halloween_mood"
     mandatory=true
-    versionRange="[1.0.7,)"
+    versionRange="[1.0.9,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="bonezone"
     mandatory=true
-    versionRange="[1.0.0,)"
+    versionRange="[1.0.3,)"
     ordering="NONE"
     side="BOTH"
 
@@ -115,14 +115,14 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="cursedcrypts"
     mandatory=true
-    versionRange="[1.1.0,)"
+    versionRange="[1.1.1,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="pumpkillagersquest"
     mandatory=true
-    versionRange="[2.1,)"
+    versionRange="[2.2,)"
     ordering="NONE"
     side="BOTH"
 
@@ -130,5 +130,19 @@ It's a bingo mod.
     modId="maledicta"
     mandatory=true
     versionRange="[1.19.2-1.0.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="hauntedfields"
+    mandatory=true
+    versionRange="[1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.bongo]]
+    modId="kindled"
+    mandatory=true
+    versionRange="[1.0.1,)"
     ordering="NONE"
     side="BOTH"

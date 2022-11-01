@@ -147,11 +147,8 @@
       }
     },
     {
-      "type": "bongo.item",
-      "value": {
-        "item": "minecraft:golden_sword",
-        "count": 1
-      }
+      "type": "bongo.entity",
+      "value": "kindled:kindled"
     },
     {
       "type": "bongo.item",
@@ -166,7 +163,7 @@
     },
     {
       "type": "bongo.entity",
-      "value": "minecraft:wither_skeleton"
+      "value": "hauntedfields:scarecrow"
     }
   ]
 }

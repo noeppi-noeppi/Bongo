@@ -30,14 +30,16 @@ dependencies {
     
     implementation curse.mod(684453, 4052170) // Maledicta-1.19.2-1.0.1.jar
     implementation curse.mod(686211, 4027610) // Broglis Owls 1.19 - 0.0.3
-    implementation curse.mod(689392, 4051647) // Cursed Crypts 1.1.0 FORGE
+    implementation curse.mod(689392, 4059543) // Cursed Crypts 1.1.1 FORGE
     implementation curse.mod(687086, 4033678) // FunkyFrames-forge-1.19.2-1.0.0.3.jar
-    implementation curse.mod(690176, 4035566) // BoneZone-Forge-1.19.2-1.0.0.jar
+    implementation curse.mod(690176, 4057707) // BoneZone-Forge-1.19.2-1.0.3.jar
     implementation curse.mod(690188, 4054824) // mandragora-0.4.jar
     implementation curse.mod(683174, 4035897) // gardens-of-the-dead-1.19.2-1.1.0.jar
-    implementation curse.mod(687184, 4054140) // HalloweenMood 1.0.7
+    implementation curse.mod(687184, 4060012) // HalloweenMood 1.1.0
     implementation curse.mod(683144, 4048744) // VillagersOctober-1.19.2-1.1.jar
-    implementation curse.mod(689943, 4049715) // pumpkillagersquest_1.19.2-2.1.jar
+    implementation curse.mod(689943, 4060396) // pumpkillagersquest_1.19.2-2.2.jar
+    implementation curse.mod(694997, 4059384) // Haunted Fields 1.0
+    implementation curse.mod(686176, 4051044) // kindled-1.0.1.jar
     
     implementation curse.mod(388172, 4036065) // geckolib-forge-1.19-3.1.28.jar
     implementation curse.mod(378802, 4029363) // Structure Gel 1.19.2-v2.7.1
@@ -45,7 +47,7 @@ dependencies {
     implementation curse.mod(563928, 4013816) // TerraBlender Forge 1.19.2-2.0.1.128
     implementation curse.mod(306770, 4031402) // Patchouli-1.19.2-77.jar
     implementation curse.mod(653732, 4029683) // SandBox-1.19.2-1.0.1.jar
-    implementation curse.mod(342584, 4035506) // collective-1.19.2-5.11.jar
+    implementation curse.mod(342584, 4058179) // collective-1.19.2-5.13.jar
 }
 
 compileJava.options.compilerArgs += [
