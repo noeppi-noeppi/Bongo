@@ -7,6 +7,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -152,11 +154,15 @@ public class Util {
                     ((ServerPlayer) player).getLevel().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
                         if (team.hasPlayer(thePlayer)) {
                             thePlayer.sendSystemMessage(tc);
-                            thePlayer.connection.send(new ClientboundSoundPacket(SoundEvents.ANVIL_LAND, SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1, 0));
+                            thePlayer.connection.send(new ClientboundSoundPacket(sound(SoundEvents.ANVIL_LAND), SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1, 0));
                         }
                     });
                 }
             }
         }
+    }
+    
+    public static Holder<SoundEvent> sound(SoundEvent event) {
+        return ForgeRegistries.SOUND_EVENTS.getHolder(event).orElseGet(() -> Holder.direct(event));
     }
 }

@@ -2,7 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo.data.task;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;

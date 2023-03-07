@@ -4,6 +4,7 @@ import io.github.noeppi_noeppi.mods.bongo.data.Team;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoWinEvent;
+import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -55,7 +56,7 @@ public class DefaultEffects {
             event.getLevel().getServer().getPlayerList().getPlayers().forEach(player -> {
                 player.sendSystemMessage(tc);
                 if (team.hasPlayer(player)) {
-                    player.connection.send(new ClientboundSoundPacket(SoundEvents.END_PORTAL_SPAWN, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 0.5f, 1, 0));
+                    player.connection.send(new ClientboundSoundPacket(Util.sound(SoundEvents.END_PORTAL_SPAWN), SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 0.5f, 1, 0));
                 }
             });
         }
@@ -109,7 +110,7 @@ public class DefaultEffects {
             player.sendSystemMessage(tcc);
             player.connection.send(new ClientboundSetTitleTextPacket(tc));
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 60, 10));
-            player.connection.send(new ClientboundSoundPacket(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1, 0));
+            player.connection.send(new ClientboundSoundPacket(Util.sound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE), SoundSource.MASTER, player.getX(), player.getY(), player.getZ(), 1.2f, 1, 0));
             if (leaderboard != null) {
                 player.sendSystemMessage(leaderboard);
             }

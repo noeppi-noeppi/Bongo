@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[44,)"
 issueTrackerURL="https://github.com/noeppi-noeppi/bongo/issues"
 license="Apache-2.0"
 
@@ -17,49 +17,49 @@ It's a bingo mod.
 [[dependencies.bongo]]
     modId="forge"
     mandatory=true
-    versionRange="[43.1.2,)"
+    versionRange="[44.1.20,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.2,)"
+    versionRange="[1.19.3,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="libx"
     mandatory=true
-    versionRange="[1.19.1-4.1.0,)"
+    versionRange="[1.19.3-4.3.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="skyblockbuilder"
     mandatory=false
-    versionRange="[1.19.1-4.1.2,)"
+    versionRange="[1.19.2-4.2.6,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="minemention"
     mandatory=false
-    versionRange="[1.19.1-2.1.0,)"
+    versionRange="[1.19.3-2.2.0,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="jei"
     mandatory=false
-    versionRange="[11.2.0.256,)"
+    versionRange="[12.3.0.18,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.bongo]]
     modId="jade"
     mandatory=false
-    versionRange="[8.0.1,)"
+    versionRange="[9.4.0,)"
     ordering="NONE"
     side="BOTH"
 

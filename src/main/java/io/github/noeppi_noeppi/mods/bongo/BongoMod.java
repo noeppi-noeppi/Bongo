@@ -19,7 +19,7 @@ import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterNothing;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporterStandard;
 import io.github.noeppi_noeppi.mods.bongo.teleporters.PlayerTeleporters;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -145,8 +145,8 @@ public final class BongoMod extends ModX {
     }
     
     private void registerStuff(RegisterEvent event) {
-        event.register(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, this.resource("tasks"), () -> GameTasksArgument.Info.INSTANCE);
-        event.register(Registry.COMMAND_ARGUMENT_TYPE_REGISTRY, this.resource("settings"), () -> GameSettingsArgument.Info.INSTANCE);
+        event.register(Registries.COMMAND_ARGUMENT_TYPE, this.resource("tasks"), () -> GameTasksArgument.Info.INSTANCE);
+        event.register(Registries.COMMAND_ARGUMENT_TYPE, this.resource("settings"), () -> GameSettingsArgument.Info.INSTANCE);
     }
     
     private void reloadClientResources(RegisterClientReloadListenersEvent event) {

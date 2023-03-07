@@ -10,7 +10,7 @@ import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.TagWithCount;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -78,7 +78,7 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public void advancementGrant(AdvancementEvent event) {
+    public void advancementGrant(@SuppressWarnings("deprecation") AdvancementEvent.AdvancementEarnEvent event) {
         Level level = event.getEntity().getCommandSenderWorld();
         if (!level.isClientSide) {
             Bongo.get(level).checkCompleted(TaskTypeAdvancement.INSTANCE, event.getEntity(), event.getAdvancement().getId());
@@ -112,7 +112,7 @@ public class EventListener {
                     if (!stack.isEmpty()) {
                         for (Map.Entry<ItemStack, Integer> entry : stacks.entrySet()) {
                             ItemStack test = entry.getKey();
-                            if (ItemStack.isSameIgnoreDurability(stack, test) && Util.matchesNBT(test.getTag(), stack.getTag())) {
+                            if (ItemStack.isSame(stack, test) && Util.matchesNBT(test.getTag(), stack.getTag())) {
                                 entry.setValue(entry.getValue() + stack.getCount());
                             }
                         }
@@ -134,7 +134,7 @@ public class EventListener {
                 
                 // This is a bit hacky but it works
                 try {
-                    ResourceLocation biomeKey = event.player.level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(event.player.level.getBiome(event.player.blockPosition()).value());
+                    ResourceLocation biomeKey = event.player.level.registryAccess().registryOrThrow(Registries.BIOME).getKey(event.player.level.getBiome(event.player.blockPosition()).value());
                     bongo.checkCompleted(TaskTypeBiome.INSTANCE, event.player, biomeKey);
                 } catch (Exception e) {
                     // In case of unbound values
@@ -288,7 +288,7 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public void serverChat(ServerChatEvent.Submitted event) {
+    public void serverChat(ServerChatEvent event) {
         if (!ModList.get().isLoaded("minemention") && event.getPlayer() != null) {
             Bongo bongo = Bongo.get(event.getPlayer().level);
             if (bongo.teamChat(event.getPlayer())) {

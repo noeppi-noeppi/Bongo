@@ -9,18 +9,19 @@ import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.base.BlockBase;
+import org.moddingx.libx.base.ItemBase;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -68,10 +69,10 @@ public class TaskTypeItem implements TaskType<ItemStack> {
     public Stream<ItemStack> listElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
             return ForgeRegistries.ITEMS.getValues().stream().flatMap(item -> {
-                if (item.getItemCategory() != null) {
-                    NonNullList<ItemStack> nl = NonNullList.create();
-                    item.fillItemCategory(CreativeModeTab.TAB_SEARCH, nl);
-                    return nl.stream();
+                if (item instanceof ItemBase base) {
+                    return base.makeCreativeTabStacks();
+                } else if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof BlockBase base) {
+                    return base.makeCreativeTabStacks();
                 } else {
                     return Stream.of(new ItemStack(item));
                 }
@@ -83,7 +84,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public boolean shouldComplete(ServerPlayer player, ItemStack element, ItemStack compare) {
-        if (ItemStack.isSameIgnoreDurability(element, compare) && element.getCount() <= compare.getCount()) {
+        if (ItemStack.isSame(element, compare) && element.getCount() <= compare.getCount()) {
             return Util.matchesNBT(element.getTag(), compare.getTag());
         } else {
             return false;
@@ -92,7 +93,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public void consume(ServerPlayer player, ItemStack element, ItemStack found) {
-        Util.removeItems(player, element.getCount(), stack -> ItemStack.isSameIgnoreDurability(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag()));
+        Util.removeItems(player, element.getCount(), stack -> ItemStack.isSame(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag()));
     }
 
     @Override

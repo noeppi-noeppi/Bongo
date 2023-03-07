@@ -1,7 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -76,10 +76,10 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
             float scale = (float) Math.min(Math.min(8d / bb.getXsize(), 16d / bb.getYsize()), 8d / bb.getZsize());
             poseStack.translate(8, 16, 50);
             poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(Vector3f.ZP.rotationDegrees(180));
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(45));
-            poseStack.mulPose(Vector3f.XP.rotationDegrees(2));
-            entity.tickCount = ClientTickHandler.ticksInGame;
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+            poseStack.mulPose(Axis.YP.rotationDegrees(45));
+            poseStack.mulPose(Axis.XP.rotationDegrees(2));
+            entity.tickCount = ClientTickHandler.ticksInGame();
             render.render(entity, 0, 0, poseStack, buffer, LightTexture.pack(15, 15));
             if (buffer instanceof MultiBufferSource.BufferSource source) source.endBatch();
         }

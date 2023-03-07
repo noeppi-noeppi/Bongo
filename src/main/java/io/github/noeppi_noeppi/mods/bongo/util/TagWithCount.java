@@ -2,15 +2,15 @@ package io.github.noeppi_noeppi.mods.bongo.util;
 
 import com.mojang.serialization.Codec;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
+import net.minecraftforge.registries.tags.ITagManager;
 import org.moddingx.libx.annotation.api.Codecs;
 import org.moddingx.libx.annotation.codec.PrimaryConstructor;
-import org.moddingx.libx.util.data.TagAccess;
 import org.moddingx.libx.util.lazy.CachedValue;
 
 import java.util.List;
@@ -21,25 +21,23 @@ public final class TagWithCount {
     
     public static final Codec<TagWithCount> CODEC = Codecs.get(BongoMod.class, TagWithCount.class);
     
-    private final ResourceLocation tag;
+    private final ResourceLocation id;
     private final TagKey<Item> key;
     private final CachedValue<Predicate<Item>> contains;
     private final CachedValue<List<Item>> itemList;
     private final int count;
 
     @PrimaryConstructor
-    public TagWithCount(ResourceLocation tag, int count) {
-        this.tag = tag;
+    public TagWithCount(ResourceLocation id, int count) {
+        this.id = id;
         this.count = count;
-        this.key = TagKey.create(Registry.ITEM_REGISTRY, tag);
+        this.key = TagKey.create(Registries.ITEM, id);
         this.contains = new CachedValue<>(() -> {
             try {
-                // Can't use TagAccess for performance reasons
-                @SuppressWarnings("unchecked")
-                Registry<Item> registry = (Registry<Item>) Registry.REGISTRY.get(Registry.ITEM_REGISTRY.location());
-                if (registry == null) throw new IllegalStateException("Item registry not found");
-                HolderSet.Named<Item> holderSet = TagAccess.ROOT.get(this.key);
-                return item -> registry.getHolder(registry.getId(item)).map(holderSet::contains).orElse(false);
+                ITagManager<Item> mgr = Objects.requireNonNull(ForgeRegistries.ITEMS.tags());
+                if (!mgr.isKnownTagName(this.key)) return item -> false;
+                ITag<Item> theTag = mgr.getTag(this.key);
+                return theTag::contains;
             } catch (Exception e) {
                 e.printStackTrace();
                 return item -> false;
@@ -47,8 +45,9 @@ public final class TagWithCount {
         });
         this.itemList = new CachedValue<>(() -> {
             try {
-                HolderSet.Named<Item> holderSet = TagAccess.ROOT.get(this.key);
-                return holderSet.stream().map(Holder::value).toList();
+                ITagManager<Item> mgr = Objects.requireNonNull(ForgeRegistries.ITEMS.tags());
+                if (!mgr.isKnownTagName(this.key)) return List.of();
+                return mgr.getTag(this.key).stream().toList();
             } catch (Exception e) {
                 e.printStackTrace();
                 return List.of();
@@ -58,15 +57,15 @@ public final class TagWithCount {
     
     private TagWithCount(TagWithCount parent, int count) {
         // We leave the lazy value here
-        this.tag = parent.tag;
+        this.id = parent.id;
         this.count = count;
         this.key = parent.key;
         this.contains = parent.contains.copy();
         this.itemList = parent.itemList.copy();
     }
 
-    public ResourceLocation getTag() {
-        return tag;
+    public ResourceLocation getId() {
+        return id;
     }
 
     public TagKey<Item> getKey() {
@@ -100,16 +99,16 @@ public final class TagWithCount {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TagWithCount that = (TagWithCount) o;
-        return count == that.count && tag.equals(that.tag);
+        return count == that.count && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tag);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "TagWithCount[ " + tag + " x " + count + " ]";
+        return "TagWithCount[ " + id + " x " + count + " ]";
     }
 }

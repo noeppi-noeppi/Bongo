@@ -2,9 +2,7 @@ package io.github.noeppi_noeppi.mods.bongo.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import net.minecraft.client.Minecraft;
@@ -19,6 +17,8 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -42,11 +42,11 @@ public class CrownRenderer extends RenderLayer<Player, EntityModel<Player>> {
                 if (player.isShiftKeyDown() && !player.getAbilities().flying) {
                     poseStack.translate(0, 0.25, 0);
                 }
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(headYaw));
+                poseStack.mulPose(Axis.YP.rotationDegrees(headYaw));
                 if (!player.isFallFlying() && !player.isSwimming()) {
-                    poseStack.mulPose(Vector3f.XP.rotationDegrees(headPitch));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(headPitch));
                 } else {
-                    poseStack.mulPose(Vector3f.XP.rotationDegrees(-40));
+                    poseStack.mulPose(Axis.XP.rotationDegrees(-40));
                 }
                 poseStack.translate(-0.5, -0.9d, 0);
                 poseStack.scale(0.6f, 0.6f, 0.6f);
@@ -60,7 +60,7 @@ public class CrownRenderer extends RenderLayer<Player, EntityModel<Player>> {
                 poseStack.popPose();
 
                 poseStack.pushPose();
-                poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
+                poseStack.mulPose(Axis.YP.rotationDegrees(90));
                 poseStack.translate(-0.425, 0, 0);
                 renderSprites(poseStack, buffer, 0.85, 0.85, 1, OverlayTexture.NO_OVERLAY);
                 poseStack.translate(0, 0, 0.85);
@@ -77,7 +77,7 @@ public class CrownRenderer extends RenderLayer<Player, EntityModel<Player>> {
         poseStack.pushPose();
         renderSprite(poseStack, buffer, 0, 0, width, height, alpha, overlay);
         poseStack.translate(width / 2d, 0, 0);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.translate(width / -2d, 0, 0);
         renderSprite(poseStack, buffer, 0, 0, width, height, alpha, overlay);
         poseStack.popPose();
@@ -95,7 +95,7 @@ public class CrownRenderer extends RenderLayer<Player, EntityModel<Player>> {
         vertex.vertex(model, (float) x, (float) y, 0.0F).color(1.0F, 1.0F, 1.0F, alpha).uv(0, 0).overlayCoords(overlay).uv2(light).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void register() {
         try {
             Map<String, EntityRenderer<? extends Player>> skinMap = Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap();
