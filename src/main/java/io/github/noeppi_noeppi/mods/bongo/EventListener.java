@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.stats.ServerStatsCounter;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -198,7 +199,7 @@ public class EventListener {
     }
 
     private void handleCommonDamageEvent(LivingEvent event, DamageSource source, Runnable setDamageToZero) {
-        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player player && !source.isBypassInvul()) {
+        if (!event.getEntity().level.isClientSide && event.getEntity() instanceof Player player && source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             Bongo bongo = Bongo.get(player.level);
             Team team = bongo.getTeam(player);
             if (bongo.running() && team != null) {

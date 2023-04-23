@@ -177,7 +177,7 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
             poseStack.scale(2/3f, 2/3f, 1);
             Font fr = Minecraft.getInstance().font;
             String text = element.stat().format(element.value());
-            fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, false, 0, 15728880);
+            fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 15728880);
             poseStack.popPose();
         }
     }

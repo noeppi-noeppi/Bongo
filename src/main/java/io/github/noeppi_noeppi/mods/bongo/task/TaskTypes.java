@@ -27,7 +27,7 @@ public class TaskTypes {
     
     public static DataResult<Codec<?>> getCodec(TaskType<?> type) {
         Codec<?> codec = type == null ? null : taskCodecs.get(type);
-        return codec == null ? DataResult.error("Task type not found: " + (type == null ? "null" : type.id())) : DataResult.success(codec);
+        return codec == null ? DataResult.error(() -> "Task type not found: " + (type == null ? "null" : type.id())) : DataResult.success(codec);
     }
 
     public static <T> void registerType(TaskType<T> type) {

@@ -12,6 +12,7 @@ import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
@@ -62,7 +63,7 @@ public class SkyblockIntegration {
         
         @SubscribeEvent(priority = EventPriority.HIGH)
         public void livingHurt(LivingHurtEvent event) {
-            if (event.getEntity() instanceof ServerPlayer player && event.getSource().isBypassInvul()
+            if (event.getEntity() instanceof ServerPlayer player && event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)
                     && event.getEntity().getY() < 0
                     && Level.OVERWORLD.equals(event.getEntity().getCommandSenderWorld().dimension())) {
                 if (appliesFor(player.getLevel())) {

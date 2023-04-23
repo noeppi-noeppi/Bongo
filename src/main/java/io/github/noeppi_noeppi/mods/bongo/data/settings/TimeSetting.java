@@ -48,13 +48,13 @@ public sealed interface TimeSetting {
             public <T> DataResult<TimeSetting> decode(DynamicOps<T> ops, MapLike<T> input) {
                 T elem = input.get(name);
                 if (elem == null) {
-                    return DataResult.error("Missing key: " + name);
+                    return DataResult.error(() -> "Missing key: " + name);
                 } else {
                     DataResult<Number> num = ops.getNumberValue(elem);
                     if (num.result().isPresent()) {
                         return num.map(n -> new Time(n.intValue()));
                     } else {
-                        return ops.getStringValue(elem).flatMap(str -> "unlimited".equals(str) ? DataResult.success(new Unlimited()) : DataResult.error("Invalid time value: " + str));
+                        return ops.getStringValue(elem).flatMap(str -> "unlimited".equals(str) ? DataResult.success(new Unlimited()) : DataResult.error(() -> "Invalid time value: " + str));
                     }
                 }
             }

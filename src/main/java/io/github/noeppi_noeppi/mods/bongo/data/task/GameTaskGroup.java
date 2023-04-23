@@ -19,7 +19,7 @@ public class GameTaskGroup {
             Codec.STRING.fieldOf("type").forGetter(Pair::getFirst), 
             WeightedTaskProvider.CODEC.listOf().fieldOf("tasks").forGetter(pair -> pair.getSecond().tasks())
     ).apply(instance, (type, tasks) -> Pair.of(type, new GameTaskGroup(tasks)))).flatXmap(
-            pair -> PSEUDO_TYPE.equals(pair.getFirst()) ? DataResult.success(pair.getSecond()) : DataResult.error("Not a task group"),
+            pair -> PSEUDO_TYPE.equals(pair.getFirst()) ? DataResult.success(pair.getSecond()) : DataResult.error(() -> "Not a task group"),
             group -> DataResult.success(Pair.of(PSEUDO_TYPE, group))
     );
     

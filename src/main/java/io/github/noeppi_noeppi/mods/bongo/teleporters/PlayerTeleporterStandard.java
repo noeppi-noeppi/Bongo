@@ -32,7 +32,7 @@ public class PlayerTeleporterStandard implements PlayerTeleporter {
             int x = center.getX() + (random.nextInt(2 * radius) - radius);
             int z = center.getZ() + (random.nextInt(2 * radius) - radius);
             BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos(x, gameLevel.getMaxBuildHeight(), z);
-            while (mpos.getY() > 5 && gameLevel.getBlockState(mpos).isAir()) {
+            while (mpos.getY() > gameLevel.getMinBuildHeight() + 5 && gameLevel.getBlockState(mpos).isAir()) {
                 mpos.move(Direction.DOWN);
             }
             pos = mpos.immutable().above();

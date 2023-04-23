@@ -29,7 +29,7 @@ public class DynamicUtil {
             public <A> DataResult<Pair<T, A>> decode(DynamicOps<A> ops, A input) {
                 DataResult<Dynamic<A>> dflRes = codec.encodeStart(ops, defaultValue).map(res -> new Dynamic<>(ops, res));
                 if (dflRes.result().isEmpty()) {
-                    return DataResult.error("Failed to encode default value: " + dflRes.error().map(DataResult.PartialResult::message).orElse("null") + ": " + defaultValue);
+                    return DataResult.error(() -> "Failed to encode default value: " + dflRes.error().map(DataResult.PartialResult::message).orElse("null") + ": " + defaultValue);
                 } else {
                     Dynamic<A> dynamic = dflRes.result().get();
                     DataResult<Dynamic<A>> merged = mergeMaps(dynamic, new Dynamic<>(ops, input));
