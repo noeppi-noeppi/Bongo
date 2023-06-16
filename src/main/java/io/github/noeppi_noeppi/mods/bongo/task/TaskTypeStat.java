@@ -1,7 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
@@ -9,8 +8,7 @@ import io.github.noeppi_noeppi.mods.bongo.util.StatAndValue;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -25,6 +23,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.moddingx.libx.render.RenderHelper;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -110,17 +109,17 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        GuiComponent.blit(poseStack, 0, 0, 36, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
+        graphics.blit(RenderOverlay.BINGO_SLOTS_TEXTURE, 0, 0, 36, 0, 18, 18, 256, 256);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, StatAndValue element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, StatAndValue element, boolean bigBongo) {
         Object value = element.stat().getValue();
         if (value instanceof ItemLike) {
             ItemStack renderStack = new ItemStack((ItemLike) value, element.value());
-            ItemRenderUtil.renderItem(poseStack, buffer, renderStack, false);
+            ItemRenderUtil.renderItem(graphics, renderStack, false);
             int x = -1;
             if (element.stat().getType() == Stats.ITEM_CRAFTED) {
                 x = 19;
@@ -136,18 +135,16 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
                 x = 109;
             }
             if (x >= 0) {
-                poseStack.pushPose();
-                poseStack.translate(9, -1, 100);
-                poseStack.scale(0.5f, 0.5f, 1);
-                RenderSystem.setShaderTexture(0, RenderOverlay.ICONS_TEXTURE);
-                GuiComponent.blit(poseStack, 0, 0, 0, 32, 0, 16, 16, 256, 256);
-                poseStack.translate(0, 0, 10);
-                RenderSystem.setShaderTexture(0, STAT_ICONS_TEXTURE);
-                GuiComponent.blit(poseStack, 0, 0, 0, x, 19, 16, 16, 128, 128);
-                poseStack.popPose();
+                graphics.pose().pushPose();
+                graphics.pose().translate(9, -1, 100);
+                graphics.pose().scale(0.5f, 0.5f, 1);
+                graphics.blit(RenderOverlay.ICONS_TEXTURE, 0, 0, 0, 32, 0, 16, 16, 256, 256);
+                graphics.pose().translate(0, 0, 10);
+                graphics.blit(STAT_ICONS_TEXTURE, 0, 0, 0, x, 19, 16, 16, 128, 128);
+                graphics.pose().popPose();
             }
         } else if (value instanceof EntityType<?>) {
-            TaskTypeEntity.INSTANCE.renderSlotContent(mc, (EntityType<?>) value, poseStack, buffer, bigBongo);
+            TaskTypeEntity.INSTANCE.renderSlotContent(mc, graphics, (EntityType<?>) value, bigBongo);
         } else {
             boolean foundCustomTex = false;
             if (Stats.CUSTOM.equals(element.stat().getType()) && element.stat().getValue() instanceof ResourceLocation) {
@@ -157,28 +154,28 @@ public class TaskTypeStat implements TaskType<StatAndValue> {
                 //noinspection ConstantConditions
                 if (texture != null && texture.getId() != MissingTextureAtlasSprite.getTexture().getId()) {
                     foundCustomTex = true;
-                    poseStack.pushPose();
-                    poseStack.scale(0.5f, 0.5f, 0.5f);
-                    GuiComponent.blit(poseStack, 0, 0, 0, 0, 0, 32, 32, 32, 32);
-                    poseStack.popPose();
+                    graphics.pose().pushPose();
+                    graphics.pose().scale(0.5f, 0.5f, 0.5f);
+                    graphics.blit(textureLocation, 0, 0, 0, 0, 0, 32, 32, 32, 32);
+                    graphics.pose().popPose();
                 }
             }
             if (!foundCustomTex) {
-                poseStack.pushPose();
-                poseStack.scale(0.5f, 0.5f, 0.5f);
-                RenderSystem.setShaderTexture(0, RenderOverlay.ICONS_TEXTURE);
-                GuiComponent.blit(poseStack, 0, 0, 0, 0, 0, 32, 32, 256, 256);
-                poseStack.popPose();
+                graphics.pose().pushPose();
+                graphics.pose().scale(0.5f, 0.5f, 0.5f);
+                graphics.blit(RenderOverlay.ICONS_TEXTURE, 0, 0, 0, 0, 0, 32, 32, 256, 256);
+                graphics.pose().popPose();
             }
         }
         if (!bigBongo) {
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 200);
-            poseStack.scale(2/3f, 2/3f, 1);
-            Font fr = Minecraft.getInstance().font;
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 200);
+            graphics.pose().scale(2/3f, 2/3f, 1);
             String text = element.stat().format(element.value());
-            fr.drawInBatch(text, (float) (25 - fr.width(text)), 17, 0xffffff, true, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, 15728880);
-            poseStack.popPose();
+            RenderHelper.resetColor();
+            Font font = Minecraft.getInstance().font;
+            font.drawInBatch(text, (float) (25 - font.width(text)), 17, 0xffffff, true, graphics.pose().last().pose(), graphics.bufferSource(), Font.DisplayMode.NORMAL, 0, 15728880);
+            graphics.pose().popPose();
         }
     }
 }

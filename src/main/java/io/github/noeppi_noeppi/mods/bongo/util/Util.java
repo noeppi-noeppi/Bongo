@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -107,9 +108,12 @@ public class Util {
     }
 
     public static boolean validSpawn(Level level, BlockPos pos) {
-        return level.getBlockState(pos).getBlock().isPossibleToRespawnInThis()
-                && level.getBlockState(pos.above()).getBlock().isPossibleToRespawnInThis()
+        return canRespawnIn(level.getBlockState(pos)) && canRespawnIn(level.getBlockState(pos.above()))
                 && level.getBlockState(pos.below()).isFaceSturdy(level, pos, Direction.UP);
+    }
+    
+    private static boolean canRespawnIn(BlockState state) {
+        return state.getBlock().isPossibleToRespawnInThis(state);
     }
     
     public static Optional<ResourceLocation> biome(ServerLevel level, BlockPos pos) {
@@ -150,8 +154,8 @@ public class Util {
             Team team = bongo.getTeam(player);
             if (team != null && team.lockRandomTask()) {
                 MutableComponent tc = Component.translatable("bongo.task_locked.death", player.getDisplayName());
-                if (player instanceof ServerPlayer) {
-                    ((ServerPlayer) player).getLevel().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.serverLevel().getServer().getPlayerList().getPlayers().forEach(thePlayer -> {
                         if (team.hasPlayer(thePlayer)) {
                             thePlayer.sendSystemMessage(tc);
                             thePlayer.connection.send(new ClientboundSoundPacket(sound(SoundEvents.ANVIL_LAND), SoundSource.MASTER, thePlayer.getX(), thePlayer.getY(), thePlayer.getZ(), 1f, 1, 0));

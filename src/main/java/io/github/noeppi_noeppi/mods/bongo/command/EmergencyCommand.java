@@ -15,7 +15,7 @@ public class EmergencyCommand implements Command<CommandSourceStack> {
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        Bongo bongo = Bongo.get(player.level);
+        Bongo bongo = Bongo.get(player.level());
         Team team = bongo.getTeam(player);
         
         if (team == null) {

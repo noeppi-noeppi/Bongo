@@ -2,8 +2,6 @@ package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -12,8 +10,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -121,22 +118,21 @@ public class Task {
     }
     
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
         if (this.customTexture() == null) {
-            this.content.type.renderSlot(mc, poseStack, buffer);
+            this.content.type.renderSlot(mc, graphics);
         }
     }
     
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, boolean bigBongo) {
         ResourceLocation tex = this.customTexture();
         if (tex == null) {
             //noinspection unchecked
-            ((TaskType<Object>) this.content.type).renderSlotContent(mc, this.content.element, poseStack, buffer, bigBongo);
+            ((TaskType<Object>) this.content.type).renderSlotContent(mc, graphics, this.content.element, bigBongo);
         } else {
             RenderHelper.resetColor();
-            RenderSystem.setShaderTexture(0, tex);
-            GuiComponent.blit(poseStack, -1, -1, 0, 0, 18, 18, 18, 18);
+            graphics.blit(tex, -1, -1, 0, 0, 18, 18, 18, 18);
         }
     }
     

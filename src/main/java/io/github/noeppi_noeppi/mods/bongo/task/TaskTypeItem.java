@@ -1,14 +1,13 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
+import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.Highlight;
 import io.github.noeppi_noeppi.mods.bongo.util.ItemRenderUtil;
 import io.github.noeppi_noeppi.mods.bongo.util.StackTagReader;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -84,7 +83,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public boolean shouldComplete(ServerPlayer player, ItemStack element, ItemStack compare) {
-        if (ItemStack.isSame(element, compare) && element.getCount() <= compare.getCount()) {
+        if (ItemStack.isSameItem(element, compare) && element.getCount() <= compare.getCount()) {
             return Util.matchesNBT(element.getTag(), compare.getTag());
         } else {
             return false;
@@ -93,7 +92,7 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     public void consume(ServerPlayer player, ItemStack element, ItemStack found) {
-        Util.removeItems(player, element.getCount(), stack -> ItemStack.isSame(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag()));
+        Util.removeItems(player, element.getCount(), stack -> ItemStack.isSameItem(element, stack) && Util.matchesNBT(element.getTag(), stack.getTag()));
     }
 
     @Override
@@ -114,13 +113,13 @@ public class TaskTypeItem implements TaskType<ItemStack> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
+        graphics.blit(RenderOverlay.BINGO_SLOTS_TEXTURE, 0, 0, 0, 0, 18, 18, 256, 256);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, ItemStack element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        ItemRenderUtil.renderItem(poseStack, buffer, element, !bigBongo);
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, ItemStack element, boolean bigBongo) {
+        ItemRenderUtil.renderItem(graphics, element, !bigBongo);
     }
 }

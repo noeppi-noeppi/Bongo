@@ -1,12 +1,11 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
+import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -75,7 +74,7 @@ public class TaskTypeBiome implements TaskType<ResourceLocation> {
         if (player == null) {
             return ForgeRegistries.BIOMES.getKeys().stream();
         } else {
-            return Util.biome(player.getLevel(), player.blockPosition()).stream();
+            return Util.biome(player.serverLevel(), player.blockPosition()).stream();
         }
     }
 
@@ -86,13 +85,13 @@ public class TaskTypeBiome implements TaskType<ResourceLocation> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        GuiComponent.blit(poseStack, 0, 0, 18, 0, 18, 18, 256, 256);
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
+        graphics.blit(RenderOverlay.BINGO_SLOTS_TEXTURE, 0, 0, 18, 0, 18, 18, 256, 256);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, ResourceLocation element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, ResourceLocation element, boolean bigBongo) {
         ResourceLocation biomeTexture;
         if (element != null) {
             biomeTexture = new ResourceLocation(element.getNamespace(), "textures/icon/biome/" + element.getPath() + ".png");
@@ -102,8 +101,9 @@ public class TaskTypeBiome implements TaskType<ResourceLocation> {
         RenderSystem.setShaderTexture(0, biomeTexture);
         AbstractTexture texture = mc.getTextureManager().getTexture(biomeTexture);
         //noinspection ConstantConditions
-        if (texture == null || texture.getId() == MissingTextureAtlasSprite.getTexture().getId())
-            RenderSystem.setShaderTexture(0, FALLBACK_TEXTURE);
-        GuiComponent.blit(poseStack, 0, 0, 0, 0, 16, 16, 16, 16);
+        if (texture == null || texture.getId() == MissingTextureAtlasSprite.getTexture().getId()) {
+            biomeTexture = FALLBACK_TEXTURE;
+        }
+        graphics.blit(biomeTexture, 0, 0, 0, 0, 16, 16, 16, 16);
     }
 }

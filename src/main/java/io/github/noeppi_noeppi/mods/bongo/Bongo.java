@@ -232,7 +232,7 @@ public class Bongo extends SavedData {
             for (UUID uid : uids) {
                 ServerPlayer player = level.getServer().getPlayerList().getPlayer(uid);
                 if (player != null) {
-                    MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.getLevel(), player));
+                    MinecraftForge.EVENT_BUS.post(new BongoStopEvent.Player(this, player.serverLevel(), player));
                     updateMentions(player);
                     player.refreshDisplayName();
                     player.refreshTabListName();
@@ -403,7 +403,7 @@ public class Bongo extends SavedData {
     }
     
     public <C> void checkCompleted(TaskType<C> type, Player player, C compare) {
-        if (!running || player.level.isClientSide) return;
+        if (!running || player.level().isClientSide) return;
         Team team = getTeam(player);
         if (team != null && player instanceof ServerPlayer serverPlayer) {
             for (int i = 0; i < items.size(); i++) {
@@ -421,7 +421,7 @@ public class Bongo extends SavedData {
                                 }
                             }
                         }
-                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.serverLevel(), serverPlayer, task(i)));
                     } else if (state.shouldLock) {
                         team.lock(i);
                         // inverted tasks are completed for everyone if the first player fails it
@@ -432,7 +432,7 @@ public class Bongo extends SavedData {
                                 }
                             }
                         }
-                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.getLevel(), serverPlayer, task(i)));
+                        MinecraftForge.EVENT_BUS.post(new BongoTaskEvent(this, serverPlayer.serverLevel(), serverPlayer, task(i)));
                     }
                 }
             }

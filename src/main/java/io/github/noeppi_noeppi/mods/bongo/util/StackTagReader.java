@@ -11,7 +11,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import org.moddingx.libx.codec.CodecHelper;
 import org.moddingx.libx.codec.MoreCodecs;
 import org.moddingx.libx.codec.TypedEncoder;
-import org.moddingx.libx.crafting.CraftingHelper2;
+import org.moddingx.libx.crafting.RecipeHelper;
 
 import java.util.Objects;
 import java.util.Set;
@@ -27,7 +27,7 @@ public class StackTagReader {
                     stack -> CodecHelper.doesNotThrow(() -> stack.save(new CompoundTag()).toString())
             ),
             TypedEncoder.of(Tag.class, stack -> stack.save(new CompoundTag()), tag -> fromNBT((CompoundTag) tag)),
-            TypedEncoder.of(JsonElement.class, stack -> CraftingHelper2.serializeItemStack(stack, true), json -> fromJson(json.getAsJsonObject()))
+            TypedEncoder.of(JsonElement.class, stack -> RecipeHelper.serializeItemStack(stack, true), json -> fromJson(json.getAsJsonObject()))
     );
     
     public static ItemStack fromNBT(CompoundTag nbt) {

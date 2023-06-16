@@ -1,12 +1,11 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.RenderEntityCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -59,29 +58,29 @@ public class TaskTypeEntity extends RegistryTaskType<EntityType<?>> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        poseStack.translate(-2, -2, 0);
-        poseStack.scale(22 / 26f, 22 / 26f, 1);
-        GuiComponent.blit(poseStack, 0, 0, 0, 44, 26, 26, 256, 256);
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
+        graphics.pose().translate(-2, -2, 0);
+        graphics.pose().scale(22 / 26f, 22 / 26f, 1);
+        graphics.blit(RenderOverlay.BINGO_SLOTS_TEXTURE, 0, 0, 0, 44, 26, 26, 256, 256);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, EntityType<?> element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, EntityType<?> element, boolean bigBongo) {
         @SuppressWarnings("unchecked")
         EntityRenderer<Entity> render = (EntityRenderer<Entity>) mc.getEntityRenderDispatcher().renderers.get(element);
         if (render != null) {
             Entity entity = RenderEntityCache.getRenderEntity(mc, element);
             AABB bb = entity.getBoundingBoxForCulling();
             float scale = (float) Math.min(Math.min(8d / bb.getXsize(), 16d / bb.getYsize()), 8d / bb.getZsize());
-            poseStack.translate(8, 16, 50);
-            poseStack.scale(scale, scale, scale);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(180));
-            poseStack.mulPose(Axis.YP.rotationDegrees(45));
-            poseStack.mulPose(Axis.XP.rotationDegrees(2));
+            graphics.pose().translate(8, 16, 50);
+            graphics.pose().scale(scale, scale, scale);
+            graphics.pose().mulPose(Axis.ZP.rotationDegrees(180));
+            graphics.pose().mulPose(Axis.YP.rotationDegrees(45));
+            graphics.pose().mulPose(Axis.XP.rotationDegrees(2));
             entity.tickCount = ClientTickHandler.ticksInGame();
-            render.render(entity, 0, 0, poseStack, buffer, LightTexture.pack(15, 15));
-            if (buffer instanceof MultiBufferSource.BufferSource source) source.endBatch();
+            render.render(entity, 0, 0, graphics.pose(), graphics.bufferSource(), LightTexture.pack(15, 15));
+            graphics.bufferSource().endBatch();
         }
     }
 }

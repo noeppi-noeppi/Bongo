@@ -18,7 +18,7 @@ public class LeaveCommand implements Command<CommandSourceStack> {
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        Bongo bongo = Bongo.get(player.level);
+        Bongo bongo = Bongo.get(player.level());
 
         if (!bongo.active()) {
             throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.team.noactive")).create();

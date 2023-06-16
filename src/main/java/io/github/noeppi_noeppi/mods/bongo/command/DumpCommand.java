@@ -1,5 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.command;
 
+import com.google.common.base.Suppliers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -68,7 +69,7 @@ public class DumpCommand implements Command<CommandSourceStack> {
                 w.close();
             }
 
-            context.getSource().sendSuccess(Component.literal("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize())).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).withUnderlined(true)), true);
+            context.getSource().sendSuccess(Suppliers.ofInstance(Component.literal("Dumped data for " + types + " task types to " + (base.toAbsolutePath().normalize())).withStyle(Style.EMPTY.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, base.toAbsolutePath().normalize().toString())).withUnderlined(true))), true);
         } catch (IOException e) {
             throw new SimpleCommandExceptionType(Component.literal("IOException: " + e.getMessage())).create();
         }

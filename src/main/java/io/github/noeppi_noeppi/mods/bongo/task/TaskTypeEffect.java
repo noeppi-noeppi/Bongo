@@ -1,11 +1,9 @@
 package io.github.noeppi_noeppi.mods.bongo.task;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.noeppi_noeppi.mods.bongo.render.RenderOverlay;
 import io.github.noeppi_noeppi.mods.bongo.util.PotionTextureRenderCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,16 +50,15 @@ public class TaskTypeEffect extends RegistryTaskType<MobEffect> {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlot(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
-        poseStack.translate(-1, -1, 0);
-        GuiComponent.blit(poseStack, 0, 0, 26, 18, 20, 20, 256, 256);
+    public void renderSlot(Minecraft mc, GuiGraphics graphics) {
+        graphics.pose().translate(-1, -1, 0);
+        graphics.blit(RenderOverlay.BINGO_SLOTS_TEXTURE, 0, 0, 26, 18, 20, 20, 256, 256);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void renderSlotContent(Minecraft mc, MobEffect element, PoseStack poseStack, MultiBufferSource buffer, boolean bigBongo) {
-        poseStack.translate(-1, -1, 0);
-        RenderSystem.setShaderTexture(0, PotionTextureRenderCache.getRenderTexture(element));
-        GuiComponent.blit(poseStack, 0, 0, 0, 0, 18, 18, 18, 18);
+    public void renderSlotContent(Minecraft mc, GuiGraphics graphics, MobEffect element, boolean bigBongo) {
+        graphics.pose().translate(-1, -1, 0);
+        graphics.blit(PotionTextureRenderCache.getRenderTexture(element), 0, 0, 0, 0, 18, 18, 18, 18);
     }
 }

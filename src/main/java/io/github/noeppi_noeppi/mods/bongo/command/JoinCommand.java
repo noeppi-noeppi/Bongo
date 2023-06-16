@@ -19,7 +19,7 @@ public class JoinCommand implements Command<CommandSourceStack> {
     @Override
     public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
-        Bongo bongo = Bongo.get(player.level);
+        Bongo bongo = Bongo.get(player.level());
         DyeColor dc = context.getArgument("team", DyeColor.class);
 
         if (!bongo.active()) {

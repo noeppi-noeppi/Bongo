@@ -31,7 +31,7 @@ public class MineMentionIntegration {
         @Override
         public Predicate<ServerPlayer> selectPlayers(ServerPlayer sender) {
             return player -> {
-                Bongo bongo = Bongo.get(sender.getLevel());
+                Bongo bongo = Bongo.get(sender.level());
                 Team team = bongo.getTeam(sender);
                 return team != null && team.hasPlayer(player);
             };
@@ -39,7 +39,7 @@ public class MineMentionIntegration {
 
         @Override
         public boolean available(ServerPlayer sender) {
-            Bongo bongo = Bongo.get(sender.getLevel());
+            Bongo bongo = Bongo.get(sender.level());
             return bongo.active() && bongo.getTeam(sender) != null;
         }
     }

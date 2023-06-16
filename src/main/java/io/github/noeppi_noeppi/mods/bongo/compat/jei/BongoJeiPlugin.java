@@ -1,6 +1,5 @@
 package io.github.noeppi_noeppi.mods.bongo.compat.jei;
 
-import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -13,7 +12,8 @@ import javax.annotation.Nullable;
 @JeiPlugin
 public class BongoJeiPlugin implements IModPlugin {
     
-    public static ResourceLocation ID = BongoMod.getInstance().resource("jeiplugin");
+    // Hardcoded mod id as JEI might load this before our own mod.
+    public static ResourceLocation ID = new ResourceLocation("bongo", "jeiplugin");
     
     @Nullable
     public static IJeiRuntime runtime = null;

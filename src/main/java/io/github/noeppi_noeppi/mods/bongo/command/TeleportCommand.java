@@ -36,11 +36,11 @@ public class TeleportCommand implements Command<CommandSourceStack> {
         }
 
         if (team.consumeTeleport()) {
-            if (player.getLevel() != target.getLevel()) {
-                player.changeDimension(target.getLevel());
+            if (player.level() != target.level()) {
+                player.changeDimension(target.serverLevel());
             }
             player.teleportTo(target.getX(), target.getY(), target.getZ());
-            Util.broadcastTeam(player.getLevel(), team, Component.translatable("bongo.cmd.tp.success", player.getDisplayName(), target.getDisplayName()));
+            Util.broadcastTeam(player.level(), team, Component.translatable("bongo.cmd.tp.success", player.getDisplayName(), target.getDisplayName()));
         } else {
             throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.tp.noleft")).create();
         }

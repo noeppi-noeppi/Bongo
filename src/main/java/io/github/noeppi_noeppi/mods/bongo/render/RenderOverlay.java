@@ -1,7 +1,6 @@
 package io.github.noeppi_noeppi.mods.bongo.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.noeppi_noeppi.mods.bongo.Bongo;
 import io.github.noeppi_noeppi.mods.bongo.BongoMod;
 import io.github.noeppi_noeppi.mods.bongo.Keybinds;
@@ -11,10 +10,11 @@ import io.github.noeppi_noeppi.mods.bongo.data.WinCondition;
 import io.github.noeppi_noeppi.mods.bongo.task.Task;
 import io.github.noeppi_noeppi.mods.bongo.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
@@ -62,15 +62,14 @@ public class RenderOverlay implements IGuiOverlay {
     }
 
     @Override
-    public void render(ForgeGui gui, PoseStack poseStack, float partialTick, int width, int height) {
-        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && mc.player != null && mc.screen == null && (!mc.options.renderDebug || Keybinds.BIG_OVERLAY.isDown())) {
             Bongo bongo = Bongo.get(mc.level);
             Team team = bongo.getTeam(mc.player);
             if (bongo.active() && (!bongo.running() || team != null)) {
                 gui.setupOverlayRenderState(false, false);
-                poseStack.pushPose();
+                graphics.pose().pushPose();
                 
                 double padding = 5;
                 double px = height / 3.5d;
@@ -84,16 +83,15 @@ public class RenderOverlay implements IGuiOverlay {
                     itemNames = true;
                 } else {
                     float scale = (float) (double) ClientConfig.bongoMapScaleFactor.get();
-                    poseStack.scale(scale, scale, 1);
+                    graphics.pose().scale(scale, scale, 1);
                 }
 
-                poseStack.translate(x, y, 0);
-                poseStack.scale((float) px / 138, (float) px / 138, 1);
+                graphics.pose().translate(x, y, 0);
+                graphics.pose().scale((float) px / 138, (float) px / 138, 1);
 
-                RenderSystem.setShaderTexture(0, BINGO_TEXTURE);
-                GuiComponent.blit(poseStack, 0, 0, 0, 0, 138, 138, 256, 256);
+                graphics.blit(BINGO_TEXTURE, 0, 0, 0, 0, 138, 138, 256, 256);
 
-                poseStack.translate(2, 2, 10);
+                graphics.pose().translate(2, 2, 10);
 
                 for (int ySlot = 0; ySlot < 5; ySlot++) {
                     for (int xSlot = 0; xSlot < 5; xSlot++) {
@@ -104,84 +102,80 @@ public class RenderOverlay implements IGuiOverlay {
                                 colorCodes.add(dc.getTextColor());
                         }
 
-                        poseStack.pushPose();
-                        poseStack.translate(xSlot * 27, ySlot * 27, 0);
+                        graphics.pose().pushPose();
+                        graphics.pose().translate(xSlot * 27, ySlot * 27, 0);
 
-                        renderCompleted(poseStack, buffer, colorCodes);
+                        renderCompleted(graphics, colorCodes);
 
-                        poseStack.popPose();
+                        graphics.pose().popPose();
                     }
                 }
 
-                poseStack.translate(-2, -2, 10);
+                graphics.pose().translate(-2, -2, 10);
 
-                RenderSystem.setShaderTexture(0, BINGO_SLOTS_TEXTURE);
                 for (int ySlot = 0; ySlot < 5; ySlot++) {
                     for (int xSlot = 0; xSlot < 5; xSlot++) {
                         int slot = xSlot + (5 * ySlot);
 
-                        poseStack.pushPose();
-                        poseStack.translate(6 + (27 * xSlot), 6 + (27 * ySlot), 0);
+                        graphics.pose().pushPose();
+                        graphics.pose().translate(6 + (27 * xSlot), 6 + (27 * ySlot), 0);
 
-                        bongo.task(slot).renderSlot(mc, poseStack, buffer);
+                        bongo.task(slot).renderSlot(mc, graphics);
 
-                        poseStack.popPose();
+                        graphics.pose().popPose();
                     }
                 }
 
-                poseStack.translate(7, 7, 0);
+                graphics.pose().translate(7, 7, 0);
 
                 for (int ySlot = 0; ySlot < 5; ySlot++) {
                     for (int xSlot = 0; xSlot < 5; xSlot++) {
                         int slot = xSlot + (5 * ySlot);
                         Task task = bongo.task(slot);
 
-                        poseStack.pushPose();
-                        poseStack.translate(xSlot * 27, ySlot * 27, 0);
+                        graphics.pose().pushPose();
+                        graphics.pose().translate(xSlot * 27, ySlot * 27, 0);
 
-                        task.renderSlotContent(mc, poseStack, buffer, itemNames);
+                        task.renderSlotContent(mc, graphics, itemNames);
 
-                        poseStack.popPose();
+                        graphics.pose().popPose();
 
                         boolean hasOverlayIcon = team != null && (team.completed(slot) || team.locked(slot));
                         if (!hasOverlayIcon && task.inverted() && task.customTexture() == null) {
-                            poseStack.pushPose();
-                            poseStack.translate(xSlot * 27 - 4, ySlot * 27 - 4, 650);
-                            RenderSystem.setShaderTexture(0, BARRIER_TEXTURE);
-                            poseStack.scale(24f/16f, 24f/16f, 24f/16f);
-                            GuiComponent.blit(poseStack, 0, 0, 0, 0, 16, 16, 16, 16);
-                            poseStack.popPose();
+                            graphics.pose().pushPose();
+                            graphics.pose().translate(xSlot * 27 - 4, ySlot * 27 - 4, 650);
+                            graphics.pose().scale(24f/16f, 24f/16f, 24f/16f);
+                            graphics.blit(BARRIER_TEXTURE, 0, 0, 0, 0, 16, 16, 16, 16);
+                            graphics.pose().popPose();
                         }
                         
                         if (itemNames) {
-                            poseStack.pushPose();
-                            poseStack.translate((xSlot * 27) + 8, (ySlot * 27) + 4, 700);
-                            poseStack.scale(0.3f, 0.3f, 1);
+                            graphics.pose().pushPose();
+                            graphics.pose().translate((xSlot * 27) + 8, (ySlot * 27) + 4, 700);
+                            graphics.pose().scale(0.3f, 0.3f, 1);
 
-                            RenderHelper.renderText(task.typeName(), poseStack);
+                            renderTextWithBackground(graphics, task.typeName());
 
-                            poseStack.translate(0, 8 / 0.3, 10);
-                            poseStack.scale(0.8f, 0.8f, 1);
+                            graphics.pose().translate(0, 8 / 0.3, 10);
+                            graphics.pose().scale(0.8f, 0.8f, 1);
 
-                            RenderHelper.renderText(task.renderDisplayName(mc), poseStack);
+                            renderTextWithBackground(graphics, task.renderDisplayName(mc));
 
-                            poseStack.popPose();
+                            graphics.pose().popPose();
                         }
 
                         if (team != null) {
                             if (team.completed(slot)) {
-                                poseStack.pushPose();
-                                poseStack.translate(0, 0, 800);
-                                RenderSystem.setShaderTexture(0, BEACON_TEXTURE);
-                                GuiComponent.blit(poseStack, xSlot * 27, ySlot * 27, 90, 222, 16, 16, 256, 256);
-                                poseStack.popPose();
+                                graphics.pose().pushPose();
+                                graphics.pose().translate(0, 0, 800);
+                                graphics.blit(BEACON_TEXTURE, xSlot * 27, ySlot * 27, 90, 222, 16, 16, 256, 256);
+                                graphics.pose().popPose();
                             } else if (team.locked(slot)) {
-                                poseStack.pushPose();
-                                poseStack.translate(xSlot * 27, ySlot * 27, 800);
-                                RenderSystem.setShaderTexture(0, BEACON_TEXTURE);
-                                poseStack.scale(16f/15f, 16f/15f, 16f/15f);
-                                GuiComponent.blit(poseStack, 0, 0, 113, 222, 15, 15, 256, 256);
-                                poseStack.popPose();
+                                graphics.pose().pushPose();
+                                graphics.pose().translate(xSlot * 27, ySlot * 27, 800);
+                                graphics.pose().scale(16f/15f, 16f/15f, 16f/15f);
+                                graphics.blit(BEACON_TEXTURE, 0, 0, 113, 222, 15, 15, 256, 256);
+                                graphics.pose().popPose();
                             }
                         }
                     }
@@ -230,22 +224,22 @@ public class RenderOverlay implements IGuiOverlay {
                     }
 
                     if (!lines.isEmpty()) {
-                        poseStack.translate(0, 133, 800);
-                        poseStack.scale(1.3f, 1.3f, 1);
-
+                        graphics.pose().translate(0, 133, 800);
+                        graphics.pose().scale(1.3f, 1.3f, 1);
+                        
+                        RenderHelper.resetColor();
                         for (int i = 0; i < lines.size(); i++) {
-                            mc.font.draw(poseStack, lines.get(i), 0, (mc.font.lineHeight + 1) * i, 0xFFFFFF);
+                            graphics.drawString(mc.font, lines.get(i), 0, (mc.font.lineHeight + 1) * i, 0xFFFFFF, false);
                         }
                     }
                 }
 
-                poseStack.popPose();
-                buffer.endBatch();
+                graphics.pose().popPose();
             }
         }
     }
 
-    public void renderCompleted(PoseStack poseStack, MultiBufferSource buffer, List<Integer> colorCodes) {
+    public void renderCompleted(GuiGraphics graphics, List<Integer> colorCodes) {
         if (colorCodes.isEmpty())
             return;
         int[][] rects;
@@ -263,21 +257,43 @@ public class RenderOverlay implements IGuiOverlay {
             rects = RECTS_16;
         }
 
-        poseStack.pushPose();
-        poseStack.scale(26 / 24f, 26 / 24f, 0);
-        RenderSystem.setShaderTexture(0, COMPLETED_TEXTURE);
+        graphics.pose().pushPose();
+        graphics.pose().scale(26 / 24f, 26 / 24f, 0);
 
         for (int rect = 0; rect < rects.length; rect++) {
             if (rect >= colorCodes.size())
                 break;
 
             RenderHelper.rgb(colorCodes.get(rect));
-            GuiComponent.blit(poseStack, rects[rect][0], rects[rect][1], 0, 0, rects[rect][2] - rects[rect][0], rects[rect][3] - rects[rect][1], 256, 256);
+            graphics.blit(COMPLETED_TEXTURE, rects[rect][0], rects[rect][1], 0, 0, rects[rect][2] - rects[rect][0], rects[rect][3] - rects[rect][1], 256, 256);
             RenderHelper.resetColor();
         }
-        poseStack.popPose();
+        graphics.pose().popPose();
     }
 
+    public static void renderTextWithBackground(GuiGraphics graphics, Component text) {
+        renderTextWithBackground(graphics, text.getVisualOrderText());
+    }
+    
+    public static void renderTextWithBackground(GuiGraphics graphics, FormattedCharSequence text) {
+        if (Minecraft.getInstance().font.width(text) == 0) return;
+        float widthHalf = Minecraft.getInstance().font.width(text) / 2f;
+        float heightHalf = Minecraft.getInstance().font.lineHeight / 2f;
+
+        graphics.pose().pushPose();
+        graphics.pose().translate(-(widthHalf + 2), -(heightHalf + 2), 0);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(0.2f, 0.2f, 0.2f, 0.8f);
+        graphics.blit(RenderHelper.TEXTURE_WHITE, 0, 0, 0, 0, (int) (2 * widthHalf) + 4, (int) (2 * heightHalf) + 4, 256, 256);
+        RenderSystem.disableBlend();
+        graphics.pose().translate(widthHalf + 2, heightHalf + 2, 10);
+
+        RenderHelper.resetColor();
+        graphics.drawString(Minecraft.getInstance().font, text, -widthHalf, -heightHalf, 0xFFFFFF, false);
+        graphics.pose().popPose();
+    }
+    
     private static final int[][] RECTS_1 = new int[][]{
             { 0, 0, 24, 24 }
     };

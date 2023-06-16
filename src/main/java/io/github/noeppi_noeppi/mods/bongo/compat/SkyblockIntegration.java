@@ -64,16 +64,16 @@ public class SkyblockIntegration {
         @SubscribeEvent(priority = EventPriority.HIGH)
         public void livingHurt(LivingHurtEvent event) {
             if (event.getEntity() instanceof ServerPlayer player && event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY)
-                    && event.getEntity().getY() < 0
-                    && Level.OVERWORLD.equals(event.getEntity().getCommandSenderWorld().dimension())) {
-                if (appliesFor(player.getLevel())) {
-                    Bongo bongo = Bongo.get(player.getLevel());
+                    && event.getEntity().getY() < event.getEntity().level().getMinBuildHeight()
+                    && Level.OVERWORLD.equals(event.getEntity().level().dimension())) {
+                if (appliesFor(player.serverLevel())) {
+                    Bongo bongo = Bongo.get(player.level());
                     if (bongo.running()) {
                         BlockPos pos = player.getRespawnPosition();
                         if (Level.OVERWORLD.equals(player.getRespawnDimension()) && pos != null) {
                             event.setCanceled(true);
                             Util.handleTaskLocking(bongo, player);
-                            player.teleportTo(player.getLevel(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot(), player.getXRot());
+                            player.teleportTo(player.serverLevel(), pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, player.getYRot(), player.getXRot());
                         }
                     }
                 }
