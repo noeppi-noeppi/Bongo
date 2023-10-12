@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.moddingx.libx.annotation.api.Codecs;
 import org.moddingx.libx.annotation.codec.PrimaryConstructor;
+import org.moddingx.libx.codec.MoreCodecs;
 import org.moddingx.libx.datapack.DataLoader;
 import org.moddingx.libx.util.lazy.CachedValue;
 
@@ -38,9 +39,9 @@ public record GameSettings(
     
     public static Codec<GameSettings> mergeTo(GameSettings fallback) {
         return RecordCodecBuilder.create(instance -> instance.group(
-                DynamicUtil.createMergedCodec(PlaySettings.CODEC, PlaySettings.DEFAULT).fieldOf("game").orElse(PlaySettings.DEFAULT).forGetter(GameSettings::game),
-                DynamicUtil.createMergedCodec(LevelSettings.CODEC, LevelSettings.DEFAULT).fieldOf("level").orElse(LevelSettings.DEFAULT).forGetter(GameSettings::level),
-                DynamicUtil.createMergedCodec(EquipmentSettings.CODEC, EquipmentSettings.DEFAULT).fieldOf("equipment").orElse(EquipmentSettings.DEFAULT).forGetter(GameSettings::equipment)
+                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(PlaySettings.CODEC, fallback.game()), "game", fallback.game()).forGetter(GameSettings::game),
+                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(LevelSettings.CODEC, fallback.level()), "level", fallback.level()).forGetter(GameSettings::level),
+                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(EquipmentSettings.CODEC, fallback.equipment()), "equipment", fallback.equipment()).forGetter(GameSettings::equipment)
         ).apply(instance, GameSettings::new));
     }
 
@@ -49,14 +50,14 @@ public record GameSettings(
     }
     
     public static GameSettings load(List<ResourceLocation> settings) {
-        if (settings.isEmpty() || DEFAULT_ID.equals(settings.get(0))) {
+        if (settings.isEmpty()) return DEFAULT;
+        ResourceLocation last = settings.get(settings.size() - 1);
+        if (DEFAULT_ID.equals(last)) {
             return DEFAULT;
-        } else if (!GAME_SETTINGS.containsKey(settings.get(0))) {
-            throw new NoSuchElementException("Settings not found: " + settings.get(0));
-        } else try {
-            return mergeTo(load(settings.subList(0, settings.size() - 1))).decode(GAME_SETTINGS.get(settings.get(settings.size() - 1))).getOrThrow(false, err -> {}).getFirst();
-        } catch (RuntimeException e) {
-            throw new IllegalStateException("Failed to merge settings");
+        } else if (!GAME_SETTINGS.containsKey(last)) {
+            throw new NoSuchElementException("Settings not found: " + last);
+        } else {
+            return mergeTo(load(settings.subList(0, settings.size() - 1))).decode(GAME_SETTINGS.get(last)).getOrThrow(false, err -> {}).getFirst();
         }
     }
 

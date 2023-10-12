@@ -13,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor fg.deobf('org.moddingx:LibX:1.20.1-5.0.1')
+    annotationProcessor fg.deobf('org.moddingx:LibX:1.20.1-5.0.7')
 
-    implementation fg.deobf('org.moddingx:LibX:1.20.1-5.0.1')
+    implementation fg.deobf('org.moddingx:LibX:1.20.1-5.0.7')
     compileOnly fg.deobf('top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1:api')
     runtimeOnly fg.deobf('de.melanx:JustEnoughAdvancements:1.20.1-5.0.0')
     compileOnly fg.deobf('de.melanx:SkyblockBuilder:1.19.2-4.2.14')

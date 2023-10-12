@@ -4,18 +4,22 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class DynamicUtil {
     
+    // No deep merge
     public static <T> DataResult<Dynamic<T>> mergeMaps(Dynamic<T> dynamic, Dynamic<T> additional) {
-        AtomicReference<DataResult<Dynamic<T>>> result = new AtomicReference<>(DataResult.success(dynamic));
-        additional.getMapValues().result().ifPresent(map -> {
-            for (Map.Entry<Dynamic<T>, Dynamic<T>> entry : map.entrySet()) {
-                result.updateAndGet(r -> r.flatMap(d -> d.merge(entry.getKey(), entry.getValue()).get()));
+        DataResult<Dynamic<T>> result = DataResult.success(dynamic);
+        boolean dynamicIsMap = dynamic.getMapValues().result().isPresent();
+        if (dynamicIsMap) {
+            DataResult<Map<Dynamic<T>, Dynamic<T>>> additionalMapValues = additional.getMapValues();
+            if (additionalMapValues.result().isPresent()) {
+                for (Map.Entry<Dynamic<T>, Dynamic<T>> entry : additionalMapValues.result().get().entrySet()) {
+                    result = result.flatMap(dyn -> dyn.merge(entry.getKey(), entry.getValue()).get());
+                }
             }
-        });
-        return result.get();
+        }
+        return result;
     }
     
     public static <T> Codec<T> createMergedCodec(Codec<T> codec, T defaultValue) {

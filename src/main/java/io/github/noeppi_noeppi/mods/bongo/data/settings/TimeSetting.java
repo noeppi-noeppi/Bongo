@@ -54,7 +54,15 @@ public sealed interface TimeSetting {
                     if (num.result().isPresent()) {
                         return num.map(n -> new Time(n.intValue()));
                     } else {
-                        return ops.getStringValue(elem).flatMap(str -> "unlimited".equals(str) ? DataResult.success(new Unlimited()) : DataResult.error(() -> "Invalid time value: " + str));
+                        return ops.getStringValue(elem).flatMap(str -> {
+                            if ("unlimited".equalsIgnoreCase(str)) {
+                                return DataResult.success(new Unlimited());
+                            } else try {
+                                return DataResult.success(new Time(Integer.parseInt(str)));
+                            } catch (NumberFormatException e) {
+                                return DataResult.error(() -> "Invalid time value: " + str);
+                            }
+                        });
                     }
                 }
             }

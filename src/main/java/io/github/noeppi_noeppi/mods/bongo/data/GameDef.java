@@ -14,6 +14,7 @@ public class GameDef {
     public final GameSettings settings;
 
     public GameDef(GameTasks tasks, GameSettings settings) {
+        System.err.println(settings);
         this.tasks = tasks;
         this.settings = settings;
     }

@@ -43,7 +43,8 @@ public class CreateCommand implements Command<CommandSourceStack> {
         } catch (NoSuchElementException e) {
             throw new SimpleCommandExceptionType(Component.translatable("bongo.cmd.create.notfound")).create();
         } catch (Exception e) {
-            throw new SimpleCommandExceptionType(Component.literal("Unknown error while merging settings: " + e.getClass().getSimpleName() + ": " + e.getMessage())).create();
+            e.printStackTrace();
+            throw new SimpleCommandExceptionType(Component.literal("Error while merging settings: " + e.getMessage())).create();
         }
         
         GameDef gd = new GameDef(tasks, settings);
