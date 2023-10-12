@@ -8,13 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -64,7 +64,7 @@ public class TaskTypeBiome implements TaskType<ResourceLocation> {
 
     @Override
     public void validate(ResourceLocation element, MinecraftServer server) {
-        if (ForgeRegistries.BIOMES.getValue(element) == null) {
+        if (server.registryAccess().registryOrThrow(Registries.BIOME).get(element) == null) {
             throw new IllegalStateException("Biome not registered: " + element);
         }
     }
@@ -72,7 +72,7 @@ public class TaskTypeBiome implements TaskType<ResourceLocation> {
     @Override
     public Stream<ResourceLocation> listElements(MinecraftServer server, @Nullable ServerPlayer player) {
         if (player == null) {
-            return ForgeRegistries.BIOMES.getKeys().stream();
+            return server.registryAccess().registryOrThrow(Registries.BIOME).keySet().stream();
         } else {
             return Util.biome(player.serverLevel(), player.blockPosition()).stream();
         }
