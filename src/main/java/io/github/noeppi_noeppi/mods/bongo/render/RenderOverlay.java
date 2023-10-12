@@ -82,12 +82,14 @@ public class RenderOverlay implements IGuiOverlay {
                     y = ((height - px) / 2) - (2 * padding);
                     itemNames = true;
                 } else {
-                    float scale = (float) (double) ClientConfig.bongoMapScaleFactor.get();
-                    graphics.pose().scale(scale, scale, 1);
+                    px *= (float) (double) ClientConfig.bongoMapScaleFactor.get();
+                    if (ClientConfig.bongoMapOnTheRight.get()) {
+                        x = width - padding - px;
+                    }
                 }
 
                 graphics.pose().translate(x, y, 0);
-                graphics.pose().scale((float) px / 138, (float) px / 138, 1);
+                graphics.pose().scale((float) (px / 138), (float) (px / 138), 1);
 
                 graphics.blit(BINGO_TEXTURE, 0, 0, 0, 0, 138, 138, 256, 256);
 
@@ -224,12 +226,17 @@ public class RenderOverlay implements IGuiOverlay {
                     }
 
                     if (!lines.isEmpty()) {
-                        graphics.pose().translate(0, 133, 800);
+                        if (ClientConfig.bongoMapOnTheRight.get()) {
+                            graphics.pose().translate(124, 133, 800);
+                        } else {
+                            graphics.pose().translate(0, 133, 800);
+                        }
                         graphics.pose().scale(1.3f, 1.3f, 1);
                         
                         RenderHelper.resetColor();
                         for (int i = 0; i < lines.size(); i++) {
-                            graphics.drawString(mc.font, lines.get(i), 0, (mc.font.lineHeight + 1) * i, 0xFFFFFF, false);
+                            int off = ClientConfig.bongoMapOnTheRight.get() ? -mc.font.width(lines.get(i)) : 0;
+                            graphics.drawString(mc.font, lines.get(i), off, (mc.font.lineHeight + 1) * i, 0xFFFFFF, false);
                         }
                     }
                 }

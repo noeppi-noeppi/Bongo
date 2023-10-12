@@ -163,6 +163,7 @@ public class EventListener {
     @SubscribeEvent
     public void resourcesReload(AddReloadListenerEvent event) {
         event.addListener(new SimplePreparableReloadListener<>() {
+            
             @Nonnull
             @Override
             protected Object prepare(@Nonnull ResourceManager resourceManager, @Nonnull ProfilerFiller profiler) {
