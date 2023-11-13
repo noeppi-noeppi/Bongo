@@ -51,7 +51,7 @@
   "bongo.task.advancement.invalid": "Недійсне досягнення",
   "bongo.task.advancement.name": "Досягнення",
   "bongo.task.biome.name": "Біом",
-  "bongo.task.complete": "%s виконати завдання %s",
+  "bongo.task.complete": "%s виконали завдання %s",
   "bongo.task.fail": "%s зазнали невдачі із завданням %s",
   "bongo.task.entity.name": "Убити створіння",
   "bongo.task.item.name": "Предмет",
