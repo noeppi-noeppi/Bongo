@@ -200,7 +200,7 @@ public class EventListener {
     }
 
     private void handleCommonDamageEvent(LivingEvent event, DamageSource source, Runnable setDamageToZero) {
-        if (!event.getEntity().level().isClientSide && event.getEntity() instanceof Player player && source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        if (!event.getEntity().level().isClientSide && event.getEntity() instanceof Player player && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             Bongo bongo = Bongo.get(player.level());
             Team team = bongo.getTeam(player);
             if (bongo.running() && team != null) {

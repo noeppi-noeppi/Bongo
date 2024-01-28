@@ -28,9 +28,11 @@ public class JeiIntegration {
                 addBookmark(bookmarkList, VanillaTypes.ITEM_STACK, stack);
             }
             
-            Object advancementType = Class.forName("de.melanx.jea.api.client.Jea").getField("ADVANCEMENT_TYPE").get(null);
-            for (ResourceLocation advancement : advancements) {
-                addBookmark(bookmarkList, advancementType, getAdvancementIngredient(advancement));
+            if (ModList.get().isLoaded("jea")) {
+                Object advancementType = Class.forName("de.melanx.jea.api.client.Jea").getField("ADVANCEMENT_TYPE").get(null);
+                for (ResourceLocation advancement : advancements) {
+                    addBookmark(bookmarkList, advancementType, getAdvancementIngredient(advancement));
+                }
             }
             forceBookmarkUpdate(bookmarkList);
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
