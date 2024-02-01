@@ -53,7 +53,7 @@ public class EventListener {
         Level level = event.getEntity().getCommandSenderWorld();
         if (!level.isClientSide && level instanceof ServerLevel && event.getEntity() instanceof ServerPlayer) {
             Bongo bongo = Bongo.get(level);
-            if (bongo.running()) {
+            if (bongo.running() && bongo.getSettings().server().preventJoiningDuringGame()) {
                 boolean playerFound = false;
                 for (Team team : bongo.getTeams()) {
                     if (team.hasPlayer(event.getEntity())) {

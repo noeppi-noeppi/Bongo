@@ -22,13 +22,14 @@ import java.util.*;
 public record GameSettings(
         PlaySettings game,
         LevelSettings level,
-        EquipmentSettings equipment
+        EquipmentSettings equipment,
+        ServerSettings server
 ) {
     
     public static final Codec<GameSettings> CODEC = Codecs.get(BongoMod.class, GameSettings.class);
     
     public static final ResourceLocation DEFAULT_ID = BongoMod.getInstance().resource("default");
-    public static final GameSettings DEFAULT = new GameSettings(PlaySettings.DEFAULT, LevelSettings.DEFAULT, EquipmentSettings.DEFAULT);
+    public static final GameSettings DEFAULT = new GameSettings(PlaySettings.DEFAULT, LevelSettings.DEFAULT, EquipmentSettings.DEFAULT, ServerSettings.DEFAULT);
     
     private static Map<ResourceLocation, Dynamic<JsonElement>> GAME_SETTINGS = Map.of();
     private static final CachedValue<Set<ResourceLocation>> SETTING_KEYS = new CachedValue<>(() -> {
@@ -41,7 +42,8 @@ public record GameSettings(
         return RecordCodecBuilder.create(instance -> instance.group(
                 MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(PlaySettings.CODEC, fallback.game()), "game", fallback.game()).forGetter(GameSettings::game),
                 MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(LevelSettings.CODEC, fallback.level()), "level", fallback.level()).forGetter(GameSettings::level),
-                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(EquipmentSettings.CODEC, fallback.equipment()), "equipment", fallback.equipment()).forGetter(GameSettings::equipment)
+                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(EquipmentSettings.CODEC, fallback.equipment()), "equipment", fallback.equipment()).forGetter(GameSettings::equipment),
+                MoreCodecs.optionalFieldOf(DynamicUtil.createMergedCodec(ServerSettings.CODEC, fallback.server()), "server", fallback.server()).forGetter(GameSettings::server)
         ).apply(instance, GameSettings::new));
     }
 

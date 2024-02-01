@@ -50,6 +50,9 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
       "item": "minecraft:air",
       "count": 0
     }
+  },
+  "server": {
+    "prevent_joining_during_game": true
   }
 }
 ```
@@ -138,6 +141,11 @@ bongo.skyblock   (Only when SkyBlockBuilder is present) Teleports each team to a
 ### teleportRadius
 
 `level.teleport_radius` is the distance from spawn where the players will be teleported. Please note that this is not supported by all [teleporters](#Teleporter) Default is `10000`.
+
+### preventJoiningDuringGame
+
+if `server.prevent_joining_during_game` is set to true, Bongo won't allow new players to join the server while the game is running. Players who were already part of the current round but left after it started will be ableto rejoin. Also operators can always join the game. This defaults to `true`.
+
 
 ## Tasks
 
