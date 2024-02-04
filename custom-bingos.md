@@ -23,6 +23,7 @@ Your settings should be defined in a file in `data/<datapack-id>/bingo_settings/
     "lockout": false
   },
   "level": {
+    "keep": [],
     "teleporter": "bongo.default",
     "teleport_radius": 10000
   },
@@ -126,6 +127,23 @@ Setting `game.leaderboard` to true will show a list of teams which team had whic
 The `equipment` settings control the equipment in the game. `inventory`, `head`, `chest`, `legs`, `feet` and `offhand` control the starting inventory, `backpack` the starting backpack inventory and `emergency` the items for the `/bingo emergency` command that are given to a player in exchange to three locked tasks.
 
 All items are in [recipe format](https://minecraft.fandom.com/wiki/Recipe#JSON_format).
+
+### Keep
+
+The `level.keep` setting is a list of strings that determines, what Bongo should not reset, when thegame starts. Supported keys:
+
+```
+game_mode               If set, the game mode of player is not changed to survival.
+equipment               If set, armor and inventory are not cleared. Also prevents filling in starting inventory and armor items.
+advancements            If set, advancements are not revoked.
+experience              If set, experience is not removed.
+statistics              If set, statistics are kept. Otherwise they are set to 0.
+time                    If set, the level time is not set to 0.
+weather                 If set, the weather is not cleared.
+wandering_trader_time   If set, the wandering trader spawn delay is not reset.
+```
+
+`level.keep` can also be set to the special value `"all"` which causes Bongo to keep everything. The default is the empty list `[]`, which means Bongo will clear everything.
 
 ### Teleporter
 

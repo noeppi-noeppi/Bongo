@@ -1,6 +1,7 @@
 package io.github.noeppi_noeppi.mods.bongo.effect;
 
 import io.github.noeppi_noeppi.mods.bongo.data.Team;
+import io.github.noeppi_noeppi.mods.bongo.data.settings.KeptLevelData;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoStartEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoTaskEvent;
 import io.github.noeppi_noeppi.mods.bongo.event.BongoWinEvent;
@@ -22,30 +23,49 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class DefaultEffects {
 
     @SubscribeEvent
     public void gameStart(BongoStartEvent.Level event) {
-        event.getLevel().setDayTime(600);
-        event.getLevel().serverLevelData.setRaining(false);
-        event.getLevel().serverLevelData.setThundering(false);
-        event.getLevel().serverLevelData.setWanderingTraderSpawnDelay(24000);
-        event.getLevel().serverLevelData.setWanderingTraderSpawnDelay(25);
+        Set<KeptLevelData> keep = event.getBongo().getSettings().level().keep();
+        if (!keep.contains(KeptLevelData.time)) {
+            event.getLevel().setDayTime(600);
+        }
+        if (!keep.contains(KeptLevelData.weather)) {
+            event.getLevel().serverLevelData.setRaining(false);
+            event.getLevel().serverLevelData.setThundering(false);
+        }
+        if (!keep.contains(KeptLevelData.wandering_trader_time)) {
+            event.getLevel().serverLevelData.setWanderingTraderSpawnDelay(24000);
+            event.getLevel().serverLevelData.setWanderingTraderSpawnChance(25);
+        }
     }
 
     @SubscribeEvent
     public void playerInit(BongoStartEvent.Player event) {
-        event.getPlayer().getInventory().clearContent();
-        event.getPlayer().setExperienceLevels(0);
-        event.getPlayer().setExperiencePoints(0);
-        event.getPlayer().setGameMode(GameType.SURVIVAL);
-        event.getBongo().getSettings().equipment().equip(event.getPlayer());
-        AdvancementCommands.Action.REVOKE.perform(event.getPlayer(), event.getLevel().getServer().getAdvancements().getAllAdvancements());
-        ServerStatsCounter mgr = event.getLevel().getServer().getPlayerList().getPlayerStats(event.getPlayer());
-        mgr.stats.keySet().forEach(stat -> mgr.stats.put(stat, 0));
-        mgr.markAllDirty();
-        mgr.sendStats(event.getPlayer());
+        Set<KeptLevelData> keep = event.getBongo().getSettings().level().keep();
+        if (!keep.contains(KeptLevelData.equipment)) {
+            event.getPlayer().getInventory().clearContent();
+            event.getBongo().getSettings().equipment().equip(event.getPlayer());
+        }
+        if (!keep.contains(KeptLevelData.experience)) {
+            event.getPlayer().setExperienceLevels(0);
+            event.getPlayer().setExperiencePoints(0);
+        }
+        if (!keep.contains(KeptLevelData.game_mode)) {
+            event.getPlayer().setGameMode(GameType.SURVIVAL);
+        }
+        if (!keep.contains(KeptLevelData.advancements)) {
+            AdvancementCommands.Action.REVOKE.perform(event.getPlayer(), event.getLevel().getServer().getAdvancements().getAllAdvancements());
+        }
+        if (!keep.contains(KeptLevelData.statistics)) {
+            ServerStatsCounter mgr = event.getLevel().getServer().getPlayerList().getPlayerStats(event.getPlayer());
+            mgr.stats.keySet().forEach(stat -> mgr.stats.put(stat, 0));
+            mgr.markAllDirty();
+            mgr.sendStats(event.getPlayer());
+        }
     }
 
     @SubscribeEvent

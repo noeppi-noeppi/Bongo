@@ -9,8 +9,11 @@ import org.moddingx.libx.annotation.api.Codecs;
 import org.moddingx.libx.annotation.codec.Param;
 import org.moddingx.libx.annotation.codec.PrimaryConstructor;
 
+import java.util.Set;
+
 @PrimaryConstructor
 public record LevelSettings(
+        @Param(KeptLevelData.class) Set<KeptLevelData> keep,
         @Param(PlayerTeleporters.class) PlayerTeleporter teleporter,
         int teleportRadius
 ) {
@@ -18,6 +21,7 @@ public record LevelSettings(
     public static final Codec<LevelSettings> CODEC = Codecs.get(BongoMod.class, LevelSettings.class);
     
     public static final LevelSettings DEFAULT = new LevelSettings(
+            Set.of(),
             PlayerTeleporterDefault.INSTANCE,
             10000
     );
